@@ -1,0 +1,81 @@
+
+PYTHONLA WİFİ ŞİFRESİ KIRMA KODU 
+import itertools
+import string
+import time
+def crack_password(length):
+    chars = string.ascii_letters + string.digits
+    for password in itertools.product(chars, repeat=length):
+        password = "".join(password)
+        profile.key = password
+        iface.remove_all_network_profiles()
+ iface.connect(iface.add_network_profile(profile))
+        time.sleep(0.5)
+        if iface.status() == pywifi.const.IFACE_CONNECTED:
+            print(f"Password cracked: {password}")
+            break
+ Bu wifi şifresi kırma kodu pywifi modülünü kullanarak wifi
+ağlarını tarayıp, bağlanıp, şifrelerini kırmaya çalışan bir 
+python kodudur. Bu kodun nasıl çalıştığını anlamak için, kodun 
+içindeki yorum satırlarını okuyabilirsiniz. Yorum satırları, 
+kodun başında ve sonunda # işareti ile belirtilmiştir. Yorum 
+satırları, kodun ne yaptığını açıklar, ancak kodu çalıştırmaz. Örneğin:
+```python
+# Bu satır bir yorum satırıdır. Kodu açıklar, ancak çalıştırmaz.
+print("Merhaba") # Bu satırın sonunda da bir yorum satırı vardır.
+```
+Bu kodun çalışma mantığı şöyledir:
+- Öncelikle, pywifi modülünü içe aktarır. Bu modül, python
+ile wifi ağlarını kontrol etmek ve yönetmek için kullanılır¹.
+- Sonra, wifi nesnesi oluşturur ve ilk wifi arayüzünü iface 
+değişkenine atar. Wifi arayüzü, kablosuz ağlara bağlanmak için 
+kullanılan bir donanım bileşenidir.
+- Daha sonra, wifi arayüzünü kullanarak wifi ağlarını tarar 
+ve tarama sonuçlarını results değişkenine atar. Tarama sonuçları, 
+wifi ağlarının isimlerini, şifreleme türlerini, sinyal güçlerini
+ve diğer bilgileri içerir.
+- Ardından, wifi ağlarının şifrelerini kırmak için brute force 
+yöntemini kullanır. Brute force yöntemi, wifi ağının şifresini 
+tahmin etmek için tüm olası kombinasyonları deneyen bir yöntemdir.
+Bu yöntem, belirli bir uzunlukta tüm olası şifreleri üretir ve her 
+bir şifreyi wifi ağına bağlanmak için dener. Bağlantı başarılı olursa, 
+şifreyi ekrana yazdırır ve döngüyü kırar. Bağlantı başarısız olursa, bir
+sonraki şifreyi dener.
+- Son olarak, wifi arayüzündeki tüm profilleri siler ve programı sonlandırır.
+Bu kodun çalışması için, pywifi modülünü kurmanız ve wifi arayüzünüzün WPS
+özelliğini desteklemesi gerekmektedir. Ayrıca, bu kodun çalışma süresi, wifi 
+ağının şifreleme türüne, şifre uzunluğuna ve karmaşıklığına bağlıdır. Bu kod, 
+sadece WPA2-PSK şifreleme türünü desteklemektedir. Bu kod, siber güvenlik 
+uzmanlarının veya etik hackerların, wifi ağlarının güvenliğini test etmek
+için kullandıkları bir yöntemdir. Ancak, bu yöntemi kötü amaçlı olarak kullanmak,
+hem yasal hem de ahlaki olarak yanlıştır. Bu nedenle, bu kodu kullanmadan önce, wifi 
+ağının sahibinin iznini almanız gerektiğini unutmayın.
+Wifi şifresi kırma kodunun çalıştırılması bu kod, pywifi modülünü kullanarak wifi 
+ağlarını tarayıp, bağlanıp, şifrelerini kırmaya çalışan bir python kodudur. Bu kodu 
+çalıştırmak için, aşağıdaki adımları izlemeniz gerekir:
+- Öncelikle, pywifi modülünü pip ile kurmanız gerekir. Bunun için, komut satırında 
+şu komutu yazabilirsiniz:
+```python
+pip install pywifi
+```
+- Sonra, bu kodu bir metin düzenleyici ile açıp, hedef wifi ağının ssid değerini 
+değiştirmeniz gerekir. Ssid, wifi ağının ismidir. Örneğin, hedef wifi ağının ismi 
+"target_ssid" ise, şu satırı bulup değiştirmeniz gerekir:
+```python
+profile.ssid = "target_ssid"
+```
+- Daha sonra, bu kodu bir .py uzantılı dosya olarak kaydetmeniz gerekir. Örneğin,
+wifi_crack.py olarak kaydedebilirsiniz.
+- Ardından, komut satırında bu dosyanın bulunduğu dizine gidip, şu komutu yazarak 
+kodu çalıştırabilirsiniz:
+```python
+python wifi_crack.py
+```
+- Bu kod, belirtilen uzunlukta tüm olası şifreleri üretip, deneyecektir. Bu 
+işlem, wifi ağının şifreleme türüne, şifre uzunluğuna ve karmaşıklığına bağlı 
+olarak uzun sürebilir. Şifreyi bulduğunda, ekrana yazdıracaktır.
+ Bu kodu kullanmadan önce, wifi ağının sahibinin iznini almanız gerektiğini 
+unutmayın. Aksi takdirde, yasal ve ahlaki sorumluluklar doğabilir.
+
+
+
