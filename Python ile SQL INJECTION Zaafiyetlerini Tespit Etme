@@ -1,0 +1,77 @@
+Python ile SQL INJECTION Zaafiyetlerini Tespit Etme
+# YAPAY ZEKA İLE SQL ENJEKSİYON ALGILAMA
+# Bu kod, SQL sorgularını iyi huylu veya kötü amaçlı olarak sınıflandırmak için bir sinir ağı kullanır
+#Sinir ağı, [SQLI-LABS]'dan gelen SQL sorgularından oluşan bir veri kümesi üzerinde eğitilir
+# Import the libraries
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding, LSTM, Dense
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix
+# Verileri yükle
+data = pd.read_csv("sqli.csv", encoding="ISO-8859-1")
+data.head()
+# Verileri giriş ve çıkışa ayırın
+X = data["Sentence"]
+y = data["Label"]
+# Çıkışı ikili değerlere dönüştürün
+y = y.map({"normal": 0, "sqli": 1})
+# Verileri eğitim ve test setlerine ayırın
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+#Tokenizasyon için parametreleri tanımlayın
+vocab_size = 10000
+max_length = 100
+trunc_type = "post"
+padding_type = "post"
+oov_token = "<OOV>"
+# Bir tokenizer oluşturun ve bunu eğitim verilerine sığdırın
+tokenizer = Tokenizer(num_words=vocab_size, oov_token=oov_token)
+tokenizer.fit_on_texts(X_train)
+# Metni tam sayı dizilerine dönüştürün
+X_train_seq = tokenizer.texts_to_sequences(X_train)
+X_test_seq = tokenizer.texts_to_sequences(X_test)
+# Dizileri aynı uzunluğa kadar doldurun
+X_train_pad = pad_sequences(X_train_seq, maxlen=max_length, padding=padding_type, truncating=trunc_type)
+X_test_pad = pad_sequences(X_test_seq, maxlen=max_length, padding=padding_type, truncating=trunc_type)
+# Sinir ağı için parametreleri tanımlama
+embedding_dim = 64
+num_epochs = 10
+batch_size = 32
+# Sinir ağı modelini oluşturun
+model = Sequential()
+model.add(Embedding(vocab_size, embedding_dim, input_length=max_length))
+model.add(LSTM(embedding_dim))
+model.add(Dense(1, activation="sigmoid"))
+# Modeli derleyin
+model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
+#Model özetini yazdırın
+model.summary()
+# Modeli eğitin
+model.fit(X_train_pad, y_train, epochs=num_epochs, batch_size=batch_size, validation_data=(X_test_pad, y_test))
+# Test setindeki modeli değerlendirin
+y_pred = model.predict(X_test_pad)
+y_pred = np.round(y_pred).flatten()
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("Confusion matrix:")
+print(confusion_matrix(y_test, y_pred))
+#Yazan Rıdvan Kaya
+Bu kod, SQL INJECTION adı verilen bir siber saldırı türünü tespit etmek için bir yapay zeka modeli oluşturmaktadır. SQL INJECTION, bir veritabanına zarar vermek veya verileri çalmak için kötü niyetli SQL sorguları göndermek anlamına gelir. Bu kod, aşağıdaki adımları izlemektedir:
+- Gerekli kütüphaneleri içe aktarır. Bu kütüphaneler, veri işleme, yapay zeka modeli oluşturma ve değerlendirme için kullanılır.
+- SQL sorgularından oluşan bir veri setini yükler. Bu veri seti, normal ve sqli etiketli iki sütundan oluşur. Normal sütun, zararsız SQL sorgularını içerir. Sqli sütunu, saldırganların kullandığı SQL sorgularını içerir.
+- Veri setini girdi ve çıktı olarak böler. Girdi, SQL sorgularını içerir. Çıktı, normal veya sqli olarak sınıflandırılan etiketleri içerir.
+- Çıktıyı ikili değerlere dönüştürür. Normal etiketi 0, sqli etiketi 1 olarak kodlanır.
+- Veri setini eğitim ve test setlerine ayırır. Eğitim seti, modeli eğitmek için kullanılır. Test seti, modelin performansını ölçmek için kullanılır.
+- Tokenizasyon için parametreleri tanımlar. Tokenizasyon, metni anlamlı parçalara ayırmak anlamına gelir. Bu parametreler, kelime sayısı, maksimum uzunluk, kesme tipi, doldurma tipi ve bilinmeyen kelimeler için yer tutucu olarak kullanılan oov_token'dir.
+- Bir tokenizör oluşturur ve eğitim verilerine uyarlar. Tokenizör, metni sayısal değerlere dönüştürmek için kullanılır.
+- Metni sayı dizilerine dönüştürür. Bu diziler, modelin girdisi olarak kullanılır.
+- Dizileri aynı uzunlukta olacak şekilde doldurur. Bu, modelin daha iyi çalışmasını sağlar.
+- Yapay sinir ağı modeli için parametreleri tanımlar. Bu parametreler, gömme boyutu, dönem sayısı ve toplu iş boyutudur. Gömme boyutu, kelimelerin vektörel temsilinin boyutudur. Dönem sayısı, modelin eğitim verilerini kaç kez göreceğidir. Toplu iş boyutu, modelin bir seferde kaç veri noktası işleyeceğidir.
+- Yapay sinir ağı modelini oluşturur. Model, üç katmandan oluşur. İlk katman, kelimeleri gömme vektörlerine dönüştürür. İkinci katman, LSTM adı verilen bir hücre tipini kullanarak dizileri işler. LSTM, uzun kısa vadeli bellek anlamına gelir ve dizilerdeki bağlamlı bilgileri yakalamak için kullanılır. Üçüncü katman, çıktıyı 0 veya 1 olarak üretmek için sigmoid aktivasyon fonksiyonunu kullanır.
+- Modeli derler. Modeli derlemek, kayıp fonksiyonu, optimizasyon algoritması ve metrikleri belirlemek anlamına gelir. Kayıp fonksiyonu, modelin ne kadar iyi performans gösterdiğini ölçer. Optimizasyon algoritması, modelin kaybı azaltmak için nasıl güncelleneceğini belirler. Metrikler, modelin başarısını değerlendirmek için kullanılır.
+- Modelin özetini yazar. Modelin özeti, modelin katmanlarını, parametrelerini ve şekillerini gösterir.
+- Modeli eğitir. Modeli eğitmek, modelin eğitim verilerini kullanarak kendini iyileştirmesi anlamına gelir. Model, eğitim verilerini toplu işler halinde alır ve her dönemde bir kez tamamlar. Model, aynı zamanda test verilerini kullanarak kendini doğrular.
+- Modeli test setinde değerlendirir. Model, test verilerini kullanarak tahminler üretir. Tahminler, 0 ile 1 arasında bir değerdir. Bu değerleri yuvarlayarak 0 veya 1 olarak sınıflandırır. Modelin doğruluğunu ve karmaşıklık matrisini yazdırır. Doğruluk, modelin doğru tahmin ettiği veri noktalarının yüzdesidir. Karmaşıklık matrisi, modelin gerçek ve tahmin edilen etiketleri karşılaştırarak oluşturduğu bir tablodur.
