@@ -1,0 +1,118 @@
+PYTHON KULLANARAK YAPAY ZEKAYLA CSRF SALDIRISINI TESPİT ETMEK
+Bu kod, web sitesinin isteklerini YSA modeline göndermek ve CSRF saldırılarını tespit etmek için Flask web çerçevesini kullanır. 
+# Flask web çerçevesini içe aktarın
+from flask import Flask, request, abort
+# YSA modelini içe aktarın
+from tensorflow.keras.models import load_model
+# YSA modelini yükleyin
+model = load_model("csrf_detector.h5")
+# Flask uygulamasını oluşturun
+app = Flask(__name__)
+# Web sitesinin tüm isteklerini izleyen bir dekoratör tanımlayın
+@app.before_request
+def detect_csrf():
+    # İsteğin özelliklerini alın
+    headers = request.headers
+    args = request.args
+    form = request.form
+    json = request.json
+    # İsteğin özelliklerini YSA modeline uygun bir şekilde ön işleyin
+    # Ön işleme işlemi, modelin nasıl eğitildiğine bağlıdır
+    # Burada, basitçe isteğin özelliklerini birleştiriyoruz
+    features = str(headers) + str(args) + str(form) + str(json)
+    # İsteğin özelliklerini YSA modeline girdi olarak verin
+    # Model, isteğin CSRF saldırısı olasılığını 0 ile 1 arasında bir sayı olarak verir
+    probability = model.predict([features])[0][0]
+    # Olasılığı bir eşik değeriyle karşılaştırın
+    # Eşik değeri, modelin hassasiyetini ayarlamak için kullanılabilir
+    # Burada, eşik değerini 0.5 olarak alıyoruz
+    threshold = 0.5
+    # Eğer olasılık eşik değerinden büyükse, isteği bir CSRF saldırısı olarak kabul edin
+    if probability > threshold:
+        # İsteği reddedin
+        abort(403)
+        # İsteği kaydedin
+        log_request(features, probability)
+        # Saldırıyı raporlayın
+        report_attack(features, probability)
+    # Aksi takdirde, isteği normal olarak işleyin
+    else:
+        # İsteği kaydedin
+        log_request(features, probability)
+        # İsteği kabul edin
+        pass
+# İsteği kaydeden bir fonksiyon tanımlayın
+def log_request(features, probability):
+    # İsteğin özelliklerini ve CSRF saldırısı olasılığını bir dosyaya yazın
+    with open("requests.log", "a") as f:
+        f.write(f"{features}\t{probability}\n")
+# Saldırıyı raporlayan bir fonksiyon tanımlayın
+def report_attack(features, probability):
+    # Saldırının ayrıntılarını bir e-posta ile gönderin
+    # E-posta göndermek için smtplib modülünü kullanabilirsiniz
+    # Burada, basitçe saldırının ayrıntılarını ekrana yazdırıyoruz
+    print(f"CSRF attack detected!\nFeatures: {features}\nProbability: {probability}")
+# Flask uygulamasını çalıştırın
+if __name__ == "__main__":
+    app.run()
+#Yazan Rıdvan Kaya
+Bu kod, web sitesinin isteklerini analiz ederek CSRF saldırılarını tespit etmek için yapay zekalı bir koddur. Bu kodun nasıl çalıştığını açıklamak için, aşağıdaki adımları takip edebilirsiniz:
+- İlk olarak, kod Flask web çerçevesini içe aktarır. Flask, Python ile web uygulamaları geliştirmek için kullanılan bir araçtır. Flask, web sitesinin isteklerini almak, işlemek ve yanıtlamak için kullanılır.
+- Sonra, kod yapay sinir ağı (YSA) modelini içe aktarır. YSA modeli, web sitesinin isteklerinin özelliklerini alarak, isteğin CSRF saldırısı olup olmadığını tahmin eden bir yapay zeka modelidir. YSA modeli, TensorFlow, Keras veya PyTorch gibi popüler yapay zeka kütüphanelerinden biri kullanılarak oluşturulmuş ve eğitilmiştir.
+- Daha sonra, kod Flask uygulamasını oluşturur. Flask uygulaması, web sitesinin iş mantığını tanımlar. Flask uygulaması, web sitesinin tüm isteklerini izleyen bir dekoratör tanımlar. Dekoratör, bir fonksiyonun işlevselliğini değiştiren veya genişleten bir fonksiyondur. Bu dekoratör, web sitesinin herhangi bir isteği almadan önce çalışır ve isteği CSRF saldırısı olup olmadığını kontrol eder.
+- Dekoratör, isteğin özelliklerini alır. İsteğin özellikleri, isteğin başlıkları, parametreleri, gövdesi ve diğer bilgileridir. Bu özellikler, isteğin kimden geldiğini, ne istediğini ve nasıl istediğini belirler.
+- Dekoratör, isteğin özelliklerini YSA modeline uygun bir şekilde ön işler. Ön işleme, isteğin özelliklerini sayısal bir formata dönüştürmek için yapılan bir işlemdir. Ön işleme işlemi, YSA modelinin nasıl eğitildiğine bağlıdır. Burada, basitçe isteğin özelliklerini birleştirerek bir metin haline getiriyoruz.
+- Dekoratör, isteğin özelliklerini YSA modeline girdi olarak verir. YSA modeli, isteğin özelliklerini alarak, isteğin CSRF saldırısı olasılığını 0 ile 1 arasında bir sayı olarak verir. Bu sayı, isteğin ne kadar saldırgan olduğunu gösterir. 0, isteğin saldırgan olmadığını, 1 ise isteğin saldırgan olduğunu belirtir.
+- Dekoratör, YSA modelinin verdiği olasılığı bir eşik değeriyle karşılaştırır. Eşik değeri, modelin hassasiyetini ayarlamak için kullanılan bir parametredir. Eşik değeri, isteğin saldırgan kabul edilmesi için gereken minimum olasılığı belirler. Burada, eşik değerini 0.5 olarak alıyoruz. Yani, isteğin olasılığı 0.5'ten büyükse, isteği saldırgan kabul ediyoruz.
+- Eğer isteğin olasılığı eşik değerinden büyükse, dekoratör isteği bir CSRF saldırısı olarak kabul eder. CSRF saldırısı, bir web sitesinin kullanıcıların tarayıcılarını, onların izni olmadan istekler göndermek için kullanan kötü niyetli saldırılardır. Bu saldırılar, kullanıcıların hesaplarını ele geçirmek, verilerini çalmak veya web sitesinin işlevselliğini bozmak için kullanılabilir. Dekoratör, isteği reddeder, isteği kaydeder, saldırıyı raporlar ve web sitesinin güvenliğini artırmak için ek işlemler yapabilir.
+- Aksi takdirde, isteğin olasılığı eşik değerinden küçükse, dekoratör isteği normal olarak işler. Dekoratör, isteği kaydeder ve isteği kabul eder. İsteği kabul ettikten sonra, web sitesinin normal işleyişine devam eder.
+Bu şekilde, bu kod web sitesinin isteklerini analiz ederek CSRF saldırılarını tespit etmek için yapay zekalı bir koddur.
+Kodun Yapay Sinir Ağı Modeli
+# tensorflow.keras modüllerini içe aktarın
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.losses import BinaryCrossentropy
+from tensorflow.keras.metrics import BinaryAccuracy
+# YSA modelini oluşturun
+model = Sequential()
+# Girdi katmanı olarak 128 nöronlu bir yoğun katman ekleyin
+# Girdi boyutu, isteğin özelliklerinin sayısına bağlıdır
+# Burada, basitçe 1000 olarak alıyoruz
+# Aktivasyon fonksiyonu olarak ReLU kullanın
+model.add(Dense(128, input_dim=1000, activation="relu"))
+# Aşırı uyumu önlemek için %50 oranında bir bırakma katmanı ekleyin
+model.add(Dropout(0.5))
+# Gizli katman olarak 64 nöronlu bir yoğun katman ekleyin
+# Aktivasyon fonksiyonu olarak ReLU kullanın
+model.add(Dense(64, activation="relu"))
+# Çıkış katmanı olarak 1 nöronlu bir yoğun katman ekleyin
+# Aktivasyon fonksiyonu olarak sigmoid kullanın
+# Bu, isteğin CSRF saldırısı olasılığını 0 ile 1 arasında bir sayı olarak verir
+model.add(Dense(1, activation="sigmoid"))
+# Modeli derleyin
+# Kayıp fonksiyonu olarak ikili çapraz entropi kullanın
+# Optimizasyon algoritması olarak Adam kullanın
+# Öğrenme oranı, modelin ne kadar hızlı öğrendiğini belirler
+# Burada, 0.001 olarak alıyoruz
+# Metrik olarak ikili doğruluk kullanın
+# Bu, modelin tahminlerinin ne kadar doğru olduğunu ölçer
+model.compile(loss=BinaryCrossentropy(), optimizer=Adam(learning_rate=0.001), metrics=[BinaryAccuracy()])
+# Modeli eğitin
+# Eğitim verisini ve etiketlerini belirtin
+# Eğitim verisi, isteğin özelliklerini içerir
+# Etiketler, isteğin CSRF saldırısı olup olmadığını gösterir
+# Burada, basitçe X_train ve y_train olarak alıyoruz
+# Dönem sayısı, modelin eğitim verisini kaç kez gördüğünü belirler
+# Burada, 10 olarak alıyoruz
+# Toplu iş boyutu, modelin her adımda kaç veri noktası kullandığını belirler
+# Burada, 32 olarak alıyoruz
+model.fit(X_train, y_train, epochs=10, batch_size=32)
+# Modeli kaydedin
+model.save("csrf_detector.h5")
+#Yazan Rıdvan Kaya
+Bu kod, bir yapay sinir ağı (YSA) modeli oluşturmak, eğitmek ve kaydetmek için kullanılan bir kodtur. Yapay sinir ağları, insan beyninin çalışma şeklini taklit eden ve karmaşık veri işleme problemlerini çözmek için kullanılan yapay zeka teknikleridir. Bu kodda, bir web isteğinin CSRF saldırısı olup olmadığını tahmin etmek için bir YSA modeli eğitiliyor. CSRF, Cross-Site Request Forgery, yani Çapraz Site İstek Sahteciliği anlamına gelir. Bu, bir saldırganın, kullanıcının oturum açtığı bir web sitesine zararlı bir istek göndermesine neden olan bir güvenlik açığıdır. Bu kodun yapısı şöyledir:
+- Öncelikle, tensorflow.keras modüllerini içe aktarıyor. Tensorflow, YSA modelleri oluşturmak ve eğitmek için kullanılan popüler bir kütüphanedir. Keras, tensorflow'un üzerine inşa edilmiş ve YSA modellerini kolayca oluşturmayı sağlayan bir arayüzdür.
+- Sonra, YSA modelini oluşturuyor. Model, bir girdi katmanı, bir gizli katman ve bir çıkış katmanından oluşuyor. Katmanlar, modelin veriyi nasıl işlediğini belirleyen birimlerdir. Girdi katmanı, modelin alacağı verinin boyutunu belirtir. Gizli katman, modelin veriyi öğrenmesini sağlayan nöronlardan oluşur. Nöronlar, veriyi işleyen ve aktivasyon fonksiyonu adı verilen bir matematiksel işleme tabi tutan birimlerdir. Çıkış katmanı, modelin vereceği sonucun boyutunu ve şeklini belirtir. Bu kodda, modelin girdi katmanı 1000 nöronlu, gizli katmanı 64 nöronlu ve çıkış katmanı 1 nöronludur. Aktivasyon fonksiyonu olarak ReLU ve sigmoid kullanılıyor. ReLU, sıfırdan küçük değerleri sıfıra eşitleyen, sıfırdan büyük değerleri olduğu gibi bırakan bir fonksiyondur. Sigmoid, değerleri 0 ile 1 arasında sıkıştıran bir fonksiyondur. Ayrıca, modelde bir bırakma katmanı da bulunuyor. Bırakma katmanı, modelin aşırı uymasını önlemek için rastgele olarak bazı nöronları devre dışı bırakan bir tekniktir. Aşırı uyum, modelin eğitim verisine çok iyi uyum sağlaması, ancak yeni verilere iyi genelleme yapamaması durumudur.
+- Daha sonra, modeli derliyor. Modeli derlemek, modelin nasıl eğitileceğini belirlemek için kullanılır. Modeli derlerken, kayıp fonksiyonu, optimizasyon algoritması ve metrik belirtilir. Kayıp fonksiyonu, modelin tahminlerinin ne kadar yanlış olduğunu ölçen bir fonksiyondur. Optimizasyon algoritması, modelin kaybı azaltmak için nasıl güncelleneceğini belirleyen bir algoritmadır. Metrik, modelin performansını değerlendirmek için kullanılan bir ölçüttür. Bu kodda, kayıp fonksiyonu olarak ikili çapraz entropi, optimizasyon algoritması olarak Adam, metrik olarak ikili doğruluk kullanılıyor. İkili çapraz entropi, modelin ikili sınıflandırma problemlerini çözmesi için kullanılan bir kayıp fonksiyonudur. İkili sınıflandırma, verinin iki sınıfa ayrılması problemidir. Bu kodda, veri CSRF saldırısı veya değil olarak iki sınıfa ayrılıyor. Adam, modelin öğrenme oranını dinamik olarak ayarlayan bir optimizasyon algoritmasıdır. Öğrenme oranı, modelin ne kadar hızlı öğrendiğini belirleyen bir parametredir. İkili doğruluk, modelin tahminlerinin ne kadar doğru olduğunu ölçen bir metriktir.
+- Son olarak, modeli eğitiyor ve kaydediyor. Modeli eğitmek, modelin veriyi öğrenmesini sağlamak için kullanılır. Modeli eğitirken, eğitim verisi, dönem sayısı ve toplu iş boyutu belirtilir. Eğitim verisi, modelin öğrenmesi için kullanılan veridir. Eğitim verisi, girdi ve etiket olarak iki bölüme ayrılır. Girdi, modelin alacağı veridir. Etiket, modelin tahmin etmesi gereken veridir. Bu kodda, girdi isteğin özelliklerini, etiket isteğin CSRF saldırısı olup olmadığını içeriyor. Dönem sayısı, modelin eğitim verisini kaç kez gördüğünü belirleyen bir parametredir. Toplu iş boyutu, modelin her adımda kaç veri noktası kullandığını belirleyen bir parametredir. Modeli kaydetmek, modelin eğitilmiş halini bir dosyaya yazmak için kullanılır. Bu kodda, model csrf_detector.h5 adlı bir dosyaya kaydediliyor.
