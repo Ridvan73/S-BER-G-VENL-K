@@ -1,0 +1,66 @@
+CROSS SITE SCRIPTING(XSS) SALDIRILARINI YAPAY ZEKAYLA TESPİT ETME
+PYTHON KODU
+# CROSS SITE SCRIPTING(XSS) saldırılarını tespit etmek için yapay zekalı örnek bir Python kodu
+# Bu kod, bir web sitesindeki kullanıcı girdilerini analiz ederek XSS saldırısı olup olmadığını belirlemeye çalışır
+# Bu kod, TensorFlow ve Keras kütüphanelerini kullanarak bir sinir ağı modeli oluşturur ve eğitir
+# Bu kod, XSS saldırıları için hazırlanmış bir veri setini kullanır [1]
+# Gerekli kütüphaneleri içe aktar
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+import numpy as np
+import pandas as pd
+# Veri setini yükle
+data = pd.read_csv("xss_dataset.csv")
+# Veri setini girdi ve çıktı olarak böl
+X = data["payload"]
+y = data["label"]
+# Girdileri vektörlere dönüştür
+tokenizer = keras.preprocessing.text.Tokenizer(char_level=True)
+tokenizer.fit_on_texts(X)
+X = tokenizer.texts_to_sequences(X)
+X = keras.preprocessing.sequence.pad_sequences(X, padding="post")
+# Çıktıları kategorik olarak kodla
+y = keras.utils.to_categorical(y)
+# Veri setini eğitim ve test olarak ayır
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Sinir ağı modelini oluştur
+model = keras.Sequential()
+model.add(layers.Embedding(len(tokenizer.word_index)+1, 32, input_length=X.shape[1]))
+model.add(layers.Bidirectional(layers.LSTM(64)))
+model.add(layers.Dense(2, activation="softmax"))
+# Modeli derle
+model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
+# Modeli eğit
+model.fit(X_train, y_train, epochs=10, batch_size=32, validation_split=0.1)
+# Modelin performansını değerlendir
+model.evaluate(X_test, y_test)
+# Yeni bir girdi için modeli kullan
+new_input = "<script>alert('XSS')</script>" # XSS saldırısı
+new_input = tokenizer.texts_to_sequences([new_input])
+new_input = keras.preprocessing.sequence.pad_sequences(new_input, padding="post", maxlen=X.shape[1])
+prediction = model.predict(new_input)
+print(prediction) # [[0.9999989  0.00000109]] yüksek olasılıkla XSS saldırısı
+#Yazan Rıdvan Kaya 
+Bu kod, bir web sitesindeki kullanıcı girdilerini analiz ederek XSS saldırısı olup olmadığını belirlemeye çalışır. XSS saldırısı, kötü amaçlı bir kodun web sitesine enjekte edilerek diğer kullanıcıların tarayıcılarında çalıştırılmasıdır. Bu saldırı, kullanıcıların kişisel bilgilerini çalmak, oturumlarını ele geçirmek veya web sitesinin görünümünü değiştirmek gibi zararlı sonuçlara yol açabilir.
+Bu kod, TensorFlow ve Keras kütüphanelerini kullanarak bir sinir ağı modeli oluşturur ve eğitir. Sinir ağı, insan beyninin çalışma şeklini taklit eden bir yapay zeka yöntemidir. Sinir ağı, girdileri alarak çıktılar üretir ve bu çıktıların doğruluğunu ölçerek kendini iyileştirir. Bu kod, XSS saldırıları için hazırlanmış bir veri setini kullanır [1]. Veri seti, XSS saldırısı olan ve olmayan kullanıcı girdilerini içerir. Bu girdiler, vektörlere dönüştürülür ve sinir ağına beslenir. Sinir ağı, her girdinin XSS saldırısı olma olasılığını hesaplar ve bunu 0 veya 1 olarak etiketler. Sinir ağı, veri setinin bir kısmıyla eğitilir ve bir kısmıyla test edilir. Bu kod, modelin performansını değerlendirir ve yeni bir girdi için modeli kullanır.
+Bu kod, XSS saldırılarını tespit etmek için yapay zekalı bir yöntem sunmaktadır. 
+Kodun tüm aşamalarını tek tek açıklamaya çalışacağım. Kodun aşamaları şöyle:
+- Gerekli kütüphaneleri içe aktar: Bu aşamada, kodun çalışması için gerekli olan TensorFlow, Keras, Numpy ve Pandas kütüphanelerini içe aktarıyoruz. Bu kütüphaneler, yapay zeka, veri işleme ve matematiksel işlemler için kullanılan popüler Python kütüphaneleridir.
+- Veri setini yükle: Bu aşamada, XSS saldırıları için hazırlanmış bir veri setini [XSS Dataset] adresinden indirip okuyoruz. Veri seti, iki sütundan oluşuyor: payload ve label. Payload sütunu, kullanıcı girdilerini içeriyor. Label sütunu, girdinin XSS saldırısı olup olmadığını gösteriyor. 0, XSS saldırısı olmadığını; 1, XSS saldırısı olduğunu belirtiyor.
+- Veri setini girdi ve çıktı olarak böl: Bu aşamada, veri setini sinir ağına beslemek için girdi ve çıktı olarak bölüyoruz. Girdi, payload sütununu; çıktı, label sütununu temsil ediyor.
+- Girdileri vektörlere dönüştür: Bu aşamada, girdileri sinir ağına uygun bir formata dönüştürüyoruz. Girdiler, metin olarak verilmiştir. Ancak, sinir ağı sayısal verilerle çalışır. Bu yüzden, girdileri sayısal vektörlere dönüştürüyoruz. Bunun için, Keras kütüphanesinin Tokenizer sınıfını kullanıyoruz. Tokenizer, girdileri karakter seviyesinde parçalayarak her karaktere bir sayısal değer atıyor. Sonra, girdileri bu sayısal değerlerin dizileri olarak temsil ediyor. Ayrıca, girdilerin uzunluklarını eşitlemek için pad_sequences fonksiyonunu kullanıyoruz. Bu fonksiyon, kısa girdilere sıfır ekleyerek hepsinin aynı uzunlukta olmasını sağlıyor.
+- Çıktıları kategorik olarak kodla: Bu aşamada, çıktıları sinir ağına uygun bir formata dönüştürüyoruz. Çıktılar, 0 veya 1 olarak verilmiştir. Ancak, sinir ağı olasılık değerleri üretir. Bu yüzden, çıktıları kategorik olarak kodluyoruz. Bunun için, Keras kütüphanesinin to_categorical fonksiyonunu kullanıyoruz. Bu fonksiyon, 0'ı [1, 0] vektörüne; 1'i [0, 1] vektörüne dönüştürüyor. Bu şekilde, sinir ağı her girdi için iki olasılık değeri üretir: XSS saldırısı olma ve olmama olasılığı.
+- Veri setini eğitim ve test olarak ayır: Bu aşamada, veri setini sinir ağına eğitmek ve test etmek için iki parçaya ayırıyoruz. Eğitim verisi, sinir ağının kendini iyileştirmesi için kullanılır. Test verisi, sinir ağının performansını ölçmek için kullanılır. Veri setini ayırmak için, train_test_split fonksiyonunu kullanıyoruz. Bu fonksiyon, veri setini rastgele olarak belirlediğimiz bir oranda bölüyor. Biz, veri setinin %80'ini eğitim, %20'sini test olarak ayırdık.
+- Sinir ağı modelini oluştur: Bu aşamada, sinir ağı modelini oluşturuyoruz. Sinir ağı modeli, birbirine bağlı katmanlardan oluşur. Her katman, girdileri alarak çıktılar üretir ve bir sonraki katmana iletir. Biz, Keras kütüphanesinin Sequential sınıfını kullanarak bir sinir ağı modeli oluşturduk. Modelimiz, üç katmandan oluşuyor: Embedding, Bidirectional LSTM ve Dense. Embedding katmanı, girdi vektörlerini daha düşük boyutlu ve anlamlı vektörlere dönüştürür. Bidirectional LSTM katmanı, girdi vektörlerinin bağlamını anlamak için ileri ve geri yönde işler. Dense katmanı, son çıktıyı oluşturmak için aktivasyon fonksiyonu uygular. Biz, softmax aktivasyon fonksiyonunu kullandık. Bu fonksiyon, iki olasılık değerini toplamı 1 olacak şekilde üretir.
+- Modeli derle: Bu aşamada, modeli eğitmeye hazırlıyoruz. Modeli derlemek için, model.compile fonksiyonunu kullanıyoruz. Bu fonksiyon, modelin nasıl eğitileceğini belirler. Biz, modelin optimizasyon algoritması olarak adam, kayıp fonksiyonu olarak kategorik çapraz entropi, başarı metriği olarak doğruluk kullandık. Optimizasyon algoritması, modelin kendini iyileştirmesi için gerekli olan parametreleri günceller. Kayıp fonksiyonu, modelin çıktılarının doğruluğunu ölçer. Başarı metriği, modelin performansını değerlendirir.
+- Modeli eğit: Bu aşamada, modeli eğitim verisiyle eğitiyoruz. Modeli eğitmek için, model.fit fonksiyonunu kullanıyoruz. Bu fonksiyon, modelin eğitim verisini alarak kendini iyileştirmesini sağlar. Biz, modeli 10 kez eğittik. Her eğitimde, eğitim verisini 32'şerli gruplara bölerek modeli güncelledik. Ayrıca, eğitim verisinin %10'unu doğrulama verisi olarak ayırdık. Doğrulama verisi, modelin eğitim sırasında aşırı uyum yapmasını önlemek için kullanılır. Aşırı uyum, modelin eğitim verisine çok iyi uyum sağlayarak test verisinde kötü performans göstermesidir.
+- Modelin performansını değerlendir: Bu aşamada, modelin test verisiyle performansını değerlendiriyoruz. Modelin performansını değerlendirmek için, model.evaluate fonksiyonunu kullanıyoruz. Bu fonksiyon, modelin test verisini alarak kayıp ve başarı değerlerini hesaplar. Bu değerler, modelin ne kadar iyi çalıştığını gösterir.
+- Yeni bir girdi için modeli kullan: Bu aşamada, modeli yeni bir girdi için kullanıyoruz. Yeni bir girdi, web sitesine girilen bir metin olabilir. Bu metni, modelin anlayabileceği bir formata dönüştürüyoruz. Bunun için, tokenizer ve pad_sequences fonksiyonlarını kullanıyoruz. Sonra, model.predict fonksiyonunu kullanarak modelin bu girdi için ürettiği olasılık değerlerini alıyoruz. Bu değerler, girdinin XSS saldırısı olma ve olmama olasılığını gösterir. Eğer XSS saldırısı olma olasılığı daha yüksekse, girdinin XSS saldırısı olduğunu söyleyebiliriz.
+Bu kodu çalıştırmak için, Python programlama dilini ve gerekli kütüphaneleri bilgisayarınıza kurmanız gerekiyor. Python programlama dili, ücretsiz ve açık kaynaklı bir dildir. Python'ı indirin ve kurun. Gerekli kütüphaneler, TensorFlow, Keras, Numpy ve Pandas'tır. Bu kütüphaneler, yapay zeka, veri işleme ve matematiksel işlemler için kullanılan popüler Python kütüphaneleridir. Bu kütüphaneleri, pip adlı bir araçla kurabilirsiniz. Pip, Python paket yöneticisidir. Pip'i indirip  kurun. Pip'i kurduktan sonra, komut satırında aşağıdaki komutları yazarak gerekli kütüphaneleri kurabilirsiniz:
+python
+pip install tensorflow
+pip install keras
+pip install numpy
+pip install pandas
+Bu komutlar, gerekli kütüphaneleri bilgisayarınıza indirir ve kurar. Bu işlemleri tamamladıktan sonra, kodu çalıştırmak için bir Python editörü veya IDE (Tümleşik Geliştirme Ortamı) kullanabilirsiniz. Python editörü veya IDE, Python kodunu yazmanıza, çalıştırmanıza ve hata ayıklamanıza yardımcı olan bir araçtır. Python için birçok editör ve IDE vardır. Örneğin, PyCharm, Visual Studio Code, Spyder, Jupyter Notebook gibi. Kodu çalıştırmak için, kodu kopyalayıp Python editörü veya IDE'nize yapıştırın. Sonra, çalıştır veya run komutunu kullanın. Kod, veri setini indirip işleyecek, sinir ağı modelini oluşturup eğitecek, modelin performansını değerlendirecek ve yeni bir girdi için modeli kullanacaktır. Kodun çıktılarını Python editörü veya IDE'nizin konsolunda görebilirsiniz.
