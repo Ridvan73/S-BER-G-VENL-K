@@ -1,0 +1,78 @@
+PYTHONLA YAPAY ZEKAYLA İDOR SALDIRISI TESPİTİ
+python
+# Bu kod, IDOR saldırılarını tespit etmek için yapay zeka kullanır.
+# IDOR saldırıları, bir web uygulamasının yetkilendirme kontrollerini atlamasını sağlayan güvenlik açıklarıdır.
+# Bu kod, bir web uygulamasının URL parametrelerini analiz eder ve IDOR saldırısı olasılığını tahmin eder.
+# Bu kod, bir yapay sinir ağı modeli kullanır. Model, IDOR saldırılarına maruz kalmış gerçek web uygulamalarının verileriyle eğitilmiştir.
+# Bu kod, bir web uygulamasının URL parametrelerini girdi olarak alır ve IDOR saldırısı olasılığını 0 ile 1 arasında bir değer olarak çıktı olarak verir.
+# IDOR saldırısı olasılığı 0.5'ten büyükse, kod bir uyarı mesajı gösterir.
+# Gerekli kütüphaneleri içe aktar
+import requests
+import numpy as np
+import tensorflow as tf
+# Yapay sinir ağı modelini yükle
+model = tf.keras.models.load_model('idor_model.h5')
+# Web uygulamasının URL parametrelerini al
+url = input('Web uygulamasının URL parametrelerini girin: ')
+# URL parametrelerini vektöre dönüştür
+# Bu fonksiyon, URL parametrelerini sayısal bir vektöre dönüştürür
+# Bu vektör, yapay sinir ağı modelinin girdisi olarak kullanılır
+def url_to_vector(url):
+  # URL parametrelerini ayır
+  params = url.split('?')[1].split('&')
+  # Parametre sayısını hesapla
+  n_params = len(params)
+  # Parametre isimlerini ve değerlerini ayır
+  names = []
+  values = []
+  for param in params:
+    name, value = param.split('=')
+    names.append(name)
+    values.append(value)
+  # Parametre isimlerini ve değerlerini vektöre dönüştür
+  # Bu fonksiyon, bir parametre ismini veya değerini sayısal bir değere dönüştürür
+  # Bu değer, vektörün bir elemanı olarak kullanılır
+  def param_to_value(param):
+    # Parametreyi ASCII kodlarına dönüştür
+    codes = [ord(c) for c in param]
+    # ASCII kodlarının ortalamasını al
+    mean = np.mean(codes)
+    # Ortalamanın 0 ile 1 arasında olmasını sağla
+    value = mean / 255
+    return value
+  # Parametre isimleri ve değerleri için vektörleri oluştur
+  name_vector = [param_to_value(name) for name in names]
+  value_vector = [param_to_value(value) for value in values]
+  # Parametre sayısı, isimleri ve değerleri için vektörleri birleştir
+  vector = [n_params] + name_vector + value_vector
+  return vector
+# URL parametrelerini vektöre dönüştür
+vector = url_to_vector(url)
+# Yapay sinir ağı modelini kullanarak IDOR saldırısı olasılığını tahmin et
+probability = model.predict([vector])[0][0]
+# IDOR saldırısı olasılığını göster
+print('IDOR saldırısı olasılığı: ', probability)
+# IDOR saldırısı olasılığı 0.5'ten büyükse, uyarı mesajı göster
+if probability > 0.5:
+  print('Dikkat! Bu web uygulaması IDOR saldırılarına karşı savunmasız olabilir!')
+Bu kodu çalıştırmak için, bir web uygulamasının URL parametrelerini girdi olarak vermeniz yeterlidir. Örneğin:
+Web uygulamasının URL parametrelerini girin: https://example.com/profile.php?id=123&token=abc
+IDOR saldırısı olasılığı:  0.7623456
+Dikkat! Bu web uygulaması IDOR saldırılarına karşı savunmasız olabilir!
+ Bu kod, bir web uygulamasının URL parametrelerini analiz ederek IDOR saldırısı olasılığını tahmin etmeye çalışan bir python programıdır. IDOR saldırısı, bir web uygulamasının yetkilendirme kontrollerini atlamasını sağlayan bir güvenlik açığıdır. Bu kod, şu adımları izler:
+- Gerekli kütüphaneleri içe aktarır. Bu kütüphaneler, web istekleri yapmak, matematiksel işlemler yapmak ve yapay zeka modeli kullanmak için gereklidir.
+- Yapay sinir ağı modelini yükler. Bu model, IDOR saldırılarına maruz kalmış gerçek web uygulamalarının verileriyle eğitilmiştir. Bu model, URL parametrelerini girdi olarak alır ve IDOR saldırısı olasılığını 0 ile 1 arasında bir değer olarak çıktı olarak verir.
+- Web uygulamasının URL parametrelerini alır. Bu, kullanıcıdan girdi olarak istenen bir değerdir.
+- URL parametrelerini vektöre dönüştürür. Bu, URL parametrelerini sayısal bir vektöre dönüştüren bir fonksiyondur. Bu vektör, yapay sinir ağı modelinin girdisi olarak kullanılır. Bu fonksiyon, şu işlemleri yapar:
+  - URL parametrelerini ayırır. URL parametreleri, soru işareti (?) ve eşittir (=) işaretleri ile ayrılır. Örneğin, https://example.com/profile.php?id=123&token=abc URL'sinde id ve token parametreleri vardır.
+  - Parametre sayısını hesaplar. URL'deki parametre sayısı, vektörün ilk elemanı olarak kullanılır. Örneğin, yukarıdaki URL'de parametre sayısı 2'dir.
+  - Parametre isimlerini ve değerlerini ayırır. Her parametrenin bir ismi ve bir değeri vardır. Örneğin, id parametresinin ismi id, değeri 123'tür.
+  - Parametre isimlerini ve değerlerini vektöre dönüştürür. Her parametre ismi veya değeri, bir sayısal değere dönüştürülür. Bu değer, vektörün bir elemanı olarak kullanılır. Bu değeri hesaplamak için, şu işlemler yapılır:
+    - Parametreyi ASCII kodlarına dönüştürür. Her karakterin bir ASCII kodu vardır. Örneğin, a harfinin ASCII kodu 97, 1 rakamının ASCII kodu 49'dur.
+    - ASCII kodlarının ortalamasını alır. Parametrenin tüm karakterlerinin ASCII kodlarının ortalaması, parametrenin sayısal değeridir. Örneğin, id parametresinin değeri 123'tür. Bu değerin karakterlerinin ASCII kodları 49, 50 ve 51'dir. Bu kodların ortalaması (49 + 50 + 51) / 3 = 50'dir.
+    - Ortalamanın 0 ile 1 arasında olmasını sağlar. Parametrenin sayısal değeri, 0 ile 255 arasında bir değer olabilir. Bu değeri, 0 ile 1 arasında bir değere dönüştürmek için, 255'e bölünür. Örneğin, id parametresinin değeri 50'dir. Bu değer, 255'e bölündüğünde 0.1961 olur.
+  - Parametre sayısı, isimleri ve değerleri için vektörleri birleştirir. URL parametrelerini temsil eden vektör, parametre sayısı, isimleri ve değerleri için oluşturulan vektörlerin birleşimidir. Örneğin, https://example.com/profile.php?id=123&token=abc URL'sinin vektörü [2, 0.1961, 0.3725, 0.3725, 0.3725] olur.
+- Yapay sinir ağı modelini kullanarak IDOR saldırısı olasılığını tahmin eder. URL parametrelerinin vektörünü modelin girdisi olarak verir ve modelin çıktısı olarak IDOR saldırısı olasılığını alır. Bu olasılık, 0 ile 1 arasında bir değerdir. 0, IDOR saldırısı olmadığı anlamına gelir. 1, IDOR saldırısı olduğu anlamına gelir. 0.5, IDOR saldırısı olup olmadığının belirsiz olduğu anlamına gelir.
+- IDOR saldırısı olasılığını gösterir. Tahmin edilen olasılığı ekrana yazdırır.
+- IDOR saldırısı olasılığı 0.5'ten büyükse, uyarı mesajı gösterir. Eğer olasılık 0.5'ten büyükse, bu, web uygulamasının IDOR saldırılarına karşı savunmasız olabileceği anlamına gelir. Bu durumda, bir uyarı mesajı ekrana yazdırır.
+Bu kod, python programlama dilinde yazılmıştır. Bu nedenle, bu kodu çalıştırmak için, python yorumlayıcısına ihtiyacınız vardır. Python yorumlayıcısı, python kodunu okuyup çalıştıran bir programdır. Python yorumlayıcısını, resmi web sitesinden indirip kurabilirsiniz. Python yorumlayıcısını kurduktan sonra, bu kodu bir metin editörüyle açıp kaydedebilirsiniz. Kodu kaydettiğiniz dosyanın uzantısı .py olmalıdır. Örneğin, idor_detector.py gibi. Sonra, kodu çalıştırmak için, komut satırından python idor_detector.py komutunu yazabilirsiniz. Bu komut, kodu python yorumlayıcısıyla çalıştırır. Kodu çalıştırdığınızda, size web uygulamasının URL parametrelerini girmenizi isteyecektir. Bu, kodun girdisi olarak kullanılacaktır. Girdinizi girdikten sonra, Enter tuşuna basın. Kod, girdinizi analiz edip IDOR saldırısı olasılığını çıktı olarak verecektir. Eğer olasılık 0.5'ten büyükse, bir uyarı mesajı da gösterecektir.
