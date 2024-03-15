@@ -1,0 +1,34 @@
+Python Kullanarak Yapay Zekayla Missing Function Level Access Control Zafiyeti Tespiti 
+# Import the requests library
+import requests
+# Define the target URL and the admin URL
+target_url = "http://example.com/login"
+admin_url = "http://example.com/admin"
+# Create a session object
+session = requests.Session()
+# Login with a low-privileged user account
+data = {"username": "user", "password": "pass"}
+response = session.post(target_url, data=data)
+# Check if login was successful
+if response.status_code == 200:
+    print("Login successful")
+else:
+    print("Login failed")
+# Try to access the admin URL with the same session
+response = session.get(admin_url)
+# Check if access was granted
+if response.status_code == 200:
+    print("Access granted to admin URL")
+else:
+    print("Access denied to admin URL")
+#Yazan Rıdvan Kaya 
+Bu kod, bir web uygulamasının yetki kontrolünü atlamaya çalışır. Eğer uygulama, admin URL’ine erişimi düzgün bir şekilde kısıtlamazsa, saldırgan, düşük ayrıcalıklı bir kullanıcı hesabıyla admin fonksiyonlarına erişebilir. Bu, uygulamanın güvenliğini ve verilerini tehlikeye atabilir. Bu yüzden, uygulama geliştiricileri, her ayrıcalıklı fonksiyon için yetki kontrolü yapmalıdır.
+Bu kod, Python programlama dilinde yazılmıştır. Kodun amacı, bir web uygulamasının yetki kontrolünü test etmektir. Kodun yaptığı işlemler şunlardır:
+- İlk olarak, requests kütüphanesini içe aktarır. Bu kütüphane, web istekleri göndermek ve almak için kullanılır.
+- Sonra, hedef URL ve admin URL değişkenlerini tanımlar. Bu değişkenler, web uygulamasının giriş sayfası ve yönetici sayfasının adreslerini içerir.
+- Ardından, bir session nesnesi oluşturur. Bu nesne, web uygulamasıyla kurulan oturumu yönetir.
+- Daha sonra, düşük ayrıcalıklı bir kullanıcı hesabıyla web uygulamasına giriş yapar. Bu işlem için, kullanıcı adı ve şifre içeren bir data sözlüğü oluşturur ve bu sözlüğü post metoduyla hedef URL'ye gönderir. Bu metodun döndürdüğü response nesnesini alır.
+- Bu noktada, giriş işleminin başarılı olup olmadığını kontrol eder. Eğer response nesnesinin status_code özelliği 200 ise, giriş başarılıdır. Eğer değilse, giriş başarısızdır. Buna göre, ekrana bir mesaj yazdırır.
+- Son olarak, aynı session nesnesiyle admin URL'ye bir get isteği gönderir. Bu isteğin döndürdüğü response nesnesini alır.
+- Bu noktada, admin URL'ye erişimin verilip verilmediğini kontrol eder. Eğer response nesnesinin status_code özelliği 200 ise, admin URL'ye erişim verilmiştir. Eğer değilse, admin URL'ye erişim engellenmiştir. Buna göre, ekrana bir mesaj yazdırır.
+Bu kodun sonucu, web uygulamasının yetki kontrolünün ne kadar güvenli olduğunu gösterir. Eğer uygulama, admin URL'ye erişimi sadece yönetici hesaplarına veriyorsa, bu kodun sonucu "Access denied to admin URL" olacaktır. Eğer uygulama, admin URL'ye erişimi herhangi bir hesaba veriyorsa, bu kodun sonucu "Access granted to admin URL" olacaktır. Bu durumda, uygulama, Missing Function Level Access Control zafiyetine sahiptir ve saldırganlar, uygulamanın yönetici fonksiyonlarını kullanabilir.
