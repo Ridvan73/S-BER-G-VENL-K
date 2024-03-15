@@ -1,0 +1,60 @@
+Python Kullanarak Yapay Zekayla Security Misconfiguration Zafiyeti Tespiti
+# Security Misconfiguration Detection with Artificial Intelligence
+# This code is for demonstration purposes only and not intended for malicious use
+# Importing the necessary libraries
+import requests
+import re
+import numpy as np
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix
+# Defining the target URL and the payload
+target_url = "http://example.com/login.php"
+payload = {"username": "admin", "password": "admin"}
+# Sending a POST request to the target URL with the payload
+response = requests.post(target_url, data=payload)
+# Checking the status code and the content of the response
+if response.status_code == 200:
+    print("The request was successful.")
+    print(response.content)
+else:
+    print("The request failed.")
+    print(response.status_code)
+# Extracting the error messages from the response content
+error_messages = re.findall(r"<div class=\"error\">(.*?)</div>", response.content.decode("utf-8"))
+# Printing the error messages
+print("The error messages are:")
+for error in error_messages:
+    print(error)
+# Creating a data frame with the error messages and their labels
+# 0: No Security Misconfiguration
+# 1: Security Misconfiguration
+data = pd.DataFrame({"error_message": error_messages, "label": [0, 1, 0, 1]})
+# Splitting the data into training and testing sets
+X_train, X_test, y_train, y_test = data["error_message"][:2], data["error_message"][2:], data["label"][:2], data["label"][2:]
+# Vectorizing the error messages using TF-IDF
+vectorizer = TfidfVectorizer()
+X_train = vectorizer.fit_transform(X_train)
+X_test = vectorizer.transform(X_test)
+# Training a logistic regression classifier on the training set
+classifier = LogisticRegression()
+classifier.fit(X_train, y_train)
+# Predicting the labels on the testing set
+y_pred = classifier.predict(X_test)
+# Evaluating the performance of the classifier
+print("The accuracy score is:", accuracy_score(y_test, y_pred))
+print("The confusion matrix is:")
+print(confusion_matrix(y_test, y_pred))
+#Yazan Rıdvan Kaya
+Bu kod, Python ile Security Misconfiguration zafiyeti tespiti yapmak için bir örnek olarak yazılmıştır. Kodun yaptığı işlemleri şöyle açıklayabilirim:
+- İlk olarak, gerekli kütüphaneleri içe aktarıyor. Bu kütüphaneler, web istekleri göndermek, metin işlemek, veri çerçeveleri oluşturmak, metinleri vektörlere dönüştürmek, sınıflandırıcı eğitmek ve performansını değerlendirmek için kullanılıyor.
+- Sonra, hedef URL'i ve yükü tanımlıyor. Bu URL, saldırıya uğratılmak istenen web sayfasının adresi, yük ise gönderilecek verilerdir. Bu örnekte, kullanıcı adı ve şifre olarak "admin" gönderiliyor.
+- Ardından, hedef URL'e yük ile birlikte bir POST isteği gönderiyor. Bu isteğin durum kodunu ve içeriğini kontrol ediyor. Eğer durum kodu 200 ise, isteğin başarılı olduğunu, değilse başarısız olduğunu yazdırıyor.
+- Daha sonra, istek içeriğinden hata mesajlarını çıkartıyor. Hata mesajları, <div class="error"> ve </div> arasında bulunan metinlerdir. Bu metinleri bir liste halinde saklıyor ve yazdırıyor.
+- Sonra, hata mesajlarını ve etiketlerini içeren bir veri çerçevesi oluşturuyor. Etiketler, hata mesajının Security Misconfiguration zafiyeti içerip içermediğini gösteriyor. 0, zafiyet olmadığını, 1 ise zafiyet olduğunu belirtiyor.
+- Ardından, veriyi eğitim ve test kümelerine ayırıyor. İlk iki hata mesajını eğitim, son iki hata mesajını test kümesi olarak kullanıyor.
+- Sonra, hata mesajlarını TF-IDF yöntemiyle vektörlere dönüştürüyor. Bu yöntem, metinlerin önemli kelimelerini belirlemek için kullanılıyor.
+- Sonra, eğitim kümesi üzerinde bir lojistik regresyon sınıflandırıcısı eğitiyor. Bu sınıflandırıcı, hata mesajlarının zafiyet içerip içermediğini tahmin etmek için kullanılıyor.
+- Sonra, test kümesindeki hata mesajlarının etiketlerini tahmin ediyor. Bu tahminleri gerçek etiketlerle karşılaştırıyor.
+- Son olarak, sınıflandırıcının performansını ölçüyor. Doğruluk skorunu ve karmaşıklık matrisini yazdırıyor. Doğruluk skoru, tahminlerin ne kadar doğru olduğunu, karmaşıklık matrisi ise tahminlerin ne kadar tutarlı olduğunu gösteriyor.
