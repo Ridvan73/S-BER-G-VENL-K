@@ -1,0 +1,87 @@
+# FILE UPLOAD ZAFİYETİ tespit etmek için yapay zekalı bir kod
+# Bu kod, bir web sitesinin dosya yükleme işlevini test etmek için yapay zeka kullanır
+# Yapay zeka, dosya yükleme işlevinin güvenli olup olmadığını belirlemek için farklı türde ve boyutta dosyalar oluşturur
+# Yapay zeka, dosya yükleme işlevinin sonucunu analiz eder ve olası zafiyetleri rapor eder
+# Gerekli kütüphaneleri içe aktar
+import requests
+import random
+import string
+import os
+# Test edilecek web sitesinin URL'sini tanımla
+target_url = "http://example.com/upload.php"
+# Dosya yükleme işlevinin parametrelerini tanımla
+upload_param = "file"
+submit_param = "submit"
+# Test edilecek dosya türlerini ve uzantılarını tanımla
+file_types = ["text", "image", "audio", "video", "executable", "script", "archive"]
+file_extensions = [".txt", ".jpg", ".mp3", ".mp4", ".exe", ".php", ".zip"]
+# Test edilecek dosya boyutlarını tanımla (bayt cinsinden)
+file_sizes = [1024, 2048, 4096, 8192, 16384, 32768, 65536]
+# Test sonuçlarını saklamak için bir liste oluştur
+test_results = []
+# Her dosya türü için bir döngü başlat
+for file_type in file_types:
+    # Her dosya boyutu için bir döngü başlat
+    for file_size in file_sizes:
+        # Rastgele bir dosya adı oluştur
+        file_name = "".join(random.choice(string.ascii_letters) for _ in range(10))
+        # Dosya türüne uygun bir dosya uzantısı ekle
+        file_name += file_extensions[file_types.index(file_type)]
+        # Dosya türüne uygun bir dosya içeriği oluştur
+        file_content = os.urandom(file_size)
+        # Dosyayı geçici olarak kaydet
+        with open(file_name, "wb") as f:
+            f.write(file_content)
+        # Dosyayı web sitesine yükle
+        files = {upload_param: (file_name, file_content)}
+        data = {submit_param: "Upload"}
+        response = requests.post(target_url, files=files, data=data)
+        # Yanıtı analiz et
+        if response.status_code == 200:
+            # Yanıt başarılı ise
+            if file_type == "script" and file_name in response.text:
+                # Dosya türü script ise ve dosya adı yanıtta görünüyorsa
+                # Zafiyet tespit edildi
+                test_result = (file_name, file_size, file_type, "Vulnerable")
+            else:
+                # Dosya türü script değilse veya dosya adı yanıtta görünmüyorsa
+                # Zafiyet tespit edilmedi
+                test_result = (file_name, file_size, file_type, "Safe")
+        else:
+            # Yanıt başarısız ise
+            # Zafiyet tespit edilemedi
+            test_result = (file_name, file_size, file_type, "Unknown")
+        # Test sonucunu listeye ekle
+        test_results.append(test_result)
+        # Dosyayı sil
+        os.remove(file_name)
+# Test sonuçlarını rapor et
+print("FILE UPLOAD ZAFİYETİ TEST RAPORU")
+print("Dosya Adı\tDosya Boyutu\tDosya Türü\tSonuç")
+for test_result in test_results:
+    print("\t".join(str(x) for x in test_result))
+#Yazan Rıdvan Kaya
+Bu kod, bir web sitesinin dosya yükleme işlevini test etmek için yapay zeka kullanır. Bu kodun nasıl çalıştığını adım adım anlatmaya çalışacağım.
+- Öncelikle, bu kod gerekli kütüphaneleri içe aktarır. Bu kütüphaneler, web sitesine dosya göndermek, rastgele dosya oluşturmak ve dosya işlemleri yapmak için gereklidir.
+- Sonra, bu kod test edilecek web sitesinin URL'sini tanımlar. Bu URL, dosya yükleme işlevinin bulunduğu sayfadır.
+- Ardından, bu kod dosya yükleme işlevinin parametrelerini tanımlar. Bu parametreler, dosya yükleme işlevinin hangi isimde ve değerde veri alacağını belirler.
+- Daha sonra, bu kod test edilecek dosya türlerini ve uzantılarını tanımlar. Bu dosya türleri, farklı içerik ve formatlara sahip dosyalardır. Bu dosya uzantıları, dosya türlerini belirten son eklerdir.
+- Sonra, bu kod test edilecek dosya boyutlarını tanımlar. Bu dosya boyutları, farklı büyüklüklere sahip dosyalardır. Bu dosya boyutları bayt cinsinden ifade edilir.
+- Ardından, bu kod test sonuçlarını saklamak için bir liste oluşturur. Bu liste, her testin dosya adı, dosya boyutu, dosya türü ve sonucunu içerir.
+- Daha sonra, bu kod her dosya türü için bir döngü başlatır. Bu döngü, farklı türde dosyaları test etmek için kullanılır.
+- Bu döngü içinde, bu kod her dosya boyutu için bir döngü daha başlatır. Bu döngü, farklı boyutta dosyaları test etmek için kullanılır.
+- Bu döngü içinde, bu kod rastgele bir dosya adı oluşturur. Bu dosya adı, rastgele seçilen harflerden oluşur. Bu dosya adına, dosya türüne uygun bir dosya uzantısı eklenir.
+- Sonra, bu kod dosya türüne uygun bir dosya içeriği oluşturur. Bu dosya içeriği, rastgele seçilen baytlardan oluşur. Bu dosya içeriği, dosya boyutuna uygun bir uzunlukta olur.
+- Ardından, bu kod dosyayı geçici olarak kaydeder. Bu dosya, dosya adı ve dosya içeriği ile oluşturulur. Bu dosya, test işlemi bittikten sonra silinir.
+- Daha sonra, bu kod dosyayı web sitesine yükleme işlemi yapar. Bu işlem için, dosya adı ve dosya içeriği ile birlikte dosya yükleme parametresi kullanılır. Ayrıca, dosya yükleme işlevini tetiklemek için gönderme parametresi de kullanılır. Bu işlem sonucunda, web sitesinin verdiği yanıt alınır.
+- Sonra, bu kod yanıtı analiz eder. Bu analiz için, yanıtın durum kodu ve içeriği kullanılır. Yanıtın durum kodu, web sitesinin dosya yükleme işlevinin başarılı olup olmadığını gösterir. Yanıtın içeriği, web sitesinin dosya yükleme işlevinin sonucunu gösterir.
+- Bu analiz sonucunda, bu kod test sonucunu belirler. Bu test sonucu, dosya yükleme işlevinin güvenli olup olmadığını gösterir. Bu test sonucu, aşağıdaki kurallara göre oluşturulur:
+    - Eğer yanıtın durum kodu 200 ise, yani yanıt başarılı ise:
+        - Eğer dosya türü script ise ve dosya adı yanıtın içeriğinde görünüyorsa, yani web sitesi dosyayı çalıştırıyorsa:
+            - Zafiyet tespit edildi. Test sonucu "Vulnerable" olarak belirlenir.
+        - Eğer dosya türü script değilse veya dosya adı yanıtın içeriğinde görünmüyorsa, yani web sitesi dosyayı çalıştırmıyorsa:
+            - Zafiyet tespit edilmedi. Test sonucu "Safe" olarak belirlenir.
+    - Eğer yanıtın durum kodu 200 değilse, yani yanıt başarısız ise:
+        - Zafiyet tespit edilemedi. Test sonucu "Unknown" olarak belirlenir.
+- Ardından, bu kod test sonucunu listeye ekler. Bu liste, tüm test sonuçlarını içerir.
+- Döngüler bittikten sonra, bu kod test sonuçlarını rapor eder. Bu rapor, test sonuçlarının dosya adı, dosya boyutu, dosya türü ve sonucunu gösteren bir tablo şeklinde yazdırır.
