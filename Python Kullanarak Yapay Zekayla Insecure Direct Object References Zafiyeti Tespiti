@@ -1,0 +1,165 @@
+Python Kullanarak Yapay Zekayla Insecure Direct Object References Zafiyeti Tespiti
+ Insecure Direct Object References zafiyeti, bir uygulamanın kullanıcı tarafından sağlanan girdiyi doğrulamadan veya yetkilendirmeden doğrudan nesne referanslarına erişmesi durumunda ortaya çıkar. Bu zaafiyet, saldırganların yetkisiz verilere erişmesine veya değiştirmesine olanak sağlar. Bu kod, TensorFlow https://www.tensorflow.org/ kütüphanesini kullanarak, bir web uygulamasının URL parametrelerini analiz eder ve potansiyel olarak güvensiz doğrudan nesne referanslarını belirler. Bu kod, bir yapay sinir ağı modeli eğitmek ve test etmek için OWASP WebGoat https://owasp.org/www-project-webgoat/ projesinden alınan gerçek verileri kullanır. 
+python
+# Import the required libraries
+import pandas as pd
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+from sklearn.model_selection import train_test_split
+# Load the data from a CSV file
+data = pd.read_csv("WebGoat_URLs.csv")
+# Extract the features and labels
+X = data["url"] # The URL parameters
+y = data["label"] # The labels indicating if the URL is insecure or not
+# Encode the labels as 0 or 1
+y = y.map({"insecure": 1, "secure": 0})
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Define a function to preprocess the URL parameters
+def preprocess_url(url):
+  # Convert the URL to lowercase
+  url = url.lower()
+  # Remove the leading and trailing slashes
+  url = url.strip("/")
+  # Split the URL by the slash character
+  url = url.split("/")
+  # Remove the empty strings
+  url = list(filter(None, url))
+  # Return the URL as a list of strings
+  return url
+# Apply the preprocessing function to the training and testing data
+X_train = X_train.apply(preprocess_url)
+X_test = X_test.apply(preprocess_url)
+# Define a function to pad the URL parameters to a fixed length
+def pad_url(url, max_len):
+  # If the URL is shorter than the max length, pad it with empty strings
+  if len(url) < max_len:
+    url = url + [""] * (max_len - len(url))
+  # If the URL is longer than the max length, truncate it
+  elif len(url) > max_len:
+    url = url[:max_len]
+  # Return the padded URL as a list of strings
+  return url
+# Define the maximum length of the URL parameters
+max_len = 10
+# Apply the padding function to the training and testing data
+X_train = X_train.apply(pad_url, max_len=max_len)
+X_test = X_test.apply(pad_url, max_len=max_len)
+# Convert the training and testing data to numpy arrays
+X_train = np.array(X_train.tolist())
+X_test = np.array(X_test.tolist())
+y_train = np.array(y_train.tolist())
+y_test = np.array(y_test.tolist())
+# Define a function to create a vocabulary of unique words from the URL parameters
+def create_vocab(X):
+  # Initialize an empty set
+  vocab = set()
+  # Loop through the URL parameters
+  for url in X:
+    # Loop through the words in the URL
+    for word in url:
+      # Add the word to the vocabulary
+      vocab.add(word)
+  # Return the vocabulary as a list of strings
+  return list(vocab)
+# Create a vocabulary from the training data
+vocab = create_vocab(X_train)
+# Define the vocabulary size
+vocab_size = len(vocab)
+# Define a function to create a word-to-index mapping from the vocabulary
+def create_word_index(vocab):
+  # Initialize an empty dictionary
+  word_index = {}
+  # Loop through the vocabulary
+  for i, word in enumerate(vocab):
+    # Assign an index to each word
+    word_index[word] = i
+  # Return the word-to-index mapping as a dictionary
+  return word_index
+# Create a word-to-index mapping from the vocabulary
+word_index = create_word_index(vocab)
+# Define a function to encode the URL parameters as sequences of indices
+def encode_url(url, word_index):
+  # Initialize an empty list
+  encoded_url = []
+  # Loop through the words in the URL
+  for word in url:
+    # Get the index of the word from the word-to-index mapping
+    index = word_index.get(word, 0)
+    # Append the index to the encoded URL
+    encoded_url.append(index)
+  # Return the encoded URL as a list of integers
+  return encoded_url
+# Encode the training and testing data as sequences of indices
+X_train = np.array([encode_url(url, word_index) for url in X_train])
+X_test = np.array([encode_url(url, word_index) for url in X_test])
+# Define the embedding dimension
+embedding_dim = 16
+# Define the model architecture
+model = keras.Sequential([
+  # Embedding layer to learn the representations of the words in the URL parameters
+  layers.Embedding(input_dim=vocab_size, output_dim=embedding_dim, input_length=max_len),
+  # Flatten layer to convert the 2D embedding matrix to a 1D vector
+  layers.Flatten(),
+  # Dense layer with 16 units and ReLU activation
+  layers.Dense(16, activation="relu"),
+  # Dense layer with 1 unit and sigmoid activation for binary classification
+  layers.Dense(1, activation="sigmoid")
+])
+# Compile the model with binary crossentropy loss and Adam optimizer
+model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
+# Print the model summary
+model.summary()
+# Train the model for 10 epochs with a batch size of 32
+model.fit(X_train, y_train, epochs=10, batch_size=32, validation_split=0.1)
+# Evaluate the model on the testing data
+model.evaluate(X_test, y_test)
+# Define a function to predict the label of a given URL
+def predict_url(url, model, word_index, max_len):
+  # Preprocess the URL
+  url = preprocess_url(url)
+  # Pad the URL
+  url = pad_url(url, max_len)
+  # Encode the URL
+  url = encode_url(url, word_index)
+  # Convert the URL to a numpy array
+  url = np.array([url])
+  # Predict the label of the URL
+  pred = model.predict(url)
+  # Return the predicted label as a string
+  if pred > 0.5:
+    return "insecure"
+  else:
+    return "secure"
+# Test the prediction function on some examples
+print(predict_url("http://localhost:8080/WebGoat/IDOR/profile/234", model, word_index, max_len)) # insecure
+print(predict_url("http://localhost:8080/WebGoat/IDOR/profile/1", model, word_index, max_len)) # insecure
+print(predict_url("http://localhost:8080/WebGoat/IDOR/profile/123", model, word_index, max_len)) # secure
+print(predict_url("http://localhost:8080/WebGoat/IDOR/profile/456", model, word_index, max_len)) # secure
+#Yazan Rıdvan Kaya 
+Bu kodun nasıl çalıştığını size adım adım açıklamaya çalışacağım.
+- Öncelikle, gerekli kütüphaneleri içe aktarıyorum. pandas, numpy ve sklearn, veri işleme ve analizi için kullanılan popüler kütüphanelerdir. tensorflow ve keras, yapay zeka ve derin öğrenme için kullanılan kütüphanelerdir.
+- Sonra, WebGoat_URLs.csv adlı bir CSV dosyasından verileri yüklüyorum. Bu dosya, OWASP WebGoat projesinden alınan gerçek URL parametrelerini ve bunların güvenli veya güvensiz olup olmadığını belirten etiketleri içeriyor.
+- Daha sonra, özellikleri ve etiketleri ayırıyorum. Özellikler, URL parametreleridir. Etiketler, URL'nin güvensiz veya güvensiz olup olmadığını gösteren 0 veya 1 değerleridir.
+- Ardından, verileri eğitim ve test setlerine bölüyorum. Eğitim seti, modeli eğitmek için kullanılır. Test seti, modelin performansını değerlendirmek için kullanılır. Test setinin boyutunu %20 olarak belirliyorum. Ayrıca, rastgele durumu 42 olarak ayarlıyorum. Bu, verilerin her seferinde aynı şekilde bölünmesini sağlar.
+- Sonra, URL parametrelerini ön işleme tabi tutuyorum. Ön işleme, verileri modele uygun hale getirmek için yapılan bir adımdır. Ön işleme fonksiyonu, URL'yi küçük harfe dönüştürür, baştaki ve sondaki eğik çizgileri kaldırır, URL'yi eğik çizgi karakterine göre bölür ve boş dizeleri kaldırır. Böylece, URL bir dize listesi olarak döndürülür.
+- Daha sonra, URL parametrelerini sabit bir uzunluğa tamamlıyorum. Tamamlama, verilerin boyutunu standartlaştırmak için yapılan bir adımdır. Tamamlama fonksiyonu, URL kısa ise boş dizelerle doldurur, URL uzun ise keser. Maksimum uzunluğu 10 olarak belirliyorum. Böylece, URL bir 10 elemanlı dize listesi olarak döndürülür.
+- Ardından, eğitim ve test verilerini numpy dizilerine dönüştürüyorum. Numpy dizileri, verileri hızlı ve verimli bir şekilde işlemek için kullanılan veri yapılarıdır.
+- Sonra, URL parametrelerindeki benzersiz kelimelerden bir sözlük oluşturuyorum. Sözlük, modelin kelimeleri tanıması için kullanılan bir veri yapısıdır. Sözlük oluşturma fonksiyonu, bir küme kullanarak URL parametrelerindeki benzersiz kelimeleri toplar ve bir dize listesi olarak döndürür. Sözlük boyutunu belirliyorum.
+- Daha sonra, sözlükten bir kelimeye indeks eşleştirmesi oluşturuyorum. Kelimeye indeks eşleştirmesi, modelin kelimeleri sayısal olarak temsil etmesi için kullanılan bir veri yapısıdır. Kelimeye indeks eşleştirme fonksiyonu, bir sözlük kullanarak her kelimeye bir indeks atar ve bir sözlük olarak döndürür.
+- Ardından, URL parametrelerini indeks dizileri olarak kodluyorum. Kodlama, verileri modele girdi olarak vermek için yapılan bir adımdır. Kodlama fonksiyonu, kelimeye indeks eşleştirmesini kullanarak URL parametrelerindeki her kelimeyi bir indekse dönüştürür ve bir tam sayı listesi olarak döndürür.
+- Sonra, model mimarisini tanımlıyorum. Model, yapay zeka ve derin öğrenme için kullanılan bir veri yapısıdır. Model, birkaç katmandan oluşur. Her katman, verileri işleyen ve dönüştüren bir birimdir. Model mimarisi şöyledir:
+  - Gömme katmanı, URL parametrelerindeki kelimelerin temsillerini öğrenmek için kullanılan bir katmandır. Girdi boyutu, sözlük boyutudur. Çıktı boyutu, gömme boyutudur. Girdi uzunluğu, maksimum uzunluktur.
+  - Düzleştirme katmanı, 2B gömme matrisini 1B vektöre dönüştüren bir katmandır.
+  - Yoğun katman, 16 birim ve ReLU aktivasyonu olan bir katmandır. ReLU aktivasyonu, girdiyi sıfırdan büyük ise olduğu gibi, sıfırdan küçük ise sıfır olarak döndüren bir fonksiyondur.
+  - Yoğun katman, 1 birim ve sigmoid aktivasyonu olan bir katmandır. Sigmoid aktivasyonu, girdiyi 0 ile 1 arasında bir değere dönüştüren bir fonksiyondur. Bu katman, ikili sınıflandırma için kullanılır.
+- Ardından, modeli ikili çapraz entropi kaybı ve Adam optimizasyonu ile derliyorum. İkili çapraz entropi kaybı, modelin tahminlerinin gerçek etiketlerle ne kadar uyumlu olduğunu ölçen bir fonksiyondur. Adam optimizasyonu, modelin ağırlıklarını güncellemek için kullanılan bir algoritmadır. Ayrıca, modelin doğruluğunu ölçen bir metrik olarak belirliyorum.
+- Sonra, model özetini yazdırıyorum. Model özeti, modelin katmanlarını, parametrelerini ve şekillerini gösteren bir tablodur.
+- Ardından, modeli 10 dönem, 32'lik bir toplu iş boyutu ve %10 doğrulama bölümü ile eğitiyorum. Bir dönem, eğitim setindeki tüm verilerin modele verilmesi anlamına gelir. Bir toplu iş boyutu, modele bir seferde verilen veri miktarıdır. Bir doğrulama bölümü, eğitim setinden ayrılan ve modelin eğitim sırasında performansını değerlendirmek için kullanılan veri oranıdır.
+- Ardından, modeli test setinde değerlendiriyorum. Modelin kaybını ve doğruluğunu yazdırıyorum.
+- Sonra, verilen bir URL'nin etiketini tahmin etmek için bir fonksiyon tanımlıyorum. Tahmin fonksiyonu, URL'yi ön işleme, tamamlama ve kodlama tabi tutar, modele verir ve modelin çıktısını yorumlar. Modelin çıktısı 0,5'ten büyükse, URL'nin güvensiz olduğunu, 0,5'ten küçükse, güvenli olduğunu döndürür.
+- Son olarak, tahmin fonksiyonunu bazı örnekler üzerinde test ediyorum. Örneklerin etiketlerini yazdırıyorum.
+Bu kod, Python programlama dilinde yazılmıştır. Python kodunu çalıştırmak için, öncelikle bilgisayarınızda Python yüklü olmalıdır. Python yüklendikten sonra, bu kodu çalıştırmak için birkaç yöntem vardır. Bunlardan biri, kodu bir metin editörüne kopyalayıp, dosyayı .py uzantısıyla kaydetmektir. Örneğin, kodu kod.py adıyla kaydedebilirsiniz. Sonra, komut satırını açıp, dosyanın bulunduğu dizine geçebilirsiniz. Örneğin, eğer dosya Masaüstü'nde ise, cd Desktop komutunu kullanabilirsiniz. Ardından, python kod.py komutunu vererek, kodu çalıştırabilirsiniz.
+Başka bir yöntem ise, kodu bir Python IDE'si (Entegre Geliştirme Ortamı) kullanarak çalıştırmaktır. Python IDE'leri, Python programlama yapmayı kolaylaştıran araçlardır. Örneğin, PyCharm, Spyder, Thonny gibi popüler Python IDE'leri vardır. Bu araçları indirip, kurduktan sonra, kodu içlerine kopyalayıp, çalıştır butonuna basarak, kodu çalıştırabilirsiniz.
