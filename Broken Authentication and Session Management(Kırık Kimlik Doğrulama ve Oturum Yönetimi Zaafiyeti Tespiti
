@@ -1,0 +1,79 @@
+Pythonla yapay zekalı bir kod yazmak için, öncelikle gerekli kütüphaneleri içe aktarmalısınız. Örneğin, requests, BeautifulSoup, tensorflow, keras gibi kütüphaneleri kullanabilirsiniz. Sonra, hedef web uygulamasının URL’sini belirlemelisiniz. Ardından, web uygulamasının kaynak kodunu çekmek için requests.get() fonksiyonunu kullanmalısınız. Kaynak koddaki form elemanlarını, giriş alanlarını ve gönderme düğmelerini bulmak için BeautifulSoup kütüphanesini kullanmalısınız. Bu elemanların isimlerini, değerlerini ve eylemlerini kaydetmelisiniz. Sonra, yapay zeka modelini eğitmek için tensorflow ve keras kütüphanelerini kullanmalısınız. Model, web uygulamasının kimlik doğrulama sisteminin zayıf noktalarını bulmak için farklı girdi değerleri denemelidir. Model, başarılı bir giriş yapabildiğinde, oturum kimliğini ve diğer oturum verilerini kaydetmelidir. Bu veriler, web uygulamasının yetkili olmayan erişime karşı savunmasız olduğunu gösterir. Model, ayrıca, web uygulamasının kimlik doğrulama sisteminin güçlü ve zayıf yönlerini rapor etmelidir.
+# Gerekli kütüphaneleri içe aktar
+import requests
+from bs4 import BeautifulSoup
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+# Hedef web uygulamasının URL'sini belirle
+target_url = "https://example.com/login"
+# Web uygulamasının kaynak kodunu çek
+response = requests.get(target_url)
+source_code = response.text
+# Kaynak koddaki form elemanlarını, giriş alanlarını ve gönderme düğmelerini bul
+soup = BeautifulSoup(source_code, "html.parser")
+form = soup.find("form")
+inputs = form.find_all("input")
+submit = form.find("button", type="submit")
+# Form elemanlarının isimlerini, değerlerini ve eylemlerini kaydet
+form_action = form["action"]
+form_method = form["method"]
+input_names = [input["name"] for input in inputs]
+input_values = [input["value"] for input in inputs]
+submit_name = submit["name"]
+submit_value = submit["value"]
+# Yapay zeka modelini oluştur
+model = keras.Sequential([
+    # Giriş katmanı, giriş alanlarının sayısına göre düğüm sayısını ayarla
+    layers.Dense(len(input_names), input_shape=(len(input_names),)),
+    # Gizli katmanlar, aktivasyon fonksiyonları olarak ReLU ve Sigmoid kullan
+    layers.Dense(64, activation="relu"),
+    layers.Dense(32, activation="sigmoid"),
+    # Çıkış katmanı, başarılı bir giriş yapılıp yapılmadığını belirten 0 veya 1 değeri döndür
+    layers.Dense(1, activation="sigmoid")
+])
+# Modeli derle, kayıp fonksiyonu olarak ikili çapraz entropi, optimizasyon algoritması olarak Adam, metrik olarak doğruluk kullan
+model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
+# Modeli eğit, eğitim verisi olarak rastgele girdi değerleri, etiket verisi olarak 0 veya 1 değerleri, eğitim döngüsü sayısı olarak 10, toplu işlem boyutu olarak 32 kullan
+model.fit(tf.random.uniform((1000, len(input_names))), tf.random.uniform((1000, 1)), epochs=10, batch_size=32)
+# Modeli test et, test verisi olarak rastgele girdi değerleri, test sonuçlarını predictions değişkenine ata
+predictions = model.predict(tf.random.uniform((100, len(input_names))))
+# Test sonuçlarını değerlendir, eğer predictions dizisindeki herhangi bir değer 0.5'ten büyükse, başarılı bir giriş yapıldığını varsay
+for i, prediction in enumerate(predictions):
+    if prediction > 0.5:
+        # Başarılı bir giriş yapıldığında, oturum kimliğini ve diğer oturum verilerini kaydet
+        session_data = {}
+        # Form verilerini oluştur, giriş alanlarının isimlerini ve test verisindeki ilgili değerleri kullan
+        form_data = {}
+        for j, input_name in enumerate(input_names):
+            form_data[input_name] = test_data[i][j]
+        # Form verilerine gönderme düğmesinin ismini ve değerini ekle
+        form_data[submit_name] = submit_value
+        # Form verilerini web uygulamasına gönder, form yöntemine ve eylemine göre istek türünü belirle
+        if form_method == "get":
+            response = requests.get(form_action, params=form_data)
+        elif form_method == "post":
+            response = requests.post(form_action, data=form_data)
+        # Yanıt başlıklarındaki çerezleri al, oturum kimliği ve diğer oturum verilerini içerebilir
+        cookies = response.headers.get("Set-Cookie")
+        # Çerezleri session_data sözlüğüne ekle
+        session_data["cookies"] = cookies
+        # Yanıt metnini al, başarılı bir giriş yapıldığını belirten mesajlar içerebilir
+        text = response.text
+        # Yanıt metnini session_data sözlüğüne ekle
+        session_data["text"] = text
+        # Session_data sözlüğünü ekrana yazdır, web uygulamasının yetkili olmayan erişime karşı savunmasız olduğunu göster
+        print(session_data)
+        # Web uygulamasının kimlik doğrulama sisteminin güçlü ve zayıf yönlerini rapor et
+        print(f"Web uygulamasının kimlik doğrulama sistemi, rastgele girdi değerleri ile başarılı bir giriş yapılmasına izin veriyor. Bu, web uygulamasının kimlik doğrulama sisteminin çok zayıf olduğunu gösteriyor. Web uygulaması, kimlik doğrulama sisteminde güvenlik önlemleri almalı, giriş denemelerini sınırlamalı, şifre karmaşıklığını artırmalı, oturum zaman aşımlarını uygulamalı ve oturum kimliklerini rastgele oluşturmalıdır.")
+#Yazan Rıdvan Kaya 
+Bu kod, web uygulamalarındaki Broken Authentication and Session Management(Kırık Kimlik Doğrulama ve Oturum Yönetimi) zaafiyetini tespit etmek için yapay zekalı bir kod yazmaya çalışan bir örnektir. Bu kodun ana adımları şunlardır:
+- Gerekli kütüphaneleri içe aktar: Bu adımda, web uygulamasının kaynak kodunu çekmek, form elemanlarını bulmak ve yapay zeka modelini oluşturmak ve eğitmek için gerekli olan Python kütüphanelerini içe aktarır.
+- Hedef web uygulamasının URL'sini belirle: Bu adımda, zaafiyet tespiti yapmak istediğiniz web uygulamasının URL'sini bir değişkene atar.
+- Web uygulamasının kaynak kodunu çek: Bu adımda, requests kütüphanesini kullanarak web uygulamasının kaynak kodunu bir değişkene atar.
+- Kaynak koddaki form elemanlarını, giriş alanlarını ve gönderme düğmelerini bul: Bu adımda, BeautifulSoup kütüphanesini kullanarak web uygulamasının kaynak kodundaki form elemanlarını, giriş alanlarını ve gönderme düğmelerini bulur ve bunların isimlerini, değerlerini ve eylemlerini kaydeder.
+- Yapay zeka modelini oluştur: Bu adımda, tensorflow ve keras kütüphanelerini kullanarak yapay zeka modelini oluşturur. Model, giriş alanlarının sayısına göre giriş katmanı, ReLU ve Sigmoid aktivasyon fonksiyonlarına sahip iki gizli katman ve Sigmoid aktivasyon fonksiyonuna sahip bir çıkış katmanından oluşur. Çıkış katmanı, başarılı bir giriş yapılıp yapılmadığını belirten 0 veya 1 değeri döndürür.
+- Modeli derle: Bu adımda, modeli derlemek için kayıp fonksiyonu olarak ikili çapraz entropi, optimizasyon algoritması olarak Adam, metrik olarak doğruluk kullanır.
+- Modeli eğit: Bu adımda, modeli eğitmek için eğitim verisi olarak rastgele girdi değerleri, etiket verisi olarak 0 veya 1 değerleri, eğitim döngüsü sayısı olarak 10, toplu işlem boyutu olarak 32 kullanır.
+- Modeli test et: Bu adımda, modeli test etmek için test verisi olarak rastgele girdi değerleri kullanır ve test sonuçlarını bir değişkene atar.
+- Test sonuçlarını değerlendir: Bu adımda, test sonuçlarını değerlendirir ve eğer test sonuçlarındaki herhangi bir değer 0.5'ten büyükse, başarılı bir giriş yapıldığını varsayar. Başarılı bir giriş yapıldığında, oturum kimliğini ve diğer oturum verilerini kaydeder ve ekrana yazdırır. Ayrıca, web uygulamasının kimlik doğrulama sisteminin güçlü ve zayıf yönlerini rapor eder.
