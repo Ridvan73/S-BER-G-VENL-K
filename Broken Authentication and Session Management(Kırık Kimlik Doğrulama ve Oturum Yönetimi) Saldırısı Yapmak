@@ -1,0 +1,60 @@
+Broken Authentication and Session Management(Kırık Kimlik Doğrulama ve Oturum Yönetimi) Saldırısı Yapmak
+# Bu kod, requests ve BeautifulSoup kütüphanelerini kullanarak bir web sitesine oturum açmaya ve oturum açtıktan sonra sayfaları kazımaya çalışır.
+# Bu kod, Rıdvan Kaya tarafından yazılmıştır. 
+import requests
+from bs4 import BeautifulSoup
+# Hedef web sitesinin URL'sini belirleyin
+target_url = "https://example.com/login"
+# Oturum açma bilgilerinizi belirleyin
+username = "your_username"
+password = "your_password"
+# Bir requests oturumu oluşturun
+session = requests.Session()
+# Hedef web sitesinin oturum açma sayfasını alın
+response = session.get(target_url)
+# Oturum açma sayfasının HTML içeriğini ayrıştırın
+soup = BeautifulSoup(response.text, "html.parser")
+# Oturum açma formunun gerekli alanlarını bulun
+# Bu alanların isimleri web sitesine göre değişebilir
+# Bu örnekte, kullanıcı adı alanı "user" ve parola alanı "pass" olarak adlandırılmıştır
+username_field = soup.find("input", {"name": "user"})
+password_field = soup.find("input", {"name": "pass"})
+# Oturum açma formunun eylem URL'sini bulun
+# Bu URL, form verilerinin gönderileceği yerdir
+# Bu örnekte, eylem URL'si "/login" olarak belirlenmiştir
+action_url = soup.find("form", {"method": "post"})["action"]
+# Oturum açma formunun verilerini oluşturun
+# Bu veriler, kullanıcı adı, parola ve diğer gerekli alanları içerir
+# Bu örnekte, diğer gerekli alan "csrf_token" olarak adlandırılmıştır
+data = {
+    username_field["name"]: username,
+    password_field["name"]: password,
+    "csrf_token": soup.find("input", {"name": "csrf_token"})["value"]
+}
+# Oturum açma formunun verilerini eylem URL'sine gönderin
+# Bu, oturum açma işlemini gerçekleştirir
+response = session.post(target_url + action_url, data=data)
+# Oturum açma işleminin başarılı olup olmadığını kontrol edin
+# Bu, yanıtın durum koduna veya içeriğine bakarak yapılabilir
+# Bu örnekte, başarılı oturum açma durum kodu 200'dür
+if response.status_code == 200:
+    print("Oturum açma başarılı!")
+else:
+    print("Oturum açma başarısız!")
+# Oturum açtıktan sonra, hedef web sitesinin diğer sayfalarını kazıyabilirsiniz
+# Bu, oturumunuzun çerezlerini kullanarak yapılabilir
+# Bu örnekte, hedef web sitesinin profil sayfasını kazıyoruz
+profile_url = "https://example.com/profile"
+response = session.get(profile_url)
+# Profil sayfasının HTML içeriğini ayrıştırın
+soup = BeautifulSoup(response.text, "html.parser")
+# Profil sayfasından istediğiniz bilgileri çıkarın
+# Bu bilgiler, web sitesine göre değişebilir
+# Bu örnekte, profil sayfası kullanıcının adını, e-postasını ve puanını içerir
+name = soup.find("div", {"class": "name"}).text
+email = soup.find("div", {"class": "email"}).text
+score = soup.find("div", {"class": "score"}).text
+# Profil sayfasından çıkarılan bilgileri yazdırın
+print(f"Ad: {name}")
+print(f"E-posta: {email}")
+print(f"Puan: {score}")
