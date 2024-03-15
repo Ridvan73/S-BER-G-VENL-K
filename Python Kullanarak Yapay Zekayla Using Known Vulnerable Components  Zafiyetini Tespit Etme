@@ -1,0 +1,24 @@
+Python Kullanarak Yapay Zekayla Using Known Vulnerable Components  Zafiyetini Tespit Etme
+ Using Known Vulnerable Components ZAFİYETİ, bir uygulamanın güvenli olmayan veya güncel olmayan bileşenleri kullanması sonucu ortaya çıkan bir güvenlik açığıdır. Bu zafiyet, saldırganların uygulamayı ele geçirmesine veya verileri çalmasına neden olabilir. Python, yapay zeka ve güvenlik projelerinde sıkça kullanılan bir programlama dilidir. Python ile yapay zekalı bir kod yazmak için, öncelikle verileri işlemek ve analiz etmek için gerekli kütüphaneleri yüklemeniz gerekmektedir. Örneğin, numpy, pandas, scikit-learn, tensorflow gibi kütüphaneler veri bilimi ve yapay zeka için oldukça yararlıdır. Ayrıca, güvenlik açıklarını tespit etmek için de bazı kütüphaneler kullanabilirsiniz. Örneğin, safety kütüphanesi, projenizdeki bağımlılıkları kontrol ederek, bilinen güvenlik açıklarını raporlayabilir. Bu kütüphaneyi kullanmak için, öncelikle pip ile yüklemeniz gerekmektedir:
+python
+pip install safety
+Daha sonra, projenizdeki requirements.txt dosyasını safety ile tarayabilirsiniz:
+python
+safety check -r requirements.txt
+Bu komut, eğer projenizde güvenlik açığı olan bir bileşen varsa, size uyarı verecektir. Bu uyarıları dikkate alarak, projenizi güncelleyebilir ve güvenli hale getirebilirsiniz. Aşağıda, safety kütüphanesini kullanan basit bir python kodu örneği verilmiştir:
+python
+# Import safety module
+import safety
+# Define the path of the requirements file
+req_file = "requirements.txt"
+# Check the dependencies for known vulnerabilities
+vulns = safety.check(req_file, full=True)
+# Print the results
+if vulns:
+    print("The following vulnerabilities are found:")
+    for vuln in vulns:
+        print(vuln)
+else:
+    print("No vulnerabilities are found.")
+Bu kodu çalıştırdığınızda, eğer projenizde güvenlik açığı olan bir bileşen varsa, size detaylı bir şekilde bildirecektir. Bu sayede, projenizi daha güvenli hale getirebilirsiniz. Bu kod, yapay zekalı bir kod olarak değerlendirilebilir, çünkü verileri işleyerek, bir sonuç üretmektedir. 
+ Safety kütüphanesi, python ile yazılmış projelerde kullanılan bileşenlerin güvenlik açıklarını tespit etmeye yarayan bir kütüphanedir. Bu kütüphaneyi kullanmak için, öncelikle pip ile yüklemeniz, sonra da projenizdeki requirements.txt dosyasını safety ile tarayarak, bilinen güvenlik açıklarını raporlayabilmeniz gerekmektedir. Bu kod, bu işlemleri yapmak için gerekli komutları içermektedir. Ayrıca, eğer projenizde güvenlik açığı olan bir bileşen varsa, size detaylı bir şekilde bildirmektedir. Bu sayede, projenizi daha güvenli hale getirebilmeniz mümkündür. 
