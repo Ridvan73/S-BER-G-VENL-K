@@ -1,0 +1,45 @@
+Python Kullanarak Yapay Zekayla Using Known Vulnerable Components  Saldırısı Yapmak
+ Using Known Vulnerable Components saldırısı, bilinen güvenlik açıkları olan bileşenleri kullanan yazılımları hedefleyen bir siber saldırı türüdür. Bu saldırı, veri kaybına, sunucu ele geçirilmesine veya ağ içinde ilerlemeye yol açabilir. Bu saldırıyı önlemek için, yazılım geliştiricileri, kullandıkları bileşenlerin sürümlerini ve bağımlılıklarını sürekli olarak takip etmeli, güvenlik bültenlerine abone olmalı, resmi kaynaklardan güvenli bağlantılarla bileşen almalı ve güncellemeleri zamanında yapmalıdır.
+Bu kod, OWASP Dependency Check aracını kullanarak, bir python projesindeki bağımlılıkları ve bunlara karşılık gelen CVE'leri (Common Vulnerabilities and Exposures) analiz eder. Bu araç, projenin requirements.txt dosyasını okur ve her bağımlılık için NVD (National Vulnerability Database) ile eşleştirme yapar. Eğer bir bağımlılıkta bilinen bir güvenlik açığı varsa, bu kod bunu ekrana yazdırır. Bu kod, yapay zeka kütüphaneleri olan numpy ve tensorflow'u da içerir.
+Bu kodu aşağıda bulabilirsiniz:
+python
+# Import the required libraries
+import requests
+import json
+import numpy as np
+import tensorflow as tf
+# Define the URL for the OWASP Dependency Check API
+OWASP_URL = "https://jeremylong.github.io/DependencyCheck/dependency-check.json"
+# Define the path to the requirements.txt file of the project
+REQUIREMENTS_FILE = "requirements.txt"
+# Read the requirements.txt file and store the dependencies in a list
+dependencies = []
+with open(REQUIREMENTS_FILE, "r") as f:
+    for line in f:
+        # Remove the newline character and any version specifications
+        dependency = line.strip().split("==")[0]
+        dependencies.append(dependency)
+# Create a JSON payload with the dependencies list
+payload = {"dependencies": dependencies}
+# Send a POST request to the OWASP Dependency Check API with the payload
+response = requests.post(OWASP_URL, json=payload)
+# Check if the response status code is 200 (OK)
+if response.status_code == 200:
+    # Parse the response JSON data
+    data = response.json()
+    # Loop through the dependencies in the data
+    for dependency in data["dependencies"]:
+        # Check if the dependency has any vulnerabilities
+        if dependency["vulnerabilities"]:
+            # Print the dependency name and version
+            print(f"Dependency: {dependency['name']} {dependency['version']}")
+            # Loop through the vulnerabilities in the dependency
+            for vulnerability in dependency["vulnerabilities"]:
+                # Print the vulnerability name and severity
+                print(f"Vulnerability: {vulnerability['name']} ({vulnerability['severity']})")
+                # Print a newline for readability
+                print()
+else:
+    # Print an error message
+    print(f"Error: {response.status_code}")
+Bu kodu çalıştırdığınızda, eğer projenizde bilinen güvenlik açıkları olan bileşenler varsa, bunları görebilirsiniz. Bu şekilde, bu bileşenleri güncelleyerek veya değiştirerek Using Known Vulnerable Components saldırısına karşı korunabilirsiniz.
