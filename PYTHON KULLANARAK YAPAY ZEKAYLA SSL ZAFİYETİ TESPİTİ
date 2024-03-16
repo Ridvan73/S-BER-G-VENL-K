@@ -1,0 +1,66 @@
+PYTHON KULLANARAK YAPAY ZEKAYLA SSL ZAFİYETİ TESPİTİ
+# SSL zaafiyeti tespiti için yapay zekalı Python kodu
+# Gerekli kütüphaneleri içe aktarma
+import socket
+import ssl
+import requests
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+# SSL zafiyeti olan sunucuların listesi
+ssl_vulnerable_servers = ["www.yahoo.com", "www.alibaba.com", "www.weibo.com"]
+# SSL zaafiyeti olmayan sunucuların listesi
+ssl_secure_servers = ["www.google.com", "www.facebook.com", "www.twitter.com"]
+# Sunucuların SSL sertifikalarını kontrol etme fonksiyonu
+def check_ssl_certificate(server):
+    # Sunucuya bağlanma
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(10)
+    wrappedSocket = ssl.wrap_socket(sock)
+    try:
+        wrappedSocket.connect((server, 443))
+    except:
+        print(f"Sunucuyla bağlantı kurulamadı: {server}")
+        return None
+    # Sunucunun SSL sertifikasını alma
+    cert = wrappedSocket.getpeercert()
+    # Sunucunun SSL sertifikasını döndürme
+    return cert
+# Sunucuların SSL sertifikalarını kontrol etme
+ssl_certificates = []
+ssl_labels = []
+for server in ssl_vulnerable_servers + ssl_secure_servers:
+    cert = check_ssl_certificate(server)
+    if cert is not None:
+        ssl_certificates.append(cert)
+        if server in ssl_vulnerable_servers:
+            ssl_labels.append(1) # SSL zaafiyeti olan sunucular 1 olarak etiketlenir
+        else:
+            ssl_labels.append(0) # SSL zaafiyeti olmayan sunucular 0 olarak etiketlenir
+# SSL sertifikalarını veri çerçevesine dönüştürme
+ssl_df = pd.DataFrame(ssl_certificates)
+ssl_df["label"] = ssl_labels
+# SSL sertifikalarını öznitelik ve hedef olarak ayırma
+X = ssl_df.drop("label", axis=1)
+y = ssl_df["label"]
+# SSL sertifikalarını eğitim ve test olarak bölme
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Yapay zeka modeli olarak rastgele orman sınıflandırıcısı kullanma
+rf = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)
+rf.fit(X_train, y_train) # Modeli eğitme
+y_pred = rf.predict(X_test) # Modeli test etme
+# Modelin doğruluk puanını hesaplama
+acc = accuracy_score(y_test, y_pred)
+print(f"Modelin doğruluk puanı: {acc}")
+#Yazan Rıdvan Kaya 
+Bu kod, SSL zaafiyeti tespiti için yapay zekalı bir Python kodudur. SSL zaafiyeti, şifreli ağ trafiğinin dinlenmesine ve verilerin ele geçirilmesine neden olan bir güvenlik açığıdır. Bu kod, şu adımları izler:
+- Gerekli kütüphaneleri içe aktarır. Bu kütüphaneler, socket, ssl, requests, numpy, pandas, sklearn ve array'dir. Bu kütüphaneler, ağ bağlantısı, veri işleme, makine öğrenimi ve diziler için kullanılır.
+- SSL zaafiyeti olan ve olmayan sunucuların listelerini oluşturur. Bu listeler, kodun eğitim ve test verisi olarak kullanacağı sunucu adlarını içerir.
+- Sunucuların SSL sertifikalarını kontrol etmek için bir fonksiyon tanımlar. Bu fonksiyon, sunucuya bağlanır, sunucunun SSL sertifikasını alır ve döndürür.
+- Sunucuların SSL sertifikalarını kontrol eder ve bir veri çerçevesine dönüştürür. Veri çerçevesi, sunucuların SSL sertifikalarının özelliklerini ve SSL zaafiyeti olup olmadığını gösteren bir etiketi içerir.
+- Veri çerçevesini öznitelik ve hedef olarak ayırır. Öznitelikler, SSL sertifikalarının özellikleridir. Hedef, SSL zaafiyeti olup olmadığıdır.
+- Veri çerçevesini eğitim ve test olarak böler. Eğitim verisi, modeli eğitmek için kullanılır. Test verisi, modeli test etmek için kullanılır.
+- Yapay zeka modeli olarak rastgele orman sınıflandırıcısı kullanır. Rastgele orman sınıflandırıcısı, birden çok karar ağacı kullanarak verileri sınıflandıran bir makine öğrenimi algoritmasıdır.
+- Modeli eğitir ve test eder. Model, eğitim verisini kullanarak SSL sertifikalarının özelliklerinden SSL zaafiyeti olup olmadığını öğrenir. Model, test verisini kullanarak SSL zaafiyeti tespit etmeye çalışır.
+- Modelin doğruluk puanını hesaplar. Doğruluk puanı, modelin test verisindeki SSL zaafiyeti etiketlerini ne kadar doğru tahmin ettiğini gösterir.
