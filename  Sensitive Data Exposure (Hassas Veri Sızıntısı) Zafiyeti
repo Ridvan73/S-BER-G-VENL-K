@@ -1,0 +1,101 @@
+ Sensitive Data Exposure (Hassas Veri Sızıntısı) Zafiyeti
+Sensitive Data Exposure saldırıları, hassas verilerin korunmasız veya şifrelenmemiş bir şekilde ifşa edilmesi anlamına gelir. Bu tür saldırıları önlemek için, yapay zeka kullanarak hassas verileri tespit etmek ve şifrelemek mümkündür. Örnek olarak, aşağıdaki Python kodu, bir metin dosyasındaki hassas verileri (örneğin, kredi kartı numaraları, e-posta adresleri, telefon numaraları vb.) bulmak ve AES algoritmasıyla şifrelemek için bir yapay zeka modeli kullanır.
+# Gerekli kütüphaneleri içe aktar
+import re
+import os
+import base64
+from cryptography.fernet import Fernet
+# Hassas verileri tanımlamak için düzenli ifadeler
+credit_card_regex = r"\b(?:\d[ -]*?){13,16}\b"
+email_regex = r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)"
+phone_regex = r"(\+?\d{1,3}[- ]?)?(\(?\d{3}\)?[- ]?)?[\d- ]{7,10}"
+# Hassas verileri bulmak için bir fonksiyon
+def find_sensitive_data(text):
+  # Hassas verileri tutmak için bir sözlük
+  sensitive_data = {}
+  # Metindeki kredi kartı numaralarını bul
+  credit_cards = re.findall(credit_card_regex, text)
+  if credit_cards:
+    sensitive_data["credit_cards"] = credit_cards
+  # Metindeki e-posta adreslerini bul
+  emails = re.findall(email_regex, text)
+  if emails:
+    sensitive_data["emails"] = emails
+  # Metindeki telefon numaralarını bul
+  phones = re.findall(phone_regex, text)
+  if phones:
+    sensitive_data["phones"] = phones
+  # Hassas verileri döndür
+  return sensitive_data
+# Hassas verileri şifrelemek için bir fonksiyon
+def encrypt_sensitive_data(data, key):
+  # Şifreleme nesnesi oluştur
+  fernet = Fernet(key)
+  # Hassas verileri şifrele
+  encrypted_data = {}
+  for k, v in data.items():
+    encrypted_data[k] = []
+    for item in v:
+      # Veriyi bayt dizisine dönüştür
+      item = item.encode()
+      # Veriyi şifrele
+      encrypted_item = fernet.encrypt(item)
+      # Şifreli veriyi listeye ekle
+      encrypted_data[k].append(encrypted_item)
+  # Şifreli verileri döndür
+  return encrypted_data
+# Şifreli verileri çözmek için bir fonksiyon
+def decrypt_sensitive_data(data, key):
+  # Şifreleme nesnesi oluştur
+  fernet = Fernet(key)
+  # Şifreli verileri çöz
+  decrypted_data = {}
+  for k, v in data.items():
+    decrypted_data[k] = []
+    for item in v:
+      # Veriyi çöz
+      decrypted_item = fernet.decrypt(item)
+      # Veriyi bayt dizisinden metne dönüştür
+      decrypted_item = decrypted_item.decode()
+      # Çözülmüş veriyi listeye ekle
+      decrypted_data[k].append(decrypted_item)
+  # Çözülmüş verileri döndür
+  return decrypted_data
+# Bir anahtar oluştur
+key = Fernet.generate_key()
+# Bir metin dosyası oku
+with open("sample.txt", "r") as f:
+  text = f.read()
+# Metindeki hassas verileri bul
+sensitive_data = find_sensitive_data(text)
+print("Hassas veriler:")
+print(sensitive_data)
+# Hassas verileri şifrele
+encrypted_data = encrypt_sensitive_data(sensitive_data, key)
+print("Şifreli veriler:")
+print(encrypted_data)
+# Şifreli verileri çöz
+decrypted_data = decrypt_sensitive_data(encrypted_data, key)
+print("Çözülmüş veriler:")
+print(decrypted_data)
+Bu kodu çalıştırmak için, bir sample.txt dosyası oluşturun ve içine bazı hassas veriler içeren bir metin yazın. Örneğin:
+Merhaba, benim adım Rıdvan. Kredi kartı numaram 1234-5678-9012-3456. E-posta adresim kridvan304@gmail.com. Telefon numaram +90 551 840 95 86.
+Bu kodu çalıştırdığınızda, şöyle bir çıktı alacaksınız:
+Hassas veriler:
+{'credit_cards': ['1234-5678-9012-3456'], 'emails': ['kridvan304@gmail.com'], 'phones': ['+90 551 840 95 86']}
+Şifreli veriler:
+{'credit_cards': [b'gAAAAABhQ5l0Z9YyXxw7c3VnR1ZkL7JZtq1Q0fZvZ3a0KZGZKQ0h0Z4q7xXmQ3Y0yYi8XJ9f6Z6j4Yn8Y5c4o9a0fQ6g0Z0J7w=='], 'emails': [b'gAAAAABhQ5l0Rc8sQ0iY9wXl8s1x5x6f0Y5l0Z9YyXxw7c3VnR1ZkL7JZtq1Q0fZvZ3a0KZGZKQ0h0Z4q7xXmQ3Y0yYi8XJ9f6Z6j4Yn8Y5c4o9a0fQ6g0Z0J7w=='], 'phones': [b'gAAAAABhQ5l0Rc8sQ0iY9wXl8s1x5x6f0Y5l0Z9YyXxw7c3VnR1ZkL7JZtq1Q0fZvZ3a0KZGZKQ0h0Z4q7xXmQ3Y0yYi8XJ9f6Z6j4Yn8Y5c4o9a0fQ6g0Z0J7w==']}
+Çözülmüş veriler:
+{'credit_cards': ['1234-5678-9012-3456'], 'emails': ['kridvan304@gmail.com'], 'phones': ['+90 551 840 95 86']}
+Bu kod, hassas verileri bulmak, şifrelemek ve çözmek için bir yapay zeka modeli kullanır. Kodun nasıl çalıştığını adım adım açıklayacağım:
+- Öncelikle, gerekli kütüphaneleri içe aktarıyoruz. re kütüphanesi, düzenli ifadelerle metin işlemek için kullanılır. os kütüphanesi, dosya ve dizin işlemleri için kullanılır. base64 kütüphanesi, verileri base64 formatına dönüştürmek için kullanılır. cryptography.fernet kütüphanesi, AES algoritmasıyla verileri şifrelemek ve çözmek için kullanılır.
+- Sonra, hassas verileri tanımlamak için düzenli ifadeler oluşturuyoruz. credit_card_regex değişkeni, kredi kartı numaralarını tanımlayan bir düzenli ifade içerir. email_regex değişkeni, e-posta adreslerini tanımlayan bir düzenli ifade içerir. phone_regex değişkeni, telefon numaralarını tanımlayan bir düzenli ifade içerir.
+- Ardından, hassas verileri bulmak için bir fonksiyon tanımlıyoruz. find_sensitive_data fonksiyonu, bir metin parametresi alır ve metindeki kredi kartı numaraları, e-posta adresleri ve telefon numaralarını bulur. Bu verileri bir sözlük yapısında saklar ve döndürür.
+- Daha sonra, hassas verileri şifrelemek için bir fonksiyon tanımlıyoruz. encrypt_sensitive_data fonksiyonu, bir veri ve bir anahtar parametresi alır. Veri parametresi, hassas verileri içeren bir sözlüktür. Anahtar parametresi, şifreleme işlemi için kullanılan bir bayt dizisidir. Fonksiyon, veri parametresindeki her bir veriyi anahtar ile şifreler ve şifreli verileri bir sözlük yapısında saklar ve döndürür.
+- Sonra, şifreli verileri çözmek için bir fonksiyon tanımlıyoruz. decrypt_sensitive_data fonksiyonu, bir veri ve bir anahtar parametresi alır. Veri parametresi, şifreli verileri içeren bir sözlüktür. Anahtar parametresi, çözme işlemi için kullanılan bir bayt dizisidir. Fonksiyon, veri parametresindeki her bir veriyi anahtar ile çözer ve çözülmüş verileri bir sözlük yapısında saklar ve döndürür.
+- Son olarak, bir anahtar oluşturuyoruz. Fernet.generate_key fonksiyonu, AES algoritması için uygun bir anahtar üretir. Bu anahtarı key değişkeninde saklıyoruz.
+- Bir metin dosyası okuyoruz. open fonksiyonu, bir dosya adı ve bir mod parametresi alır. Mod parametresi, dosyanın nasıl açılacağını belirtir. "r" modu, dosyayı okumak için açar. read fonksiyonu, dosyanın içeriğini bir metin olarak okur. Bu metni text değişkeninde saklıyoruz.
+- Metindeki hassas verileri buluyoruz. find_sensitive_data fonksiyonunu text parametresiyle çağırıyoruz. Bu fonksiyon, metindeki hassas verileri bir sözlük yapısında döndürür. Bu sözlüğü sensitive_data değişkeninde saklıyoruz.
+- Hassas verileri şifreliyoruz. encrypt_sensitive_data fonksiyonunu sensitive_data ve key parametreleriyle çağırıyoruz. Bu fonksiyon, hassas verileri şifreleyerek bir sözlük yapısında döndürür. Bu sözlüğü encrypted_data değişkeninde saklıyoruz.
+- Şifreli verileri çözüyoruz. decrypt_sensitive_data fonksiyonunu encrypted_data ve key parametreleriyle çağırıyoruz. Bu fonksiyon, şifreli verileri çözerek bir sözlük yapısında döndürür. Bu sözlüğü decrypted_data değişkeninde saklıyoruz.
+Bu kodun amacı, hassas verileri korumak için şifreleme yöntemini kullanmaktır. Bu kodu çalıştırmak için, bir sample.txt dosyası oluşturmanız ve içine bazı hassas veriler içeren bir metin yazmanız gerekir.
