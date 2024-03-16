@@ -1,0 +1,24 @@
+Hedef Domaine Ait E-posta Adreslerinin Belirlenmesi
+Sızma testi, bir bilgisayar sisteminin güvenliğini değerlendirmek için yetkili bir şekilde gerçekleştirilen simüle edilmiş bir siber saldırıdır. Sızma testi, sistemin güvenlik açıklarını, zayıflıklarını ve güçlü yönlerini belirlemek için kullanılır. Sızma testinin amacı, kötü niyetli bir aktör tarafından sömürülebilecek güvenlik açıklarını bulmak ve bu güvenlik açıklarını müşteriye önerilen azaltma stratejileri ile birlikte sunmaktır.
+Sızma testinin bir parçası olarak, hedef sistemin e-posta adreslerini toplamak isteyebilirsiniz. Bu, sosyal mühendislik, phishing veya diğer saldırı teknikleri için kullanışlı olabilir. Bu amaçla, theHarvester ve metasploit/aux (search_email_collector) gibi araçlar kullanabilirsiniz.
+theHarvester, bir alan adına ait e-posta adreslerini, Google, Bing, Bing API, PGP, LinkedIn, Google Profiles, People123 ve Jigsaw gibi çeşitli kaynaklardan toplayan bir araçtır. theHarvester'ı kullanmak için, aşağıdaki komutu çalıştırabilirsiniz:
+python theHarvester.py -d <domain> -l <limit> -b <source>
+Burada, <domain> hedef alan adını, <limit> sonuç sayısını ve <source> veri kaynağını belirtirsiniz. Örneğin, asaguvenlik.com alan adına ait 500 e-posta adresini toplamak için, şu komutu kullanabilirsiniz:
+python theHarvester.py -d asaguvenlik.com -l 500 -b all
+Bu komut, tüm kaynaklardan (all) e-posta adreslerini toplamaya çalışacaktır. Eğer belirli bir kaynak kullanmak isterseniz, bunu -b parametresi ile belirtebilirsiniz. Örneğin, sadece Google'dan e-posta adresleri toplamak için, şu komutu kullanabilirsiniz:
+python theHarvester.py -d asaguvenlik.com -l 500 -b google
+theHarvester, bulduğu e-posta adreslerini ekrana yazdıracaktır. Ayrıca, -f parametresi ile bir dosyaya kaydedebilirsiniz. Örneğin, e-posta adreslerini emails.txt dosyasına kaydetmek için, şu komutu kullanabilirsiniz:
+python theHarvester.py -d asaguvenlik.com -l 500 -b all -f emails.txt
+Metasploit, bir sızma testi platformudur. Metasploit, çeşitli modüller içerir. Bunlardan biri de auxiliary/gather/search_email_collector modülüdür. Bu modül, Google, Yahoo ve Bing gibi arama motorlarını kullanarak bir alan adına ait e-posta adreslerini toplar. Bu modülü kullanmak için, aşağıdaki adımları izleyebilirsiniz:
+1. Metasploit konsolunu açın. Bunun için, msfconsole komutunu çalıştırın.
+2. Modülü yükleyin. Bunun için, use auxiliary/gather/search_email_collector komutunu çalıştırın.
+3. Modül seçeneklerini gösterin. Bunun için, show options komutunu çalıştırın.
+4. Gerekli seçenekleri ayarlayın. Bunlar, hedef alan adını (DOMAIN) ve arama motorlarını (SEARCH_GOOGLE, SEARCH_YAHOO, SEARCH_BING) belirtir. Örneğin, asaguvenlik.com alan adını Google, Yahoo ve Bing'de aramak için, şu komutları kullanabilirsiniz:
+set DOMAIN asaguvenlik.com
+set SEARCH_GOOGLE true
+set SEARCH_YAHOO true
+set SEARCH_BING true
+5. Modülü çalıştırın. Bunun için, run veya exploit komutunu çalıştırın.
+6. Bulunan e-posta adreslerini görüntüleyin. Modül, bulduğu e-posta adreslerini ekrana yazdıracaktır. Ayrıca, OUTFILE seçeneği ile bir dosyaya kaydedebilirsiniz. Örneğin, e-posta adreslerini emails.txt dosyasına kaydetmek için, şu komutu kullanabilirsiniz:
+set OUTFILE emails.txt
+Bu şekilde, theHarvester ve metasploit/aux (search_email_collector) modülü ile bir alan adına ait e-posta adreslerini toplayabilirsiniz. Bu e-posta adreslerini, sızma testinin ilerleyen aşamalarında kullanabilirsiniz. 
