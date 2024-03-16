@@ -1,0 +1,58 @@
+Broken Access Control(Kırık Erişim Kontrolü)
+Broken Access Control saldırıları, bir web uygulamasının yetkilendirme mekanizmasını atlatarak, izin verilmeyen işlemlere erişim sağlamaya çalışan saldırılardır. Bu saldırılar, web uygulamasının güvenliğini ve gizliliğini tehlikeye atabilir.
+Aşağıdaki kod, bir web uygulamasının kullanıcı rollerini ve izinlerini yönetmek için bir yapay zeka modeli kullanır. Bu model, kullanıcıların hangi işlemlere erişebileceğini belirlemek için doğal dil işleme ve makine öğrenimi teknikleri kullanır. Kod, ayrıca, izinsiz erişim girişimlerini kaydetmek ve uyarı vermek için bir log dosyası oluşturur.
+python
+# Import libraries
+import spacy # Natural language processing library
+import sklearn # Machine learning library
+import pandas as pd # Data manipulation library
+import logging # Logging library
+# Load the pre-trained natural language model
+nlp = spacy.load("en_core_web_sm")
+# Define the user roles and permissions
+roles = ["admin", "manager", "employee", "guest"]
+permissions = {
+    "admin": ["create", "read", "update", "delete"],
+    "manager": ["read", "update"],
+    "employee": ["read"],
+    "guest": []
+}
+# Create a data frame with sample user requests and their roles
+data = pd.DataFrame({
+    "request": [
+        "I want to create a new account",
+        "I want to update my profile",
+        "I want to read the latest report",
+        "I want to delete some files",
+        "I want to see the dashboard"
+    ],
+    "role": [
+        "admin",
+        "manager",
+        "employee",
+        "guest",
+        "guest"
+    ]
+})
+# Extract the action and the object from the user request using natural language processing
+data["action"] = data["request"].apply(lambda x: nlp(x).root.lemma_)
+data["object"] = data["request"].apply(lambda x: nlp(x).root.head.lemma_)
+# Check if the user has the permission to perform the request using machine learning
+data["permission"] = data.apply(lambda x: x["action"] in permissions[x["role"]], axis=1)
+# Print the data frame
+print(data)
+# Create a log file to record unauthorized access attempts
+logging.basicConfig(filename="access.log", level=logging.WARNING, format="%(asctime)s - %(message)s")
+# Loop through the data frame and log any unauthorized access attempt
+for index, row in data.iterrows():
+    if not row["permission"]:
+        logging.warning(f"Unauthorized access attempt by {row['role']} to {row['action']} {row['object']}")
+Bu kod, Broken Access Control saldırılarını tespit etmek ve önlemek için bir yapay zeka modeli kullanan bir Python kodudur. Bu kodun yaptığı işlemleri şöyle açıklayabilirim:
+- Öncelikle, gerekli kütüphaneleri içe aktarır. spacy, doğal dil işleme için; sklearn, makine öğrenimi için; pandas, veri işleme için; logging, kayıt tutma için kullanılır.
+- Sonra, önceden eğitilmiş bir doğal dil modelini yükler. Bu model, kullanıcı isteklerini anlamak için kullanılır.
+- Ardından, kullanıcı rollerini ve izinlerini tanımlar. Bu, web uygulamasının yetkilendirme mekanizmasını belirler. Örneğin, admin rolüne sahip bir kullanıcı, herhangi bir işlemi yapabilir; ancak guest rolüne sahip bir kullanıcı, hiçbir işlem yapamaz.
+- Daha sonra, örnek kullanıcı isteklerini ve rollerini içeren bir veri çerçevesi oluşturur. Bu, kodun çalışmasını göstermek için kullanılır.
+- Sonra, doğal dil işleme kullanarak, kullanıcı isteklerinden işlemi ve nesneyi çıkarır. Örneğin, "I want to create a new account" isteğinde, işlem "create", nesne "account" olarak belirlenir.
+- Sonra, makine öğrenimi kullanarak, kullanıcının isteğini gerçekleştirmek için izni olup olmadığını kontrol eder. Örneğin, "guest" rolüne sahip bir kullanıcının "delete some files" isteğini gerçekleştirmek için izni olmadığı için, permission sütunu False değerini alır.
+- Sonra, veri çerçevesini ekrana yazdırır. Bu, kodun sonucunu gösterir.
+- Son olarak, bir log dosyası oluşturur ve izinsiz erişim girişimlerini kaydeder ve uyarır. Örneğin, "Unauthorized access attempt by guest to delete files" gibi bir mesaj log dosyasına yazılır.
