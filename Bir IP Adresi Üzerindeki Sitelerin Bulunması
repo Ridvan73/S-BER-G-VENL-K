@@ -1,0 +1,9 @@
+Bir IP Adresi Üzerindeki Sitelerin Bulunması
+Bir IP adresi üzerindeki sitelerin bulunması, hedef web uygulamasının barındırıldığı sunucu üzerinde varsa başka web uygulamalarının tespit edilmesi anlamına gelir. Bu, sızma girişimlerinde hedef web uygulamasında herhangi bir güvenlik açığı yoksa aynı sunucu üzerinde barındırılan diğer web uygulamalarını hedef olarak seçmek ve ilgili sunucuyu ele geçirmeye çalışmak için kullanılabilir. Kullanabileceğiniz araçlar arasında bing.com ve robtex.com gibi web siteleri bulunmaktadır.
+Bu işlemi yapmak için aşağıdaki adımları takip edebilirsiniz:
+1. Bing üzerinden sanal hostların tespit edilmesi: Bu adımda, hedef web uygulamasının IP adresini bing.com üzerinden sorgulayarak, aynı IP adresini kullanan diğer web sitelerini bulabilirsiniz. Örneğin, https://asaguvenlik.com/ web sitesinin IP adresini bulmak için ping komutunu kullanabilirsiniz:
+sh-3.2# ping asaguvenlik.com
+PING asaguvenlik.com (172.67.133.14): 56 data bytes
+64 bytes from 172.67.133.14: icmp_seq=0 ttl=58 time=36.104 ms
+Bu şekilde, asaguvenlik.com web sitesinin IP adresinin 172.67.133.14 olduğunu öğrenebilirsiniz. Daha sonra, bu IP adresini bing.com üzerinde aratarak, aynı IP adresini kullanan diğer web sitelerini görebilirsiniz. Bunun için arama kutusuna ip:172.67.133.14 yazmanız yeterlidir. Bu şekilde, aynı IP adresini kullanan web sitelerinin bir listesini elde edebilirsiniz.
+2. Robtex üzerinden sanal hostların tespit edilmesi: Bu adımda, hedef web uygulamasının IP adresini robtex.com üzerinden sorgulayarak, aynı IP adresini kullanan diğer web sitelerini bulabilirsiniz. Örneğin, asaguvenlik.com web sitesinin IP adresini robtex.com üzerinde aratarak, aynı IP adresini kullanan diğer web sitelerini görebilirsiniz. Bunun için arama kutusuna 172.67.133.14 yazmanız yeterlidir. Bu şekilde, aynı IP adresini kullanan web sitelerinin bir listesini elde edebilirsiniz.
