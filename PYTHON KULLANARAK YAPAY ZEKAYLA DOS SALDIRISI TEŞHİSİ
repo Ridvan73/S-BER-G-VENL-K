@@ -1,0 +1,52 @@
+ PYTHON KULLANARAK YAPAY ZEKAYLA DOS SALDIRISI TEŞHİSİ
+# Bu kod, bir web sitesinin DOS zafiyeti olup olmadığını test etmek için yapay sinir ağları kullanır.
+# Kaynak: [3](https://www.mehmetince.net/redos-regular-expression-dos-zafiyetleri/)
+# Gerekli kütüphaneleri içe aktar
+import requests
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+# Web sitesinin URL'sini tanımla
+url = "https://zararlidomain.com/"
+# Web sitesine 1000 adet istek gönder ve yanıt sürelerini kaydet
+response_times = []
+for i in range(1000):
+    response = requests.get(url)
+    response_times.append(response.elapsed.total_seconds())
+# Yanıt sürelerini numpy dizisine dönüştür
+response_times = np.array(response_times)
+# Yanıt sürelerinin ortalamasını ve standart sapmasını hesapla
+mean = np.mean(response_times)
+std = np.std(response_times)
+# Yanıt sürelerini standartlaştır
+response_times = (response_times - mean) / std
+# Yapay sinir ağı modelini oluştur
+model = keras.Sequential([
+    layers.Dense(16, activation="relu", input_shape=(1,)),
+    layers.Dense(8, activation="relu"),
+    layers.Dense(1, activation="sigmoid")
+])
+# Modeli derle
+model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
+# Modeli eğit
+model.fit(response_times, response_times > 1, epochs=10, batch_size=32)
+# Web sitesinin DOS zafiyeti olup olmadığını tahmin et
+prediction = model.predict([response_times[-1]])
+if prediction > 0.5:
+    print("Web sitesi DOS zafiyeti taşıyor!")
+else:
+    print("Web sitesi DOS zafiyeti taşımıyor!")
+#Yazan Rıdvan Kaya
+Bu kod, bir web sitesinin DOS zafiyeti olup olmadığını test etmek için yapay sinir ağları kullanır. DOS zafiyeti, bir sunucunun veya ağın normal çalışmasını engellemek için çok sayıda istek veya paket göndererek kaynaklarını tüketmeye çalışan bir saldırı türüdür. Bu kodun açıklaması şöyledir:
+- İlk olarak, gerekli kütüphaneleri içe aktarır. Bu kütüphaneler, web sitesine istek göndermek, matematiksel işlemler yapmak ve yapay sinir ağı modeli oluşturmak için gereklidir.
+- Sonra, web sitesinin URL'sini tanımlar. Bu örnekte, zararlı bir domain kullanılmıştır. Bu URL, test etmek istediğiniz web sitesine göre değiştirilebilir.
+- Daha sonra, web sitesine 1000 adet istek gönderir ve yanıt sürelerini bir liste içinde kaydeder. Yanıt süresi, bir isteğin gönderilmesinden yanıtın alınmasına kadar geçen süredir. Bu süre, web sitesinin performansını ve kaynaklarını etkiler.
+- Ardından, yanıt sürelerini numpy dizisine dönüştürür. Numpy, Python'da çok boyutlu dizilerle çalışmak için kullanılan bir kütüphanedir. Bu diziyi, yapay sinir ağı modeline girdi olarak vereceğiz.
+- Sonra, yanıt sürelerinin ortalamasını ve standart sapmasını hesaplar. Ortalama, değerlerin toplamının sayısına bölünmesiyle elde edilen bir merkezi eğilim ölçüsüdür. Standart sapma, değerlerin ortalamadan ne kadar yayıldığını gösteren bir değişkenlik ölçüsüdür. Bu değerleri, yanıt sürelerini standartlaştırmak için kullanacağız.
+- Standartlaştırma, değerlerin ortalamadan çıkarılıp standart sapmaya bölünmesiyle yapılır. Bu işlem, değerleri bir ortak ölçeğe getirir ve yapay sinir ağı modelinin daha iyi öğrenmesini sağlar.
+- Daha sonra, yapay sinir ağı modelini oluşturur. Bu model, üç katmandan oluşur: giriş katmanı, gizli katman ve çıkış katmanı. Giriş katmanı, yanıt sürelerini alır ve 16 nörona bağlanır. Gizli katman, 16 nöronu 8 nörona bağlar. Çıkış katmanı, 8 nöronu 1 nörona bağlar. Nöron, yapay sinir ağının temel hesaplama birimidir. Katmanlar arasındaki bağlantıların ağırlıkları, modelin öğrenmesini sağlayan parametrelerdir. Katmanlarda kullanılan aktivasyon fonksiyonları, nöronların çıktılarını belirler. Bu modelde, gizli katmanlarda "relu" aktivasyon fonksiyonu kullanılmıştır. Bu fonksiyon, girdinin pozitif kısmını olduğu gibi, negatif kısmını ise sıfır olarak verir. Çıkış katmanında ise "sigmoid" aktivasyon fonksiyonu kullanılmıştır. Bu fonksiyon, girdiyi 0 ile 1 arasında bir değere dönüştürür. Bu değer, web sitesinin DOS zafiyeti taşıma olasılığını gösterir.
+- Modeli derlemek için, optimizasyon algoritması, kayıp fonksiyonu ve metrik seçilir. Optimizasyon algoritması, modelin ağırlıklarını güncellemek için kullanılan bir yöntemdir. Bu modelde, "adam" optimizasyon algoritması kullanılmıştır. Bu algoritma, adaptif bir öğrenme hızı sunar. Kayıp fonksiyonu, modelin tahminlerinin gerçek değerlerden ne kadar uzak olduğunu ölçen bir fonksiyondur. Bu modelde, "binary_crossentropy" kayıp fonksiyonu kullanılmıştır. Bu fonksiyon, ikili sınıflandırma problemleri için uygundur. Metrik, modelin performansını değerlendirmek için kullanılan bir ölçüttür. Bu modelde, "accuracy" metriği kullanılmıştır. Bu metrik, modelin doğru tahmin ettiği örneklerin yüzdesini verir.
+- Modeli eğitmek için, girdi ve çıktı verileri, eğitim döngüsü sayısı ve küme boyutu belirlenir. Girdi verileri, yanıt süreleridir. Çıktı verileri, yanıt sürelerinin 1'den büyük olup olmadığıdır. Bu, web sitesinin DOS zafiyeti taşıyıp taşımadığını belirleyen bir ikili etikettir. Eğitim döngüsü sayısı, modelin veriler üzerinde kaç kez çalışacağını belirler. Bu modelde, 10 eğitim döngüsü kullanılmıştır. Küme boyutu, modelin her adımda kaç örnek alacağını belirler. Bu modelde, 32 küme boyutu kullanılmıştır.
+- Modeli eğittikten sonra, web sitesinin DOS zafiyeti olup olmadığını tahmin etmek için son yanıt süresini modele verir. Model, bu değer için bir olasılık çıktısı verir. Bu olasılık, 0.5'ten büyükse, web sitesinin DOS zafiyeti taşıdığını söyler. 0.5'ten küçükse, web sitesinin DOS zafiyeti taşımadığını söyler.
+Bu kodun kaynağı [3] adresindedir.
