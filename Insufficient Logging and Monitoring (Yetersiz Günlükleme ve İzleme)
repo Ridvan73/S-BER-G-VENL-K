@@ -1,0 +1,60 @@
+  Insufficient Logging and Monitoring (Yetersiz Günlükleme ve İzleme)
+Insufficient Logging and Monitoring saldırıları, uygulamanın güvenlik olaylarını yeterince kaydetmediği veya izlemediği durumlarda ortaya çıkan saldırılardır. Bu saldırılar, saldırganların uygulamaya sızmasını, verileri çalmasını veya değiştirmesini veya başka zararlı eylemler yapmasını kolaylaştırır.
+python
+# Bu kod, bir web uygulamasının güvenlik olaylarını kaydetmek ve izlemek için bir yapay zeka modeli kullanır. Bu model, güvenlik olaylarını tespit etmek, sınıflandırmak ve bildirmek için doğal dil işleme ve makine öğrenimi teknikleri kullanır.
+# Gerekli kütüphaneleri içe aktarın
+import logging
+import requests
+import json
+import spacy
+import sklearn
+# Yapay zeka modelini yükleyin
+nlp = spacy.load("en_core_web_sm") # Doğal dil işleme modeli
+clf = sklearn.load("security_classifier.pkl") # Güvenlik olayı sınıflandırıcı modeli
+# Güvenlik olaylarını kaydetmek için bir logger nesnesi oluşturun
+logger = logging.getLogger("security_logger")
+logger.setLevel(logging.INFO)
+handler = logging.FileHandler("security.log") # Güvenlik olaylarını kaydedeceğimiz dosya
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s") # Güvenlik olaylarını formatlayacağımız biçim
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+# Güvenlik olaylarını izlemek ve bildirmek için bir fonksiyon tanımlayın
+def monitor_security_events():
+    # Web uygulamasının günlük dosyasını okuyun
+    with open("web_app.log", "r") as f:
+        lines = f.readlines()
+    # Her bir günlük satırı için
+    for line in lines:
+        # Günlük satırını bir doğal dil işleme belgesi olarak dönüştürün
+        doc = nlp(line)
+        # Güvenlik olayı sınıflandırıcı modeli ile günlük satırının bir güvenlik olayı olup olmadığını tahmin edin
+        pred = clf.predict([doc.text])[0]
+        # Eğer günlük satırı bir güvenlik olayı ise
+        if pred == 1:
+            # Güvenlik olayını logger nesnesi ile kaydedin
+            logger.info(doc.text)
+            # Güvenlik olayının türünü ve seviyesini belirlemek için doğal dil işleme modelini kullanın
+            event_type = doc.ents[0].label_ # Güvenlik olayının türü, belgedeki ilk varlık olarak kabul edilir
+            event_level = doc.ents[1].label_ # Güvenlik olayının seviyesi, belgedeki ikinci varlık olarak kabul edilir
+            # Güvenlik olayını bildirmek için bir web isteği gönderin
+            payload = {"event_type": event_type, "event_level": event_level, "event_message": doc.text}
+            response = requests.post("https://security-reporting-service.com/api/report", data=json.dumps(payload))
+            # Web isteğinin başarılı olup olmadığını kontrol edin
+            if response.status_code == 200:
+                print("Güvenlik olayı başarıyla bildirildi.")
+            else:
+                print("Güvenlik olayı bildirilirken bir hata oluştu.")
+# Güvenlik olaylarını kaydetmek ve izlemek için fonksiyonu çağırın
+monitor_security_events()
+Bu kod, bir web uygulamasının güvenlik olaylarını kaydetmek ve izlemek için bir yapay zeka modeli kullanır. Bu kodun nasıl çalıştığını size sade bir dille anlatmaya çalışacağım.
+- Öncelikle, bu kod gerekli kütüphaneleri içe aktarır. Bu kütüphaneler, kodun çalışması için ihtiyaç duyduğu fonksiyonları ve modülleri sağlar. Örneğin, logging kütüphanesi, güvenlik olaylarını kaydetmek için kullanılır. requests kütüphanesi, web istekleri göndermek için kullanılır. json kütüphanesi, verileri JSON formatında kodlamak ve çözmek için kullanılır. spacy kütüphanesi, doğal dil işleme için kullanılır. sklearn kütüphanesi, makine öğrenimi için kullanılır.
+- Sonra, bu kod yapay zeka modelini yükler. Bu model, güvenlik olaylarını tespit etmek, sınıflandırmak ve bildirmek için doğal dil işleme ve makine öğrenimi teknikleri kullanır. Bu model, nlp ve clf adlı iki değişkene atanır. nlp, doğal dil işleme modelidir. clf, güvenlik olayı sınıflandırıcı modelidir.
+- Ardından, bu kod güvenlik olaylarını kaydetmek için bir logger nesnesi oluşturur. Bu nesne, güvenlik olaylarını security.log adlı bir dosyaya yazmak için kullanılır. Bu nesne, güvenlik olaylarının tarih, seviye ve mesaj gibi bilgilerini içeren bir biçimle formatlanmasını sağlar. Bu nesne, logger adlı bir değişkene atanır.
+- Daha sonra, bu kod güvenlik olaylarını izlemek ve bildirmek için bir fonksiyon tanımlar. Bu fonksiyon, monitor_security_events adlı bir değişkene atanır. Bu fonksiyon, şu adımları gerçekleştirir:
+    - Web uygulamasının günlük dosyasını okur. Bu dosya, web uygulamasının çalışması sırasında oluşan tüm olayları içerir. Bu dosya, web_app.log adlı bir değişkene atanır.
+    - Her bir günlük satırı için, günlük satırını bir doğal dil işleme belgesi olarak dönüştürür. Bu belge, günlük satırının anlamını ve yapısını analiz etmek için kullanılır. Bu belge, doc adlı bir değişkene atanır.
+    - Güvenlik olayı sınıflandırıcı modeli ile günlük satırının bir güvenlik olayı olup olmadığını tahmin eder. Bu tahmin, pred adlı bir değişkene atanır. Eğer pred 1 ise, günlük satırı bir güvenlik olayıdır. Eğer pred 0 ise, günlük satırı bir güvenlik olayı değildir.
+    - Eğer günlük satırı bir güvenlik olayı ise, güvenlik olayını logger nesnesi ile kaydeder. Bu, güvenlik olayının security.log dosyasına yazılması anlamına gelir.
+    - Güvenlik olayının türünü ve seviyesini belirlemek için doğal dil işleme modelini kullanır. Bu model, günlük satırındaki varlıkları tanır. Varlıklar, isim, yer, zaman, olay gibi belgedeki önemli bilgilerdir. Bu model, güvenlik olayının türünü belgedeki ilk varlık olarak, güvenlik olayının seviyesini belgedeki ikinci varlık olarak kabul eder. Bu bilgiler, event_type ve event_level adlı iki değişkene atanır.
+    - Güvenlik olayını bildirmek için bir web isteği gönderir. Bu istek, güvenlik olayının türü, seviyesi ve mesajı gibi bilgileri içeren bir JSON verisi gönderir. Bu istek, https://security-reporting-service.com/api/report adlı bir web adresine gönderilir. Bu isteğin sonucu, response adlı bir değişkene atanır. Eğer response 200 ise, istek başarılıdır. Eğer response 200 değilse, istek başarısızdır.
+- Son olarak, bu kod güvenlik olaylarını kaydetmek ve izlemek için fonksiyonu çağırır. Bu, fonksiyonun çalışmasını sağlar.
