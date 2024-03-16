@@ -1,0 +1,9 @@
+Sızma testi, bir web uygulamasının güvenliğini değerlendirmek için yapılan bir siber güvenlik önlemidir. Sızma testinde, web uygulamasına gerçek bir siber saldırıyı taklit ederek güvenlik açıklarını bulmaya çalışırız. Bu sayede, web uygulamasının siber saldırılara karşı ne kadar dayanıklı olduğunu ve nasıl iyileştirilebileceğini öğrenebiliriz. 
+Sızma testi yaparken, web uygulamasının geçmiş tarihlerdeki içeriğini incelemek önemli bir bilgi toplama yöntemidir. Web uygulamasının geçmiş tarihlerdeki içeriğini inceleyerek, web uygulamasının nasıl değiştiğini, hangi teknolojileri kullandığını, hangi verileri sakladığını, hangi güvenlik önlemlerini aldığını ve hangi zayıf noktaları olduğunu anlayabiliriz. Bu bilgiler, web uygulamasına sızma testi yaparken bize avantaj sağlayabilir. 
+Web uygulamasının geçmiş tarihlerdeki içeriğini incelemek için kullanabileceğimiz bir araç, www.archive.org sitesidir. Bu site, web uygulamalarının farklı tarihlerde nasıl göründüğünü ve ne içerdiğini arşivleyen bir web arşivi servisidir. Bu siteye girerek, istediğimiz web uygulamasının URL'sini aratabilir ve web uygulamasının geçmiş tarihlerdeki görünümlerine ve içeriklerine erişebiliriz. 
+Örneğin, https://asaguvenlik.com/ isimli web uygulamasının geçmiş tarihlerdeki içeriğini incelemek istiyorsak, şu adımları izleyebiliriz:
+1. www.archive.org sitesine giriyoruz.
+2. Arama kutusuna https://asaguvenlik.com/ yazıyoruz ve arıyoruz.
+3. Karşımıza web uygulamasının arşivlenmiş tarihlerini gösteren bir takvim çıkıyor.
+4. Takvimden istediğimiz bir tarihi seçiyoruz. Örneğin, 31 Aralık 2023 tarihini seçiyoruz.
+5. Seçtiğimiz tarihte web uygulamasının nasıl göründüğünü ve ne içerdiğini görebiliyoruz.
