@@ -1,0 +1,181 @@
+Kali Linux Temelleri
+Backtrack Linux, 2006-2013 yılları arasında geliştirilen ve siber güvenlik testleri için tasarlanmış bir Linux dağıtımıdır. Backtrack Linux, Ubuntu tabanlıdır ve birçok popüler güvenlik aracını içerir. Backtrack Linux, 2013 yılında Kali Linux olarak yeniden doğmuştur. Kali Linux, Backtrack Linux'in devamı niteliğindedir ve daha fazla araç ve özellik sunar. Kali Linux, Debian tabanlıdır ve güncel bir çekirdek, donanım desteği ve çok dilli desteğe sahiptir.
+Backtrack Linux veya Kali Linux'i kullanmak için, bir Live CD veya Live USB oluşturabilir veya bir sanal makine, bir bulut sunucusu, bir konteyner veya bir mobil cihaz üzerinde çalıştırabilirsiniz.. Ayrıca, Kali Linux'i Windows Subsystem for Linux (WSL) üzerinde de kullanabilirsiniz.
+Backtrack Linux ve Kali Linux'te kullanabileceğiniz çok sayıda araç vardır. Bunlardan bazıları şunlardır:
+- Aircrack-ng: Kablosuz ağ trafiğini ele geçirmek, şifreleri kırmak ve ağ güvenliğini test etmek için kullanılır.
+- Burp Suite: Web uygulamalarının güvenliğini test etmek, zafiyetleri bulmak ve saldırılar gerçekleştirmek için kullanılır.
+- Hydra: Çoklu protokol desteği ile şifre kırma aracıdır. Brute force veya sözlük saldırıları yapabilir.
+- John the Ripper: Şifre kırma aracıdır. Farklı şifreleme algoritmalarını destekler ve şifreleri kırmak için çeşitli yöntemler kullanabilir.
+- Maltego: Ağ ağacını analiz etmek, ilişkileri görselleştirmek ve istihbarat toplamak için kullanılır.
+- Metasploit Framework: Sistemleri zafiyetlerini bulmak, saldırmak ve sızma testleri yapmak için kullanılır. Çeşitli modüller, payloadlar ve exploitler içerir.
+- Nmap: Ağ üzerindeki cihazları tespit etmek, port taraması yapmak ve servisleri belirlemek için kullanılır.
+- Responder: Kablosuz ağ trafiğine yanıt göndererek saldırılara katılabilirsiniz. SMB, HTTP, FTP, SQL gibi protokollerde kimlik bilgilerini çalmak için kullanılır.
+- sqlmap: SQL veritabanlarında SQL injection saldırısı yapabilirsiniz. Veritabanı yapısını, tabloları, verileri ve hatta işletim sistemini ele geçirebilirsiniz.
+- Wireshark: Ağ trafiğini yakalayarak görselleştirebilirsiniz. Farklı protokolleri, paketleri ve filtreleri analiz edebilirsiniz.
+Kali Linux'te bulunmayan ancak ekleyebileceğiniz başka araçlar da vardır. Bunlardan bazıları şunlardır:
+- CrackMapExec: Windows ağlarına sızma testi yapmak için kullanılır. SMB, WMI, PowerShell gibi protokollerde saldırılar gerçekleştirebilir.
+- FFUF: Hızlı bir web uygulaması fuzzer'ıdır. URL, dizin, parametre, başlık gibi bileşenleri taramak ve zafiyetleri bulmak için kullanılır.
+- Empire: PowerShell ve Python tabanlı bir post-exploitation aracıdır. Ağ üzerindeki Windows ve Linux sistemlerine sızabilir ve uzaktan komut çalıştırabilir.
+- Starkiller: Empire için bir grafiksel kullanıcı arayüzüdür. Saldırıları kolayca yönetmek ve izlemek için kullanılır.
+ Kali Linux Kurulumu
+Kali Linux, Debian linux tabanlı bir işletim sistemidir. Bu işletim sistemi, güvenlikle ilgili çeşitli konularda çalışan veya öğrenen kişiler için tasarlanmıştır. Kali Linux, ağ analizi, sızma testleri, adli bilişim, zararlı yazılım analizi gibi alanlarda kullanılan ve geliştirilen çok sayıda açık kaynaklı güvenlik yazılımını içerir. Bu yazılımlar, Kali Linux'un menüsünde kategorilere ayrılmış şekilde bulunur.
+Kali Linux'u kullanmak için birkaç seçeneğiniz vardır:
+- LiveCD veya USB ile: Bu seçenekte, Kali Linux'u bilgisayarınıza kurmadan, bir CD veya USB bellekten çalıştırabilirsiniz. Bu şekilde, Kali Linux'u deneyebilir veya geçici olarak kullanabilirsiniz. Ancak, bu yöntemin performansı, CD veya USB'nin okuma hızına bağlıdır. Ayrıca, bu yöntemde veri kaydetmek için harici bir disk kullanmanız gerekir.
+- Diske veya sanal makineye kurarak: Bu seçenekte, Kali Linux'u bilgisayarınızın sabit diskine veya bir sanal makineye kurabilirsiniz. Bu şekilde, Kali Linux'u daha hızlı ve kalıcı olarak kullanabilirsiniz. Ancak, bu yöntemde, Kali Linux'u kurduğunuz disk veya sanal makineye yeterli alan ayırmanız gerekir.
+Kali Linux'u kullanmak istiyorsanız, diske veya sanal makineye kurmanız tavsiye edilen yöntemdir. Bu yöntem, Kali Linux'un tüm özelliklerinden yararlanmanızı sağlar.
+Kali Linux, Backtrack 5'in devamı niteliğinde olup, siber güvenlik, penetrasyon testi, tersine mühendislik gibi konularda çok sayıda araç ve özellik sunmaktadır.
+Kali Linux'u VMware sanal makine üzerinde kurmak için şu adımları izleyebilirsiniz:
+1. VMware programını açın ve 'Home > Create a New Virtual Machine' seçeneğini tıklayın. Bu size yeni bir sanal makine oluşturmanızı sağlayacak bir sihirbaz sunacaktır.
+2. 'Installer Disc Image' seçeneğini seçin ve Kali Linux'un .iso dosyasını bilgisayarınızdan bulun. Kali Linux'un .iso dosyasını internet sitesinden  indirebilirsiniz. İndirirken işlemcinize uygun 32 bit veya 64 bit seçeneğini seçmeyi unutmayın.
+3. İşletim sistemi olarak Linux ve sürüm olarak Debian 10.x seçin. Kali Linux, Debian tabanlı bir Linux dağıtımıdır.
+4. Sanal makinenize bir isim ve bir kurulum dizini belirleyin. Kurulum dizini için varsayılan ayarları kullanabilirsiniz.
+5. Disk kapasitesi olarak ön tanımlı olarak 20 GB gelir. Bu değer, Kali Linux'u çalıştırmak için yeterli olacaktır. Ancak daha fazla disk alanına ihtiyacınız olursa, bu değeri artırabilirsiniz.
+6. Son adımda, oluşturacağınız sanal makinenin ayarlarını görebilirsiniz. Bu ayarlar arasında RAM, CPU, ağ arabirimi gibi donanım bileşenleri de vardır. Bu bileşenlerin değerlerini 'Customize Hardware' seçeneği ile değiştirebilirsiniz. Donanım özelliklerinize göre bu değerleri artırabilirsiniz. Örneğin, RAM'i 2 GB, CPU'yu 2 çekirdek, ağ arabirimini de Bridge mod olarak ayarlayabilirsiniz. Bu şekilde, sanal makineniz daha hızlı çalışacak ve ağınızda gerçek bir bilgisayar gibi görünecektir.
+7. Ayarlarınızı tamamladıktan sonra, 'Finish' seçeneğini tıklayın. Böylece VMware sanal makineniz başarıyla oluşturulmuş olacaktır. Kuruluma başlamak için 'Play virtual machine' butonuna tıklayabilirsiniz.
+Kali Linux'u VMware sanal makine üzerinde kurmak için şu adımları izleyebilirsiniz:
+1. Sanal makinenizi çalıştırdığınızda, Kali Linux'un başlangıç menüsü ile karşılaşacaksınız. Bu menüde, Kali Linux'u farklı modlarda çalıştırabileceğiniz seçenekler bulunmaktadır. Disk üzerine kurulum yapmak için ilk sırada bulunan 'Graphical Install' seçeneğini seçin. Bu size grafik arayüzü olan bir kurulum sihirbazı sunacaktır.
+2. İlk aşamada, kurulum dilini seçmeniz istenir. Kurulum dilleri arasında Türkçe de bulunmaktadır. Ülkenizin resmi dili Türkçe olduğu için, Türkçe dilini seçebilirsiniz.
+3. Bölgesel dil ayarlarını, bulunduğunuz konuma uygun olarak seçebilirsiniz. Seçim için haritayı da kullanabilirsiniz. Bu ayarlar, saat dilimi, para birimi, tarih formatı gibi konularda etkili olacaktır.
+4. Klavye dili ayarlarını tanımlayın. Seçenekler arasında Türkçe klavye düzenleri de bulunmaktadır. Seçim yaptıktan sonra, sol alt köşedeki kutucuğu klavyenizi test etmek için kullanabilirsiniz.
+5. Disk seçimi aşamasında, sanal makinenize ayırdığınız disk alanını Kali Linux'a tahsis edebilirsiniz. Bu aşamada, disk bölümlendirme yöntemini seçmeniz gerekmektedir. Eğer disk alanınızı tek bir bölüm olarak kullanmak istiyorsanız, 'Guided - use entire disk' seçeneğini seçebilirsiniz. Eğer disk alanınızı farklı bölümlere ayırmak istiyorsanız, 'Manual' seçeneğini seçebilirsiniz. Bu seçenek size disk bölümlerini kendiniz oluşturma ve boyutlandırma imkanı sunacaktır.
+6. Son aşamada, kurulum özetini gözden geçirip, her şey yolundaysa 'Install' seçeneği ile diske kurulumu başlatabilirsiniz. Kurulum otomatik olarak tamamlanacaktır. Kurulum tamamlandıktan sonra, sistemi yeniden başlatmanız istenecektir.
+Bu şekilde, Kali Linux'u VMware sanal makine üzerinde başarıyla kurmuş olacaksınız. Artık Kali Linux'un sunduğu çok sayıda siber güvenlik aracını ve özelliğini kullanabilirsiniz. 
+Kali Linux VMware İmajı Kullanımı
+Kali Linux dağıtımını VMware Player üzerinde çalıştırmak için, aşağıdaki adımları takip edebilirsiniz:
+- Öncelikle, Kali Linux resmi sitesinden bilgisayarınıza uygun olan VMware imaj dosyasını indirin. Bu dosya, Kali Linux işletim sistemini içeren bir sanal makine dosyasıdır. Dosya adı kali-linux-2022.4-vmware-amd64.7z gibi bir formatta olacaktır.
+- İndirdiğiniz dosyayı, 7zip veya winrar gibi bir arşiv yöneticisi programı ile açın. Bu işlem, dosyanın içindeki sanal makine dosyalarını çıkaracaktır. Çıkarılan dosyalar arasında kali-linux-2022.4-vmware-amd64.vmx gibi bir dosya olacaktır. Bu dosya, sanal makinenin ayarlarını içeren bir dosyadır.
+- VMware Player programını açın ve Home > Open a Virtual Machine seçeneğini seçin. Açılan pencerede, çıkardığınız dosyaların bulunduğu klasöre gidin ve kali-linux-2022.4-vmware-amd64.vmx dosyasını seçin. Bu işlem, sanal makineyi VMware Player'a içe aktaracaktır.
+- Sanal makineyi içe aktardıktan sonra, Play virtual machine seçeneğini seçerek sanal makineyi çalıştırın. Bu işlem, Kali Linux işletim sistemini sanal ortamda başlatacaktır.
+- Kali Linux işletim sistemi başladığında, size kullanıcı adı ve şifre soracaktır. Varsayılan olarak, kullanıcı adı kali ve şifre kali dir. Bu bilgileri girerek sisteme giriş yapabilirsiniz.
+- Sisteme giriş yaptıktan sonra, Kali Linux işletim sistemini ve içerdiği araçları kullanmaya başlayabilirsiniz. Ayrıca, sisteminizi güncel tutmak için, terminalden sudo apt update ve sudo apt upgrade komutlarını çalıştırabilirsiniz.
+Bu adımları takip ederek, Kali Linux VMware imajını kullanarak sanal ortamda güvenlik testleri yapabilirsiniz. 
+Güncelleme
+Kali Linux, Debian tabanlı bir Linux dağıtımıdır. Kali Linux, güvenlik testi, penetrasyon testi, tersine mühendislik, bilgisayar adli analizi ve diğer güvenlik amaçlı görevler için kullanılan birçok araç içerir. Kali Linux'u ve kurulu uygulamaları güncel tutmak, sisteminizin performansını, güvenliğini ve kararlılığını artırmak için önemlidir.
+Kali Linux'u ve kurulu uygulamaları güncel tutmak için aşağıdaki adımları izleyebilirsiniz:
+- Paket deposunu güncellemek için aşağıdaki komutu çalıştırın:
+sudo apt update
+Bu komut, Kali Linux'un paket depolarından en son paket listelerini indirir. Paket deposu, Kali Linux'un ve kurulu uygulamaların sürümlerini ve bağımlılıklarını içeren bir çevrimiçi kaynaktır. Bu komut, sisteminizdeki paketleri güncellemez, sadece mevcut güncellemeleri kontrol eder.
+- Tek bir uygulamayı güncellemek için aşağıdaki komutu çalıştırın:
+sudo apt upgrade <paket_adı>
+Bu komut, belirtilen paket adına sahip uygulamayı günceller. Örneğin, nmap uygulamasını güncellemek için aşağıdaki komutu çalıştırın:
+sudo apt upgrade nmap
+Bu komut, nmap uygulamasının en son sürümünü paket deposundan indirir ve sisteminize kurar. Bu komut, diğer paketleri veya sistemi etkilemez.
+- Tüm sistem ve uygulamaları güncellemek için aşağıdaki komutlardan birini çalıştırın:
+sudo apt upgrade
+veya
+sudo apt full-upgrade
+veya
+sudo apt dist-upgrade
+Bu komutlar, sisteminizdeki tüm paketleri günceller. Ancak, bu komutlar arasında bazı farklar vardır:
+  - sudo apt upgrade: Bu komut, sisteminizdeki tüm paketleri günceller, ancak yeni paketleri kurmaz veya mevcut paketleri kaldırmaz. Bu komut, sisteminizdeki bağımlılık sorunlarını çözmez.
+  - sudo apt full-upgrade: Bu komut, sisteminizdeki tüm paketleri günceller, ancak yeni paketleri kurar veya mevcut paketleri kaldırır, eğer bu, bağımlılık sorunlarını çözmek için gerekiyorsa. Bu komut, sisteminizdeki bağımlılık sorunlarını çözer.
+  - sudo apt dist-upgrade: Bu komut, sisteminizdeki tüm paketleri günceller, ancak yeni paketleri kurar veya mevcut paketleri kaldırır, eğer bu, bağımlılık sorunlarını çözmek için gerekiyorsa. Ayrıca, bu komut, sisteminizin çekirdeğini veya önemli bileşenlerini de günceller, eğer bu, yeni paketlerle uyumlu olmak için gerekiyorsa. Bu komut, sisteminizdeki bağımlılık sorunlarını çözer, ancak sisteminizin kararlılığını veya uyumluluğunu etkileyebilir.
+Bu komutları çalıştırmadan önce, sisteminizin yedeğini almanızı öneririm. Ayrıca, bu komutları çalıştırdıktan sonra, sisteminizi yeniden başlatmanız gerekebilir.
+Genel Ayarlar
+Hostname
+Kali Linux dağıtımının makina adı hostname komutu ile öğrenilebilir. Makina adı aşağıdaki şekilde değiştirilebilir:
+# hostnamectl set-hostname pentest
+Bu komut, /etc/hostname dosyasını da günceller. Makina adını kalıcı olarak değiştirmek için sistemi yeniden başlatmanız gerekir.
+Password
+Kali Linux işletim sisteminde bulunan bir kullanıcının parolasını değiştirmek için aşağıdaki komut kullanılır:
+# passwd kullanıcı_adı
+Kali Linux işletim sisteminde bulunan kullanıcı bilgileri hakkında /etc/passwd ve /etc/shadow dosyalarında parola bilgisi dahil olmak üzere bilgi edinilebilir. Bu dosyaları okumak için root yetkisine sahip olmanız gerekir.
+Klavye
+Kali Linux işletim sisteminde bulunan klavye ayarları aşağıdaki komut ile anlık olarak değiştirilebilir:
+# setxkbmap tr
+Bu değişiklik sadece oturum süreniz boyunca geçerli olacaktır. Kali Linux yeniden başlatıldığında ayarlar kaybolur.
+Klavye ayarlarını kalıcı olarak değiştirmek için;
+System > Preferences > Keyboard menüsü açılır.
+Açılan menünün sol baştan ikinci sekmesi olan Layouts sekmesine geçiş yapılır. Bu pencerede Add butonuna tıklanarak açılan yeni pencereden Country: Turkey olarak seçilir ve Add butonuna tıklanarak listeye eklenir. USA dili seçeneğine ihtiyacınız yoksa bu seçimi Remove butonu ile kaldırabilirsiniz. Klavyenizi test etmek için pencerenin en altında bulunan Type to test settings bölümünü kullanabilirsiniz.
+Ekran Çözünürlüğü
+VMware aracılığı ile kullandığınız işletim sistemlerinde eğer vmtools kurulu değilse ekran görüntü çözünürlüğünü değiştirmede sorunlar yaşarsınız. VMware aracılığıyla kullandığınız işletim sistemlerine mutlaka vmtool kurmanızı öneririm.
+Kali Linux dağıtımında ekran çözünürlüğünü değiştirmek için aşağıdaki menu yolunu tıklayınız;
+System > Preferences > Monitors penceresinden Resolution sekmesi kullanılarak size uygun çözünürlüğü ayarlayabilirsiniz. Ekran çözünürlüğünü komut satırından değiştirmek için xrandr komutunu kullanabilirsiniz.
+Network Ayarları
+Ağ ayarlarını diğer tüm sistemlerde olduğu gibi sabit olarak veya bulunduğunuz ortamda otomatik IP dağıtan bir dhcp sunucu varsa dinamik olarak tanımlanabilir. Ağ ayarlarını yapmadığınız durumda, dahil olduğunuz bir ağdaki diğer sistemlerle haberleşemezsiniz.
+Dhcp ile IP Almak
+Bulunduğunuz ortamdaki dhcp sunuculardan IP almak için, dhclient komutunu kullanabilirsiniz. Örneğin, eth0 ağ arabirimine dhcp ile IP almak için:
+# dhclient eth0
+Sabit IP Ataması
+Linux sistemlerde ağ ayarları ifconfig komutu ve parametreleri ile yönetilir. Ağ ayarlarını görüntülemek ve değişiklikler yapmak için ifconfig komutu kullanılır.
+Kullanılabilir ağ arabirimlerini görüntümek için ifconfig -a yazmanız yeterli olacaktır. Bu aşamadan sonraki ayarları mevcut ağ arabiriminizin adını öğrenerek devam edin.
+Örnek olarak, eth0 ağ arabirimine 192.168.1.100 ip adresini, 255.255.255.0 ağ maskesini ve 192.168.1.1 ağ geçidini tanımlayacağım:
+# ifconfig eth0 192.168.1.100 netmask 255.255.255.0
+# route add default gw 192.168.1.1
+Bir ağ arabirimi ayarlarını görüntülemek için hatırlayacağınız üzere ifconfig komutu kullanabiliriz. Ağ ayarlarını kalıcı olarak değiştirmek için /etc/network/interfaces dosyasını düzenlemeniz gerekir.
+Linux'ta ağ arayüzlerini yapılandırmanın birçok yolu vardır. Bunlardan bazıları şunlardır:
+- /etc/network/interfaces dosyasını kullanmak: Bu dosya, Debian tabanlı dağıtımlarda (Ubuntu, Mint, Kali vb.) ağ arayüzlerinin ayarlarını saklar. Bu dosyayı düzenleyerek, statik veya dinamik IP adresleri, ağ geçidi, ağ maskesi, DNS sunucuları ve diğer seçenekleri belirleyebilirsiniz. Dosyanın sözdizimi şöyledir:
+# Ağ arayüzünün adı
+auto eth1
+# Ağ arayüzünün tipi (statik veya dhcp)
+iface eth1 inet static
+# Ağ arayüzünün IP adresi
+address 1.1.1.1
+# Ağ arayüzünün ağ maskesi
+netmask 255.255.255.0
+# Ağ arayüzünün ağ geçidi
+gateway 1.1.1.254
+# Ağ arayüzünün DNS sunucuları
+dns-nameservers 8.8.8.8 4.2.2.4
+Bu dosyayı düzenledikten sonra, ağ arayüzünü yeniden başlatmak için ifdown eth1 ve ifup eth1 komutlarını kullanabilirsiniz.
+- nmcli komutunu kullanmak: Bu komut, NetworkManager adlı bir hizmet tarafından sağlanan bir araçtır. NetworkManager, ağ bağlantılarını otomatik olarak algılayıp yapılandırmak için kullanılan bir programdır. Red Hat tabanlı dağıtımlarda (CentOS, Fedora, RHEL vb.) yaygın olarak kullanılır. nmcli komutu, ağ arayüzlerini komut satırından yönetmenizi sağlar. Örneğin, eth1 ağ arayüzünü statik olarak yapılandırmak için şu komutu kullanabilirsiniz:
+# Ağ arayüzünü NetworkManager tarafından yönetilebilir hale getirmek
+nmcli connection modify eth1 connection.autoconnect yes
+# Ağ arayüzünün tipini ethernet olarak belirlemek
+nmcli connection modify eth1 connection.type ethernet
+# Ağ arayüzünün IP adresini, ağ maskesini ve ağ geçidini belirlemek
+nmcli connection modify eth1 ipv4.address 1.1.1.1/24
+nmcli connection modify eth1 ipv4.gateway 1.1.1.254
+# Ağ arayüzünün DNS sunucularını belirlemek
+nmcli connection modify eth1 ipv4.dns "8.8.8.8 4.2.2.4"
+# Ağ arayüzünün IPv4 protokolünü kullanmasını sağlamak
+nmcli connection modify eth1 ipv4.method manual
+# Ağ arayüzünü yeniden başlatmak
+nmcli connection down eth1
+nmcli connection up eth1
+- ip komutunu kullanmak: Bu komut, Linux çekirdeği tarafından sağlanan bir araçtır. ip komutu, ağ arayüzlerini, yönlendirme tablolarını, tünelleri ve diğer ağ bileşenlerini yönetmenizi sağlar. ip komutu, ifconfig komutunun yerini almıştır. ip komutu, ağ arayüzlerini geçici olarak yapılandırmanızı sağlar. Kalıcı olarak yapılandırmak için, ilgili dosyaları veya hizmetleri düzenlemeniz gerekir. Örneğin, eth1 ağ arayüzünün IP adresini, ağ maskesini ve ağ geçidini belirlemek için şu komutu kullanabilirsiniz:
+# Ağ arayüzünün IP adresini ve ağ maskesini belirlemek
+ip addr add 1.1.1.1/24 dev eth1
+# Ağ arayüzünü etkinleştirmek
+ip link set eth1 up
+# Ağ arayüzünün ağ geçidini belirlemek
+ip route add default via 1.1.1.254 dev eth1
+Bu komutları çalıştırdıktan sonra, DNS sunucularını belirlemek için /etc/resolv.conf dosyasını düzenlemeniz gerekir. Örneğin:
+# DNS sunucularını belirlemek
+echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+echo "nameserver 4.2.2.4" >> /etc/resolv.conf
+Ağ arayüzlerini test etmek için, ping, traceroute, nslookup, dig, curl gibi araçları kullanabilirsiniz. Örneğin:
+- Yerel ağdaki bir sisteme ping atmak:
+# 1.1.1.2 IP adresine sahip bir sisteme ping atmak
+ping 1.1.1.2 -c 3
+- İnternette ping paketlerine yanıt veren bir sisteme ping atmak:
+# 8.8.8.8 IP adresine sahip bir sisteme ping atmak
+ping 8.8.8.8 -c 3
+- İnternette bulunan bir web sunucusuna bağlantı kurmak:
+# google.com web sunucusuna bağlantı kurmak
+curl google.com
+- DNS sunucunun isim çözme işlevini gerçekleştirdiğini kontrol etmek:
+# cehturkiye.com alan adının IP adresini öğrenmek
+nslookup cehturkiye.com
+# google.com alan adının A kaydını öğrenmek
+dig A google.com
+Network Ayarlarının Kalıcı Hale Getirilmesi
+Kali Linux'ta ağ ayarlarını yapmak için, aşağıdaki yöntemleri kullanın. 
+- Kablolu ağ bağlantısı için, sanal makinenin ağ adaptörünü köprü moduna (bridged mode) ayarlayın. Böylece, sanal makine, fiziksel makinenizin ağ kartını kullanarak doğrudan ağa bağlanabilir.
+- Kablosuz ağ bağlantısı için, fiziksel makinenize bir USB kablosuz ağ adaptörü takın ve vmware workstation'da sanal makineye aktarın. Bunu yapmak için, Player > Removable Devices > 'USB Device Name' > Connect seçeneğini kullanın. Ardından, sanal makinede 'iwconfig' komutu ile kablosuz ağ arabirimini görüntüleyebilir ve 'nmcli' komutu ile kablosuz ağlara bağlanabilirsiniz.
+- Alternatif olarak, sanal makinenin ağ adaptörünü NAT moduna ayarlayarak, fiziksel makinenizin ağ bağlantısını paylaşabilirsiniz. Bu durumda, sanal makine, fiziksel makinenizin ağ geçidini kullanarak ağa bağlanır.
+Kali Linux'ta ağları yönetmek için, 'Network Manager' yazılımını kullanabilirsiniz. Bu yazılım, kablosuz ve kablolu ağları tarayabilir, bağlanabilir, kesintiye uğratabilir ve yapılandırabilir. 'Network Manager' yazılımını, 'Applications > System Tools > Network' sekmesinden açabilirsiniz. Önemli Not: Eğer kablosuz ağ arabiriminizin adı wlan0 değil de farklı bir isimle (örneğin: wlan1 gibi) yer alıyorsa, Network Manager > Preferences penceresinden 'Wireless interface' değerini değiştirmeniz gerekmektedir.
+Kali Linux Temel Ayarları: 
+ Kali Linux, Vmware Fusion/Player üzerinde kurulabilir ve bazı temel ayarlar yapılabilir. Bunlardan bazıları şunlardır:
+- Kali Linux sisteme bridge modda IP adresi aldırmak: Bu, Kali Linux'un aynı ağdaki diğer cihazlarla iletişim kurmasını sağlar. Bunu yapmak için, virtual machine-Network adapter-Bridge(Autodect) seçeneğini işaretlemek yeterlidir. Bu şekilde configre edilmiş sistem açıldığında otomatik olarak DHCP sunucusundan IP adresi alır. IP adresini yenilemek istenirse, terminalde dhclient komutu kullanılabilir.
+- Kali Linux'ta root kullanıcısı olmak: Root kullanıcısı, sistemin tüm yetkilerine sahip olan kullanıcıdır. Bazı komutlar ve araçlar yalnızca root kullanıcısı tarafından çalıştırılabilir. Root kullanıcısı olmak için, terminalde sudo su komutunu yazmak ve şifreyi girmek gerekir. Şifre, varsayılan olarak kali dir. Bu şifreyi değiştirmek için, passwd komutunu kullanmak gerekir.
+- Kali Linux'ta dosya ve klasör işlemleri yapmak: Terminalde, dosya ve klasörler arasında gezinmek, yeni dosya ve klasör oluşturmak, silmek, kopyalamak, taşımak, adlandırmak gibi işlemler yapılabilir. Bunun için, bazı temel komutlar kullanılır. Bunlardan bazıları şunlardır:
+    - pwd: Bulunduğumuz dizini gösterir.
+    - ls: Bulunduğumuz dizindeki dosya ve klasörleri listeler. Gizli dosya ve klasörleri görmek için ls -la kullanılır.
+    -cd: Başka bir dizine geçmek için kullanılır. Örneğin, masaüstüne gitmek için cd Desktop yazılır. Bir üst dizine çıkmak için cd .. yazılır.
+    -mkdir: Yeni bir klasör oluşturmak için kullanılır. Örneğin, mkdir test yazarak test adında bir klasör oluşturulur.
+    -touch: Yeni bir dosya oluşturmak için kullanılır. Örneğin, touch test.txt yazarak test.txt adında bir dosya oluşturulur.
+    -rm: Bir dosya veya klasörü silmek için kullanılır. Örneğin, rm test.txt yazarak test.txt dosyasını sileriz. Bir klasörü silmek için -r parametresi eklenir. Örneğin, rm -r test yazarak test klasörünü sileriz.
+    -cp: Bir dosya veya klasörü kopyalamak için kullanılır. Örneğin, cp test.txt test2.txt yazarak test.txt dosyasını test2.txt dosyası olarak kopyalarız. Bir klasörü kopyalamak için -r parametresi eklenir. Örneğin, cp -r test test2 yazarak test klasörünü test2 klasörü olarak kopyalarız.
+    -mv: Bir dosya veya klasörü taşımak veya adlandırmak için kullanılır. Örneğin, mv test.txt test2.txt yazarak test.txt dosyasının adını test2.txt olarak değiştiririz. mv test.txt Desktop yazarak test.txt dosyasını masaüstüne taşırız. Bir klasörü taşımak veya adlandırmak için de aynı şekilde kullanılır.
+Bu komutların daha fazla parametre ve seçeneği vardır. Bunları öğrenmek için, komutun sonuna -h veya --help ekleyerek yardım sayfasını görüntüleyebilirsiniz. Örneğin, ls --help yazarak ls komutunun tüm özelliklerini görebilirsiniz.
