@@ -1,0 +1,75 @@
+Vmware Sanallaştırma Platformu, farklı işletim sistemlerini tek bir fiziksel makine üzerinde çalıştırmak için kullanılan bir yazılımdır. Bu sayede, işletim sistemlerinin performansını, güvenliğini ve esnekliğini artırabilirsiniz. Ayrıca, sanallaştırma sayesinde birden fazla işletim sistemi aynı anda çalıştırabilir ve kaynakları daha verimli kullanabilirsiniz.
+Vmware Sanallaştırma Platformu'nu kurmak için iki yöntem vardır: Windows ve Linux sistemlerine kurulum sihirbazı ile veya komut satırından kurulum yaparak.
+Windows sistemlerine kurulum sihirbazı ile kurulum yapmak isterseniz, öncelikle VMware Player programını indirmeniz gerekiyor. Bu program, sanallaştırma yapabileceğiniz işletim sistemlerini çalıştıran bir yazılımdır. VMware Player programını https://my.vmware.com/web/vmware/free#desktop_end_user_computing/vmware_player/5_0 adresinden indirin. 
+Kurulum sihirbazını çalıştırmak için, Windows işletim sisteminize giriş yapın ve program kurma yetkisi olan bir kullanıcı hesabına sahip olduğunuzdan emin olun. Kurulum sihirbazını çalıştırmak için VMware-Player-xxxx-xxxx.exe adresine tıklayın.
+Kurulum sihirbazında, VMware Player programının hangi sürümünü indirmek istediğinizi seçin. VMware Player programının en son sürümü 5.0'dir. Sürümü seçtikten sonra, indirme işlemini başlatın.
+Linux sistemlerine komut satırından kurulum yapmak isterseniz, öncelikle VMware Workstation programını indirmeniz gerekiyor. Bu program da sanallaştırma yapabileceğiniz işletim sistemlerini çalıştıran bir yazılımdır. VMware Workstation programını https://my.vmware.com/web/vmware/free#desktop_end_user_computing/vmware_player/5_0 linkinden indirin. 
+Kurulum yapmak için Linux tabanlı işletim sisteminize giriş yapın ve root haklarına sahip olduğunuzdan emin olun. Root haklarına sahip olmak için 'su root' komutunu kullanabilirsiniz.
+Kurulumu yapmak için VMware workstation programını komut satırından kurun.
+Komut satırında, VMware Workstation programının hangi sürümünü indirmek istediğinizi seçin. Sürümü seçtikten sonra, 'sh VMware-Player-e.x.p-xxxx-xxxx.architecture.bundle' komutunu kullanarak kurulum sihirbazını başlatın ve varsayılan ayarlarla kurulumu tamamlayın.
+Kurulum sonrası root haklarına tekrar ihtiyacınız olmayacaktır. İşletim sisteminizi yeniden başlatıp VMware Workstation programını çalıştırabilirsiniz.
+Vmware Player Pencereleri
+Vmware Player, Windows veya Linux bilgisayarınızda birden fazla işletim sistemi çalıştırmanızı sağlayan ücretsiz bir yazılımdır. Vmware Player ile sanal makine oluşturabilir, varolan sanal makina imajını açabilir veya vmware player için yardım alabilirsiniz.
+Vmware Player Pencereleri, vmware player özelliklerini gösteren farklı menülerdir. Home penceresi, yeni bir sanal makina oluşturmak, varolan sanal makina imajını açmak veya vmware player için yardım almak için kullanılır. Home penceresinin altında bulunan diğer pencereler ise şunlardır:
+- File: Burada sanal makina imajlarını, ayarlarını ve özelliklerini yönetebilirsiniz.
+- Edit: Burada sanal makina imajlarını düzenleyebilir, yeni bir sanal makina oluşturabilir veya varolan bir sanal makina imajını kaldırabilirsiniz.
+- View: Burada sanal makinelerinizi görüntüleyebilir, önbelleğini temizleyebilir veya performansını optimize edebilirsiniz.
+- Help: Burada vmware player hakkında bilgi alabilir, sorun giderme ipuçlarına ulaşabilir veya destek talep edebilirsiniz.
+Yeni Sanal İşletim Sistemi Oluşturmak için ise Home menüsünden 'Create a New Virtual Machine' seçeneğini tıklayın. Bu seçenek size iki farklı yol sunacaktır:
+1. İşletim sistemi CD ROM aracılığı ile seçilebilir: Bu yolda, kurulacak işletim sisteminin CD ROM'sundan yüklenmesini sağlayacaksınız. Bu yöntemle Linux gibi bazı işletim sistemleri kurabilirsiniz.
+2. İşletim sisteminin .iso dosyası diskden seçilebilir: Bu yolda, kurulacak işletim sisteminin .iso dosyasının diskten yüklenmesini sağlayacaksınız. Bu yöntemle Windows gibi bazı işletim sistemleri kurabilirsiniz.
+Her iki yol da vmware player'in otomatik olarak kurulum sihirbazını başlatacağı ve lisans bilgilerinizi ve işletim bilgilerinizi tamamlamanızı isteyecektir. Daha sonra disk kapasitesi ve kurulum dosyalarının konumu gibi ayarları yapabilir ve kurulumu tamamlayabilirsiniz.
+Varolan Bir Vmware İmajını içe Aktarmak
+Vmware, sanal makineler oluşturmak ve yönetmek için kullanılan bir yazılımdır. Sanal makineler, fiziksel bir bilgisayarın içinde çalışan farklı işletim sistemleri veya uygulamaları temsil eder. Böylece, birden fazla işletim sistemi veya uygulama aynı anda çalıştırabilir ve yönetebilirsiniz.
+Vmware imajı ise, sanal makinenin özelliklerini ve ayarlarını içeren bir dosyadır. Vmware imajını içe aktarmak, sanal makinenizi başka bir bilgisayarda veya VMware programında açmak anlamına gelir.
+Vmware imajını içe aktarmak için aşağıdaki adımları izleyebilirsiniz:
+- VMware programını açın ve "File" menüsünden "Open a Virtual Machine" seçeneğini seçin.
+- Vmware imajının bulunduğu klasördeki *.vmx uzantılı dosyayı seçin ve "Open" butonuna tıklayın.
+- Sanal makinenizi açmak istediğiniz bilgisayarı seçin ve "Power on this virtual machine" butonuna tıklayın.
+- Sanal makinenizin ilk açılması durumunda, ekrandaki talimatları takip ederek sanal makinenizi kurun ve ayarlayın.
+Bu şekilde, VMware imajını içe aktarmış olursunuz.
+VMware Tools Kurulumu
+VMware Tools, sanal makinelerin performansını arttıran ve gerçek işletim sistemi ile kolayca entegre olmasını sağlayan bir yazılımdır. VMware Tools kurulumu sonrası, gerçek bilgisayarınızdan dosyaları sanal işletim sistemine sürükle bırak yöntemi ile aktarabilir, metinleri kopyala/yapıştır vb. işlemleri yapabilirsiniz.
+VMware Tools kurulumu için farklı işletim sistemlerine göre farklı adımlar izlemeniz gerekebilir. Aşağıda Windows, Linux ve macOS için VMware Tools kurulumu nasıl yapılacağına dair bilgileri verdim. 
+- Windows Sistemlere Vmware Tools Kurulumu
+    - Player > Manage > İnstall VMware Tools Installation sekmesinden kurulum başlatılabilir.
+    - Eğer VMware Tools bilgisayarınızda yoksa otomotik olarak internetten indirilecektir.
+    - 2. VMware Tools sanal CDROM aracılığı ile işletim sistemine bağlanacaktır.
+    - Eğer autorun otomotif olarak başlamazsa ‘Bilgisayarım > DVD Drive’ çift tıklanarak kurulum başlatılabilir.
+    - Kurulum sihirbazı aracılığıyla varsayılan ayarlar ile kurulum tamamlanabilir. Kurulum başarıyla tamamlandıkten sonra sisteminizi yeniden başlatınız.
+- Linux Sistemlere Vmware Tools Kurulumu
+    - Player > Manage > İnstall VMware Tools Installation sekmesinden kurulum başlatılabilir.
+    - Eğer VMware Tools bilgisayarınızda yoksa otomotif olarak internetten indirilecektir.
+    - 2. VMware Tools sanal CDROM aracılığı ile işletim sistemine bağlanacaktır.
+    - Aşağıdaki komutlar ile vmware tools default ayarları ile kurulur.
+        # cd /media/VMware\ Tools/
+        # tar zxf VMwareTools-9.2.2-893683.tar.gz -C /tmp/
+        # cd /tmp/vmware-tools-distrib/
+        # perl vmware-install.pl –d
+Kurulum başarıyla tamamlandıkten sonra, ‘reboot’ komutu ile backtrack 5 işletim sisteminin yeniden başlatılmasını tavsiye ederim.
+- macOS Sistemlere Vmware Tools Kurulumu
+    - Player > Manage > Install VMware Tools seçeneğini seçerek kurulum başlatılabilir.
+    - Eğer VMware Tools bilgisayarınızda yoksa otomotik olarak internetten indirilecektir.
+    - 2. VMware Tools sanal CDROM aracılığı ile işletim sistemine bağlanacaktır.
+    - Aşağıdaki komutlar ile vmware tools default ayarları ile kurulur.
+        # cd /media/VMware\ Tools/
+        # tar zxf VMwareTools-9.2.2-893683.tar.gz -C /tmp/
+        # cd /tmp/vmware-tools-distrib/
+        # perl vmware-install.pl –d
+Kurulum tamamlandığında, ‘reboot’ komutu ile backtrack 5 işletim sisteminin yeniden başlatılmasını öneririm.
+VMware Network Ayarları
+VMware network ayarları, sanal makinelerin fiziksel ağa veya VMware üzerinde çalışan diğer sanal makinelerle nasıl bağlandığını belirleyen seçeneklerdir. Bu seçenekler şunlardır:
+- Bridge: Bu ayar, sanal makinelerin fiziksel ağ kartını kullanarak fiziksel ağa bağlanmasını sağlar. Bu sayede sanal makineler, fiziksel ağdaki diğer cihazlarla aynı IP aralığında olur ve aynı ağ servislerinden yararlanabilir. Sanal makineler, fiziksel ağdaki DHCP sunucusundan IP adresi alabilir veya kendilerine sabit IP adresi atanabilir. Sanal makineler, kendi MAC adresleri ile fiziksel ağdaki diğer cihazlarla iletişim kurabilir ve internete erişebilir. Bridge ayarı, sanal makinelerin fiziksel ağın bir parçası gibi davranmasını sağlar. Bridge ayarını kullanmak için sanal makinenin network adaptörünü Bridged olarak seçmeniz gerekir. Ayrıca, sanal makinenin network adaptörünün hangi fiziksel ağ kartına bağlı olacağını da seçebilirsiniz. Bridge ayarının avantajı, sanal makinelerin fiziksel ağa doğrudan bağlanabilmesidir. Dezavantajı ise, fiziksel ağın güvenlik risklerine maruz kalmasıdır.
+- NAT: Bu ayar, sanal makinelerin fiziksel ağdan izole edilmiş bir sanal ağda çalışmasını sağlar. Bu sayede sanal makineler, fiziksel ağdaki diğer cihazlarla aynı IP aralığında olmaz ve aynı ağ servislerinden yararlanamaz. Sanal makineler, VMware DHCP servisinden IP adresi alabilir veya kendilerine sabit IP adresi atanabilir. Sanal makineler, VMware üzerinde çalışan diğer sanal makinelerle ve VMware kurulu gerçek işletim sistemiyle iletişim kurabilir. Sanal makineler, internete erişmek için VMware NAT servisini kullanır. VMware NAT servisi, sanal makinelerin fiziksel ağ kartının IP adresini kullanarak fiziksel ağa çıkmasını ve gelen istekleri sanal makinelerin IP adreslerine yönlendirmesini sağlar. NAT ayarı, sanal makinelerin fiziksel ağdan korunmasını ve internete erişmesini sağlar. NAT ayarını kullanmak için sanal makinenin network adaptörünü NAT olarak seçmeniz gerekir. Ayrıca, sanal makinenin hangi sanal ağa bağlı olacağını da seçebilirsiniz. VMware Workstation, varsayılan olarak VMnet8 adlı bir sanal ağı NAT olarak kullanır. NAT ayarının avantajı, sanal makinelerin fiziksel ağdan izole edilmesi ve güvenli bir şekilde internete erişebilmesidir. Dezavantajı ise, sanal makinelerin fiziksel ağdaki diğer cihazlarla iletişim kuramamasıdır.
+- HostOnly: Bu ayar, sanal makinelerin fiziksel ağa veya internete bağlanmadan sadece birbirleriyle iletişim kurmasını sağlar. Bu sayede sanal makineler, fiziksel ağdan veya internetten etkilenmez ve tamamen güvenli ve özel bir ağda çalışır. Sanal makineler, VMware DHCP servisinden IP adresi alabilir veya kendilerine sabit IP adresi atanabilir. Sanal makineler, kendi MAC adresleri ile VMware üzerinde çalışan diğer sanal makinelerle iletişim kurabilir. HostOnly ayarı, sanal makinelerin dış dünyaya kapalı bir ağda çalışmasını sağlar. HostOnly ayarını kullanmak için sanal makinenin network adaptörünü HostOnly olarak seçmeniz gerekir. Ayrıca, sanal makinenin hangi sanal ağa bağlı olacağını da seçebilirsiniz. VMware Workstation, varsayılan olarak VMnet1 adlı bir sanal ağı HostOnly olarak kullanır. HostOnly ayarının avantajı, sanal makinelerin tamamen güvenli ve özel bir ağda çalışmasıdır. Dezavantajı ise, sanal makinelerin fiziksel ağa veya internete erişememesidir.
+VMware network ayarlarına göre değiştirilebilen seçenek ise Custom'dur. Custom seçeneği, VMware üzerinde farklı özelliklerde sanal ağlar oluşturmanızı sağlar. VMware üzerinde VMnet0'dan VMnet19'a kadar 20 adet sanal ağ vardır. Bunlardan üç tanesi (VMnet0 = Bridge, VMnet1 = HostOnly, VMnet8 = NAT) varsayılan olarak yukarıda açıkladığımız network ayarlarına karşılık gelmektedir. Diğerleri ise henüz bir rol yüklenmemiş hazırda bekleyen network seçenekleridir. Custom seçeneği, bu sanal ağlara istediğiniz network ayarını atamanızı sağlar. Örneğin, VMnet2'yi NAT olarak, VMnet3'ü Bridge olarak, VMnet4'ü HostOnly olarak ayarlayabilirsiniz. Böylece sanal makinelerinizi farklı network ayarlarına göre gruplayabilir ve farklı senaryoları test edebilirsiniz. Custom seçeneği, sanal makinelerin network ayarlarını esnek bir şekilde değiştirmenizi sağlar. Custom seçeneğini kullanmak için sanal makinenin network adaptörünü Custom olarak seçmeniz ve hangi sanal ağa bağlanacağınızı belirtmeniz gerekir. Custom seçeneğinin avantajı, sanal makinelerin network ayarlarını istediğiniz gibi özelleştirebilmenizdir. Dezavantajı ise, sanal ağların yapılandırılmasının daha karmaşık olmasıdır.
+VMware Ağ Arabiriminin Mac Adresini Değiştirmek
+VMware Ağ Arabirimi, sanal makinelerin ağ iletişimini sağlayan bir yazılımdır. Sanal makineler, fiziksel bilgisayarlarla aynı ağa bağlı olabilirler. Bu sayede, sanal makineler arasında veri aktarımı, dosya paylaşımı, video konferans gibi işlemler yapılabilir.
+Mac Adresi ise, bir ağ arabirim denetleyicisine (NIC) verilen 12 basamaklı benzersiz bir onaltılık tanımlayıcıdır. Bir NIC (ağ arabirim kartı olarak da bilinir), belirli bir ağa bağlı aygıtların tanımlanmasına yardımcı olur. Mac Adresi, diğer cihazlarla bağlantı kurabilen her aygıtta eşsiz olarak bulunan fiziksel adres ya da donanım adresi olarak da isimlendirilen bir adrestir.
+VMware ürünlerinin yeni sürümlerinde, MAC adresini değiştirmek için farklı bir yöntem kullanılması gerekmektedir. Bu yöntem şöyledir:
+- Sanal makinenizi kapatın.
+- Sanal makinenizin bulunduğu klasördeki .vmx dosyasını bir metin editörü ile açın.
+- Dosyada ethernet0.addressType = "generated" satırını bulun ve "generated" yerine "static" yazın.
+- Aynı dosyada ethernet0.generatedAddress = "XX:XX:XX:XX:XX:XX" satırını bulun ve "XX:XX:XX:XX:XX:XX" yerine istediğiniz MAC adresini yazın.
+- Dosyayı kaydedin ve sanal makinenizi açın.
+Bu yöntem, sanal makinenizin MAC adresini değiştirmenizi sağlar. Ancak bu yöntem de bazı riskler taşımaktadır. Örneğin, MAC adresi değiştirirken VMware'in rezerve ettiği MAC adreslerini kullanmamaya dikkat etmelisiniz. Aksi takdirde, sanal makineniz ağa bağlanamayabilir veya çakışma yaşayabilir. Bu nedenle, MAC adresini değiştirmeden önce yedek almanız ve test etmeniz önerilir.
