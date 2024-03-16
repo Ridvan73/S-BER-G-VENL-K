@@ -1,0 +1,58 @@
+ PYTHON KULLANARAK YAPAY ZEKAYLA MODEM ZAFİYETİNİ TESPİT ETME
+# Modem Zafiyetlerini Tespit Etmek için Yapay Zeka Kullanımı
+# Gerekli kütüphaneleri içe aktar
+import nmap # Ağ taraması için
+import requests # Web istekleri için
+import re # Düzenli ifadeler için
+import numpy as np # Matematiksel işlemler için
+import pandas as pd # Veri analizi için
+import sklearn # Makine öğrenmesi için
+from sklearn.ensemble import RandomForestClassifier # Rastgele orman sınıflandırıcısı için
+from sklearn.metrics import accuracy_score # Doğruluk skoru için
+# Ağdaki modemleri taramak için nmap kullan
+nm = nmap.PortScanner() # nmap nesnesi oluştur
+nm.scan(hosts='192.168.1.0/24', arguments='-n -sP -PE -PA21,23,80,3389') # Ağdaki tüm cihazları tara
+hosts_list = [(x, nm[x]['status']['state']) for x in nm.all_hosts()] # Taranan cihazların listesini al
+modems_list = [] # Modemlerin listesini tutacak boş bir liste oluştur
+for host, status in hosts_list: # Her cihaz için
+    try:
+        response = requests.get(f'http://{host}', timeout=5) # Cihazın web arayüzüne istek gönder
+        if response.status_code == 200: # Eğer istek başarılı ise
+            title = re.search('<title>(.*?)</title>', response.text) # Web sayfasının başlığını al
+            if title: # Eğer başlık varsa
+                title = title.group(1) # Başlık metnini al
+                if 'modem' in title.lower(): # Eğer başlıkta 'modem' kelimesi geçiyorsa
+                    modems_list.append((host, title)) # Modem listesine cihazın IP adresi ve başlığını ekle
+    except: # Eğer istek başarısız olursa
+        pass # Hata verme, devam et
+# Modem listesini ekrana yazdır
+print('Ağdaki modemler:')
+for host, title in modems_list:
+    print(host, title)
+# Modem zafiyetlerini tespit etmek için makine öğrenmesi kullan
+# Önceden etiketlenmiş modem veri setini yükle
+data = pd.read_csv('modem_dataset.csv') # Veri setini oku
+X = data.drop('vulnerable', axis=1) # Girdi değişkenlerini al
+y = data['vulnerable'] # Çıktı değişkenini al
+# Veri setini eğitim ve test kümelerine ayır
+X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y, test_size=0.2, random_state=42)
+# Rastgele orman sınıflandırıcısı oluştur ve eğit
+clf = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42) # Sınıflandırıcıyı oluştur
+clf.fit(X_train, y_train) # Sınıflandırıcıyı eğit
+# Test kümesindeki verileri tahmin et ve doğruluk skorunu hesapla
+y_pred = clf.predict(X_test) # Tahminleri al
+acc = accuracy_score(y_test, y_pred) # Doğruluk skorunu hesapla
+print(f'Modelin doğruluk skoru: {acc:.2f}') # Doğruluk skorunu ekrana yazdır
+# Ağdaki modemlerin zafiyet durumunu tahmin et
+for host, title in modems_list: # Her modem için
+    features = np.array([host, title]) # Modemin özelliklerini bir numpy dizisine dönüştür
+    pred = clf.predict(features.reshape(1, -1)) # Modemin zafiyet durumunu tahmin et
+    if pred == 1: # Eğer modem zafiyetli ise
+        print(f'{host} IP adresli {title} başlıklı modem zafiyetlidir.') # Uyarı mesajı yazdır
+    else: # Eğer modem zafiyetli değilse
+        print(f'{host} IP adresli {title} başlıklı modem zafiyetli değildir.') # Bilgi mesajı yazdır
+#Yazan Rıdvan Kaya 
+Bu kod, Python dilinde yazılmış bir programdır. Bu programın amacı, ağdaki modemlerin zafiyetlerini tespit etmek için yapay zeka kullanmaktır. Programın ana adımları şunlardır:
+- Gerekli kütüphaneleri içe aktarmak: Program, ağ taraması, web istekleri, düzenli ifadeler, matematiksel işlemler, veri analizi ve makine öğrenmesi için farklı kütüphaneler kullanmaktadır. Bu kütüphaneler, programın başında import komutu ile içe aktarılmaktadır.
+- Ağdaki modemleri taramak için nmap kullanmak: Program, nmap kütüphanesini kullanarak ağdaki tüm cihazları tarar ve hangilerinin modem olduğunu belirlemek için web arayüzlerine istek gönderir. Modemlerin IP adresleri ve web sayfası başlıkları bir listeye kaydedilir.
+- Modem zafiyetlerini tespit etmek için makine öğrenmesi kullanmak: Program, önceden etiketlenmiş bir modem veri setini okur ve girdi ve çıktı değişkenlerini ayırır. Veri setini eğitim ve test kümelerine bölerek rastgele orman sınıflandırıcısı oluşturur ve eğitir. Test kümesindeki verileri tahmin ederek modelin doğruluk skorunu hesaplar. Ağdaki modemlerin zafiyet durumunu tahmin etmek için modeli kullanır ve sonuçları ekrana yazdırır.
