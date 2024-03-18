@@ -1,0 +1,51 @@
+DNS Sunucu version bilgisi bulma
+DNS sunucu versiyon bilgisi, DNS sunucusunun hangi yazılımı kullandığını ve hangi özelliklere sahip olduğunu belirleyen bir metin dizisidir. DNS sunucu versiyon bilgisini öğrenmek, güvenlik analizi veya saldırı hazırlığı için yararlı olabilir. Ancak, bazı DNS sunucuları bu bilgiyi gizlemek veya değiştirmek için yapılandırılmış olabilir.
+DNS sunucu versiyon bilgisini öğrenmenin birkaç yolu vardır. Bunlardan en yaygın olanları dig, nslookup ve nmap araçlarıdır. Bu araçlar, DNS sunucusuna özel bir TXT kaydı sorgusu göndererek versiyon bilgisini alabilirler. Bu sorgu, genellikle version.bind adlı bir alan adı ile yapılır. Sorgunun sonucu, DNS sunucusunun versiyon bilgisini içeren bir TXT kaydıdır.
+Bu araçların kullanımına dair güncel bilgiler ve örnekler aşağıda verilmiştir:
+- dig: dig, DNS sorguları yapmak için kullanılan bir komut satırı aracıdır. dig aracını kullanarak DNS sunucu versiyon bilgisini öğrenmek için şu komutu kullanabilirsiniz:
+dig @<DNS sunucu adresi> version.bind chaos txt
+Bu komut, DNS sunucu adresine version.bind adlı bir TXT kaydı sorgusu gönderir ve sonucu ekrana yazdırır. Örneğin, ns1.bim.artuklu.edu.tr adlı bir DNS sunucusunun versiyon bilgisini öğrenmek için şu komutu kullanabilirsiniz:
+dig @ns1.bim.artuklu.edu.tr version.bind chaos txt
+Bu komutun çıktısı şöyle olabilir:
+; <<>> DiG 9.16.1-Ubuntu <<>> @ns1.bim.artuklu.edu.tr version.bind chaos txt
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 56467
+;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 0
+;; WARNING: recursion requested but not available
+;; QUESTION SECTION:
+;version.bind.			CH	TXT
+;; ANSWER SECTION:
+version.bind.		0	CH	TXT	"9.11.5-P4-5.1+deb10u5-Debian"
+;; AUTHORITY SECTION:
+version.bind.		0	CH	NS	version.bind.
+;; Query time: 32 msec
+;; SERVER: 193.140.136.5#53(193.140.136.5)
+;; WHEN: Mon Jan 22 08:13:01 +03 2024
+;; MSG SIZE  rcvd: 86
+Bu çıktıda, ANSWER SECTION bölümünde DNS sunucusunun versiyon bilgisini içeren bir TXT kaydı görülmektedir. Bu örnekte, DNS sunucusunun versiyonu "9.11.5-P4-5.1+deb10u5-Debian" olarak belirtilmiştir.
+- nslookup: nslookup, DNS sorguları yapmak için kullanılan başka bir komut satırı aracıdır. nslookup aracını kullanarak DNS sunucu versiyon bilgisini öğrenmek için şu komutu kullanabilirsiniz:
+nslookup -q=txt -class=chaos version.bind <DNS sunucu adresi>
+Bu komut, DNS sunucu adresine version.bind adlı bir TXT kaydı sorgusu gönderir ve sonucu ekrana yazdırır. Örneğin, ns1.bim.artuklu.edu.tr adlı bir DNS sunucusunun versiyon bilgisini öğrenmek için şu komutu kullanabilirsiniz:
+nslookup -q=txt -class=chaos version.bind ns1.bim.artuklu.edu.tr
+Bu komutun çıktısı şöyle olabilir:
+Server:		ns1.bim.artuklu.edu.tr
+Address:	193.140.136.5#53
+version.bind	text = "9.11.5-P4-5.1+deb10u5-Debian"
+version.bind	nameserver = version.bind.
+Bu çıktıda, DNS sunucusunun versiyon bilgisini içeren bir TXT kaydı görülmektedir. Bu örnekte, DNS sunucusunun versiyonu "9.11.5-P4-5.1+deb10u5-Debian" olarak belirtilmiştir.
+- nmap: nmap, ağ tarama ve güvenlik analizi için kullanılan bir komut satırı aracıdır. nmap aracını kullanarak DNS sunucu versiyon bilgisini öğrenmek için şu komutu kullanabilirsiniz:
+nmap <DNS sunucu adresi> -p 53 -sU -sV
+Bu komut, DNS sunucu adresine UDP port 53 üzerinden bir sorgu gönderir ve servis versiyonunu tespit etmeye çalışır. Örneğin, ns1.bim.artuklu.edu.tr adlı bir DNS sunucusunun versiyon bilgisini öğrenmek için şu komutu kullanabilirsiniz:
+nmap ns1.bim.artuklu.edu.tr -p 53 -sU -sV
+Bu komutun çıktısı şöyle olabilir:
+Starting Nmap 7.80 ( https://nmap.org ) at 2024-01-22 08:15 +03
+Nmap scan report for ns1.bim.artuklu.edu.tr (193.140.136.5)
+Host is up (0.032s latency).
+PORT   STATE SERVICE VERSION
+53/udp open  domain  ISC BIND 9.11.5-P4-5.1+deb10u5-Debian (Debian Linux)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 2.13 seconds
+Bu çıktıda, DNS sunucusunun versiyon bilgisini içeren bir servis versiyonu görülmektedir. Bu örnekte, DNS sunucusunun versiyonu "ISC BIND 9.11.5-P4-5.1+deb10u5-Debian (Debian Linux)" olarak belirtilmiştir.
