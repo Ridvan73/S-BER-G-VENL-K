@@ -1,0 +1,25 @@
+Hedef Sisteme Ait Ağ Haritasının Belirlenmesi
+Hedef sisteme ait ağ haritasının belirlenmesi, hedef sistemin IP adresini, ağ cihazlarının IP adreslerini, ağ trafiğinin kaynak ve hedef adreslerini ve ağ güvenlik protokollerini gösteren bir grafik veya tablodur. Bu harita, sızma testlerinin amacını, yöntemini ve sonuçlarını anlamak için önemlidir.
+Sızma testleri, bir sistemdeki güvenlik açıklarını bulmak ve değerlendirmek için kullanılan bir tekniktir. Sızma testleri, sistemdeki kritik bileşenleri (örneğin sunucu, veritabanı, web sitesi vb.) farklı yöntemlerle deneyerek güvenlik açıklarını tespit eder. Sızma testleri sonucunda elde edilen güvenlik açıkları, sistemdeki zayıf noktaları gösterir.
+Sızma testleri yapmak için çeşitli araçlar kullanılabilir. Bunlardan bazıları şunlardır:
+- traceroute: Bu araç, bir sistemden başka bir sisteme giden yolların uzunluğunu ve gecikmelerini gösterir. Bu sayede, hangi ağ cihazlarının sızdırıcı olduğunu veya engel olduğunu belirlemek mümkündür.
+- tcptraceroute: Bu araç, traceroute ile benzer şekilde yolların uzunluğunu ve gecikmelerini gösterir ancak daha fazla detay sağlar. Örneğin, her hopta hangi cihazın hangi protokolü kullandığını veya hangi portu açtığını gösterir.
+- visual traceroute: Bu araç, web üzerinden sitelerin IP adreslerini ve yollarını gösterir. Bu sayede, farklı ülkelerden veya bölgelerden bir hedefe aynı anda traceroute atmak mümkündür.
+- server sniff: Bu araç, web sitesinden gelen HTTP isteklerinin içeriğini ve kaynak adreslerini gösterir. Bu sayede, web sitesinin kim tarafından yönetildiği veya hangi cihazlardan erişildiği anlaşılabilir.
+Bu araçları kullanarak hedef sisteme giden yolların belirlenmesi için şu adımları izleyebilirsiniz:
+1. Adım: Traceroute kullanarak hedef sisteme giden yolların belirlenmesi
+    - root@bt:/# traceroute cnn.com
+    - Bu komutu çalıştırarak cnn.com sitesine ulaşmak için en uzun yolunuzu görebilirsiniz.
+    - Eğer cnn.com sitesine ulaşamazsanız veya çok fazla gecikme alırsanız (örneğin 10 saniye veya daha fazla), bu siteyi sızdırıcı olarak kabul edebilirsiniz.
+    - Eğer cnn.com sitesine ulaşabiliyorsanız ancak çok fazla hop varsa (örneğin 20 veya daha fazla), bu siteyi engelleyici olarak kabul edebilirsiniz.
+2. Adım: Aynı hedefe tcptraceroute ile sorgu gönderelim ve aradaki hopları görelim
+    - root@bt:/# tcptraceroute cnn.com
+    - Bu komutu çalıştırarak cnn.com sitesine ulaşmak için en az sayıda hoptan geçtiğiniz yolunuzu görebilirsiniz.
+    - Eğer cnn.com sitesine ulaşabiliyorsanız ancak çok fazla hop varsa (örneğin 20 veya daha fazla), bu siteyi engelleyici olarak kabul edebilirsiniz.
+    - Eğer cnn.com sitesine ulaşabiliyorsanız ve az sayıda hop varsa (örneğin 10 veya daha az), bu siteyi sızdırıcı olarak kabul edebilirsiniz.
+    - Eğer cnn.com sitesine ulaşamazsanız veya çok fazla gecikme alırsanız (örneğin 10 saniye veya daha fazla), bu siteyi engelleyici olarak kabul edebilirsiniz.
+    - Bu komutun çıktısında, her hopta hangi IP adresinin hangi portu açtığını veya kapattığını görebilirsiniz. Bu sayede, hangi ağ cihazlarının hangi protokolleri kullandığını veya hangi güvenlik önlemlerini aldığını anlayabilirsiniz.
+3. Adım: http://just-traceroute.com/ sitesini kullanarak farklı ülkelerden bir hedefe aynı anda traceroute atmak
+    - Bu siteyi ziyaret ederek, dünyanın farklı yerlerinden bir hedefe aynı anda traceroute atabilirsiniz.
+    - Bu sayede, hedef sistemin hangi ülkelere veya bölgelere daha yakın veya uzak olduğunu, hangi ülke veya bölge ağlarının hedef sisteme erişimini kolaylaştırdığını veya zorlaştırdığını görebilirsiniz.
+    - Bu siteyi kullanarak, hedef sistemin coğrafi konumunu, ağ altyapısını ve güvenlik durumunu daha iyi anlayabilirsiniz.
