@@ -1,0 +1,10 @@
+Nmap NSE ile SMB Dosya paylaşımlarını tespit etmek
+SMB dosya paylaşımlarını tespit etmek için Nmap NSE (Nmap Scripting Engine) kullanabilirsiniz. Nmap NSE, Nmap'in işlevselliğini genişleten bir araçtır. Nmap NSE ile ağdaki sistemlerin SMB protokolü ile paylaştığı dosya ve dizinleri, erişim haklarını ve diğer bilgileri öğrenebilirsiniz. Bu sayede, hassas verilere ulaşmak veya sistemlere saldırmak için fırsatlar bulabilirsiniz.
+Bu uygulamada kali Linux kullanılmıştır. Kali Linux, siber güvenlik testleri için özel olarak tasarlanmış bir Linux dağıtımıdır. Kali Linux, Nmap NSE dahil olmak üzere birçok güvenlik aracını içerir. Kali Linux'u https://www.backtrack-linux.org/ adresinden indirebilirsiniz.
+Uygulamanın adımları şöyle:
+1. Adım: Hedef ağdaki sistemlere yönelik SMB paylaşım taraması yapmak. Bu adımda, 6.6.6.90-99 IP aralığındaki sistemlerin SMB paylaşımlarını listelemek için smb-enum-shares isimli bir Nmap NSE scripti kullanacağız. Bu script, SMB protokolü ile paylaşılan dosya ve dizinlerin isimlerini, anonim erişim durumlarını ve mevcut kullanıcı erişim haklarını gösterir. Scripti çalıştırmak için aşağıdaki komutu kullanabilirsiniz:
+root@kali:~# nmap 6.6.6.90-99 --script=smb-enum-shares -PN -p 139,445 -n
+Bu komutta, -PN seçeneği ping atlamayı, -p 139,445 seçeneği SMB protokolünün kullandığı portları, -n seçeneği ise DNS çözümlemesini devre dışı bırakmayı sağlar.
+2. Adım: Read/Write haklarına sahip paylaşım bulmak. Bu adımda, 6.6.6.100-150 IP aralığındaki sistemlerin SMB paylaşımlarını listelemek için yine smb-enum-shares scriptini kullanacağız. Ancak bu sefer, sadece okuma ve yazma haklarına sahip olan paylaşımları görmek için scriptin access parametresini rw olarak ayarlayacağız. Bu sayede, hassas verileri okuyabileceğimiz veya zararlı yazılımlar bırakabileceğimiz paylaşımları tespit edebileceğiz. Scripti çalıştırmak için aşağıdaki komutu kullanabilirsiniz:
+root@kali:~# nmap 6.6.6.100-150 --script=smb-enum-shares --script-args=access=rw -PN -p 139,445 -n
+Bu komutta, --script-args=access=rw seçeneği scriptin parametresini belirler.
