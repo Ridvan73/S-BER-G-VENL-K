@@ -1,0 +1,123 @@
+Nmap, ağ tarama ve zafiyet tespiti için kullanılan açık kaynaklı bir araçtır. Nmap ile hedef sistemlerin açık portlarını, işletim sistemlerini, çalışan servisleri ve güvenlik açıklarını tespit edebilirsiniz. Nmap, farklı tarama yöntemleri sunar. Bunlardan bazıları şunlardır:
+- TCP SYN taraması (-sS): Bu tarama yöntemi, hedef sistemin portlarına TCP SYN paketleri gönderir ve gelen yanıtlara göre portların durumunu belirler. Bu yöntem, hızlı, güvenilir ve gizli bir tarama sağlar. TCP SYN taraması yapmak için -sS parametresini kullanabilirsiniz. Örneğin, nmap -sS cnn.com komutu, cnn.com sitesinin portlarını TCP SYN taraması ile kontrol eder.
+- TCP ACK taraması (-sA): Bu tarama yöntemi, hedef sistemin portlarına TCP ACK paketleri gönderir ve gelen yanıtlara göre portların durumunu belirler. Bu yöntem, hedef sistemin güvenlik duvarı kurallarını tespit etmek için kullanılabilir. TCP ACK taraması yapmak için -sA parametresini kullanabilirsiniz. Örneğin, nmap -sA cnn.com komutu, cnn.com sitesinin portlarını TCP ACK taraması ile kontrol eder.
+- UDP taraması(-sU): Bu tarama yöntemi, hedef sistemin portlarına UDP paketleri gönderir ve gelen yanıtlara göre portların durumunu belirler. Bu yöntem, TCP tabanlı olmayan servisleri tespit etmek için kullanılabilir. UDP taraması yapmak için -sU parametresini kullanabilirsiniz. Örneğin, nmap -sU cnn.com komutu, cnn.com sitesinin portlarını UDP taraması ile kontrol eder.
+Bu bilgiler ışığında,  güncel bilgilerle uygulama üzerinden detaylıca açıklamak gerekirse, şöyle yapabiliriz:
+1.Adım: Hedef sistemin (cnn.com) 21 portuna TCP SYN paketi göndererek hedefin ayakta olup olmadığını görelim. Hedef sistemin 21 portuna erişim olmadığı için hedefin down olduğunu görmemiz beklenmektedir. Bu adım için şu komutu kullanabiliriz:
+root@pentest09:/home/rıdvan# nmap -sn -PS21 cnn.com
+Bu komut, cnn.com sitesinin 21 portunu TCP SYN paketi ile pingler ve hedefin ayakta olup olmadığını gösterir. Eğer hedef down ise, şöyle bir çıktı alırız:
+Note: Host seems down. If it is really up, but blocking our ping probes, try -Pn
+Nmap done: 1 IP address (0 hosts up) scanned in 3.06 seconds
+Bu çıktı, hedefin down olduğunu veya ping paketlerini engellediğini gösterir. Eğer hedef up ise, şöyle bir çıktı alırız:
+Nmap scan report for cnn.com (151.101.65.67)
+Host is up (0.012s latency).
+Other addresses for cnn.com (not scanned): 151.101.129.67 151.101.193.67 151.101.1.67
+rDNS record for 151.101.65.67: 151-101-65-67.rev.cloud.scaleway.com
+Nmap done: 1 IP address (1 host up) scanned in 0.18 seconds
+Bu çıktı, hedefin up olduğunu ve IP adresi, ters DNS kaydı gibi bilgileri gösterir.
+2.Adım: Hedef sistemin (cnn.com) 80 portuna TCP SYN paketi göndererek hedefin ayakta olup olmadığını görelim. Hedef sistemin 80 portuna erişim olduğu için hedefin up olduğunu görmemiz beklenmektedir. Bu adım için şu komutu kullanabiliriz:
+root@pentest09:/home/rıdvan# nmap -sn -PS80 cnn.com
+Bu komut, cnn.com sitesinin 80 portunu TCP SYN paketi ile pingler ve hedefin ayakta olup olmadığını gösterir. Eğer hedef down ise, birinci adımdaki gibi bir çıktı alırız. Eğer hedef up ise, şöyle bir çıktı alırız:
+Nmap scan report for cnn.com (151.101.65.67)
+Host is up (0.012s latency).
+Other addresses for cnn.com (not scanned): 151.101.129.67 151.101.193.67 151.101.1.67
+rDNS record for 151.101.65.67: 151-101-65-67.rev.cloud.scaleway.com
+PORT   STATE SERVICE
+80/tcp open  http
+Nmap done: 1 IP address (1 host up) scanned in 0.19 seconds
+Bu çıktı, hedefin up olduğunu ve 80 portunun açık olduğunu ve http servisinin çalıştığını gösterir.
+3.Adım: Hedef sistemin (cnn.com) 22 portuna TCP ACK paketi göndererek hedefin ayakta olup olmadığını görelim. Hedef sistemin 22 portuna erişim olmadığı için hedefin down olduğunu görmemiz beklenmektedir. Bu adım için şu komutu kullanabiliriz:
+root@pentest09:/home/rıdvan# nmap -sn -PA22 cnn.com
+Bu komut, cnn.com sitesinin 22 portunu TCP ACK paketi ile pingler ve hedefin ayakta olup olmadığını gösterir. Eğer hedef down ise, birinci adımdaki gibi bir çıktı alırız. Eğer hedef up ise, şöyle bir çıktı alırız:
+Nmap scan report for cnn.com (151.101.65.67)
+Host is up (0.012s latency).
+Other addresses for cnn.com (not scanned): 151.101.129.67 151.101.193.67 151.101.1.67
+rDNS record for 151.101.65.67: 151-101-65-67.rev.cloud.scaleway.com
+PORT   STATE    SERVICE
+22/tcp filtered ssh
+Nmap done: 1 IP address (1 host up) scanned in 0.18 seconds
+Bu çıktı, hedefin up olduğunu ve 22 portunun filtreli olduğunu ve ssh servisinin çalışmadığını gösterir.
+4.Adım: Hedef sistemin (cnn.com) 80 portuna TCP ACK paketi göndererek hedefin ayakta olup olmadığını görelim. Hedef sistemin 80 portuna erişim olduğu ve ACK paketlerine cevap verdiği için hedefin up olduğunu görmemiz beklenmektedir. Bu adım için şu komutu kullanabiliriz:
+root@pentest09:/home/rıdvan# nmap -sn -PA80 cnn.com
+Bu komut, cnn.com sitesinin 80 portunu TCP ACK paketi ile pingler ve hedefin ayakta olup olmadığını gösterir. Eğer hedef down ise, birinci adımdaki gibi bir çıktı alırız. Eğer hedef up ise, şöyle bir çıktı alırız:
+Nmap scan report for cnn.com (151.101.65.67)
+Host is up (0.012s latency).
+Other addresses for cnn.com (not scanned): 151.101.129.67 151.101.193.67 151.101.1.67
+rDNS record for 151.101.65.67: 151-101-65-67.rev.cloud.scaleway.com
+PORT   STATE    SERVICE
+80/tcp unfiltered http
+Nmap done: 1 IP address (1 host up) scanned in 0.19 seconds
+Bu çıktı, hedefin up olduğunu ve 80 portunun filtrelenmediğini ve http servisinin çalıştığını gösterir.
+5.Adım: UDP ping genelde sistemin ayakta olup olmadığını tesbit etmede başarılı değildir. Tercih edilmez. UDP ping için ilgili nmap parametresi -PU şeklindedir. Bu adım için şu komutu kullanabiliriz:
+root@pentest09:/home/rıdvan# nmap -sn -PU53 cnn.com
+Bu komut, cnn.com sitesinin 53 portunu UDP paketi ile pingler ve hedefin ayakta olup olmadığını gösterir. Eğer hedef down ise, birinci adımdaki gibi bir çıktı alırız. Eğer hedef up ise, şöyle bir çıktı alırız:
+Nmap scan report for cnn.com (151.101.65.67)
+Host is up (0.012s latency).
+Other addresses for cnn.com (not scanned): 151.101.129.67 151.101.193.67 151.101.1.67
+rDNS record for 151.101.65.67: 151-101-65-67.rev.cloud.scaleway.com
+PORT   STATE         SERVICE
+53/udp open|filtered domain
+Nmap done: 1 IP address (1 host up) scanned in 0.20 seconds
+Bu çıktı, hedefin up olduğunu ve 53 portunun açık veya filtreli olduğunu ve domain servisinin çalıştığını gösterir.
+UDP ping, TCP ping kadar güvenilir değildir, çünkü UDP paketlerine cevap vermek zorunlu değildir. Bu yüzden, UDP portlarının durumunu belirlemek için -sU parametresi ile UDP taraması yapmak daha iyidir.
+Nmap Kullanarak TCP/UDP Port Tarama
+Nmap, ağ taraması yaparak ağlar ve ana bilgisayarlar hakkında bilgi edinmek için kullanılan açık kaynaklı bir araçtır. Nmap ile farklı port tarama türleri kullanabilirsiniz, bunlar TCP segmentleri, UDP datagramları veya ICMP paketleri üzerinden olabilir. Ayrıca, güvenlik duvarları tarafından tespit edilmeleri zor olacak şekilde gizli bir şekilde tarama yapılmasına izin verir.
+Nmap ile port tarama yapmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Nmap kullanarak asaguvenlik.com sitesinin TCP 21,80,443 portlarını tarayalım. Bu portlar FTP, HTTP ve SSL protokollerini kullanır. Bu tarama için -sS parametresini kullanacağız, bu parametre hedefe TCP SYN scan yapılacağını gösterir. TCP SYN scan, bağlantı kurmadan portların durumunu belirlemek için kullanılan hızlı ve etkili bir tarama türüdür. Komutumuz şöyle olacak:
+root@pentest09:~# nmap asaguvenlik.com -p 80, 21, 443 -sS
+Bu komutu çalıştırdığımızda, aşağıdaki gibi bir çıktı alacağız:
+Starting Nmap 7.91 ( https://nmap.org ) at 2024-01-22 06:22 EET
+Nmap scan report for asaguvenlik.com (185.122.13.218)
+Host is up (0.11s latency).
+rDNS record for 185.122.13.218: mail.asaguvenlik.com
+PORT    STATE  SERVICE
+21/tcp  open   ftp
+80/tcp  open   http
+443/tcp closed https
+Nmap done: 1 IP address (1 host up) scanned in 0.33 seconds
+Bu çıktıda, hedef sistemin IP adresi, ters DNS kaydı, taranan portların numarası, durumu ve servisi görülebilir. Port durumları, portların açık, kapalı veya filtreli olup olmadığını gösterir. Açık portlar, bağlantı kurulabilecek portlardır. Kapalı portlar, bağlantı kurulamayacak portlardır. Filtreli portlar, bir güvenlik duvarı tarafından engellenen portlardır. Bu örnekte, 21 ve 80 numaralı portlar açık, 443 numaralı port kapalı görünmektedir.
+2. Adım: Nmap kullanarak 8.8.8.8 IP adresinin UDP 53 portunu tarayalım. Bu port DNS protokolünü kullanır. Bu tarama için -sU parametresini kullanacağız, bu parametre hedefe UDP scan yapılacağını gösterir. UDP scan, UDP protokolü kullanan portların durumunu belirlemek için kullanılan bir tarama türüdür. Komutumuz şöyle olacak:
+root@pentest09:~# nmap 8.8.8.8 -p 53 -sU
+Bu komutu çalıştırdığımızda, aşağıdaki gibi bir çıktı alacağız:
+Starting Nmap 7.91 ( https://nmap.org ) at 2024-01-22 06:22 EET
+Nmap scan report for dns.google (8.8.8.8)
+Host is up (0.011s latency).
+PORT   STATE         SERVICE
+53/udp open|filtered domain
+Nmap done: 1 IP address (1 host up) scanned in 0.92 seconds
+Bu çıktıda, hedef sistemin IP adresi, taranan portun numarası, durumu ve servisi görülebilir. Port durumu, portun açık mı yoksa filtreli mi olduğundan emin olamadığımızı gösterir. Bu durum, açık portların yanıt vermediği tarama türleri için oluşur. Biz emin olmak için -sV parametresini kullanacağız, bu parametre hedefe versiyon tespiti yapılacağını gösterir. Versiyon tespiti, portların çalıştırdığı servislerin ve işletim sistemlerinin sürümlerini belirlemek için kullanılan bir özelliktir. Komutumuz şöyle olacak:
+root@pentest09:~# nmap 8.8.8.8 -p 53 -sU -sV
+Bu komutu çalıştırdığımızda, aşağıdaki gibi bir çıktı alacağız:
+Starting Nmap 7.91 ( https://nmap.org ) at 2024-01-22 06:22 EET
+Nmap scan report for dns.google (8.8.8.8)
+Host is up (0.011s latency).
+PORT   STATE SERVICE VERSION
+53/udp open  domain  Google Public DNS
+Service Info: Host: dns.google
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 1.23 seconds
+Bu çıktıda, portun açık olduğunu ve Google Public DNS servisini çalıştırdığını görebiliriz. Ayrıca, servis bilgisi ve versiyon tespiti sonucu da görüntülenir.
+Nmap Kullanarak Çalışan Servis Sürümlerini Belirleme
+Nmap, ağ tarama ve zafiyet tespiti için kullanılan açık kaynaklı bir araçtır. Nmap üzerinde bulunan modüller sayesinde port taraması, servis keşfi, versiyon ve işletim sistemi tespiti gerçekleştirebilir. Nmap'i kullanabilmek için komut satırı arabirimlerine aşina olmanız gerekir. Temel nmap komutu oluştururken nmap {tarama türü} {opsiyonlar} {hedef} dizilimi temel alınır.
+Nmap ile çalışan servis sürümlerini belirlemek için -sV opsiyonunu kullanabilirsiniz. Bu opsiyon, hedef portlara özel sorgular göndererek servislerin isimlerini, sürümlerini ve diğer bilgilerini tespit etmeye çalışır. Örneğin, nmap google.com -p 80 -sV komutu, google.com domaininin TCP/80 portunda çalışan servisi belirlemeye çalışır. Bu komutun çıktısı şöyle olabilir:
+Starting Nmap 7.91 ( https://nmap.org ) at 2024-01-22 10:44 +03
+Nmap scan report for google.com (142.250.185.238)
+Host is up (0.021s latency).
+Other addresses for google.com (not scanned): 2a00:1450:4017:80c::200e
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Google httpd 2.0 (GFE)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 6.77 seconds
+Bu çıktıda, TCP/80 portunun açık olduğu, servisin isminin http olduğu, sürümünün Google httpd 2.0 (GFE) olduğu ve işletim sisteminin Linux olduğu görülebilir. Servis sürümü tespiti, hedef sistemin güvenlik zafiyetlerini belirlemek için önemli bir adımdır.
+Nmap Kullanarak Belirli IP aralığındaki belirli Port Aralığını Tarama
+Nmap, ağ güvenliği testlerinde yaygın olarak kullanılan güçlü bir araçtır. Nmap ile birçok tarama işlemi gerçekleştirebilir, hedef sistemlerdeki açık portları, servisleri, işletim sistemlerini ve zafiyetleri tespit edebilirsiniz. 
+Nmap ile Belirli IP aralığındaki belirli port aralığını taramak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Aşağıdaki çıktıdaki IP adresinin 1 ile 3389 arasındaki TCP portlarını tarayalım. Nmap ön tanımlı olarak taramaya geçmeden önce hedefin ayakta olup olmadığını tesbit etmek için ping scan işlemi yapar. Bunu iptal etmek için -PN parametresini kullandık.
+root@pentest09:~# nmap 208.91.3.169 -p 1-3389 --open -PN
+Bu komut, 208.91.3.169 IP adresinin 1 ile 3389 arasındaki portlarını TCP SYN taraması yaparak kontrol eder. -PN parametresi, ping atlamayı sağlar. --open parametresi, sadece açık portları gösterir.
+Tarama sonucunda, bu IP adresinde 80, 443 ve 8443 numaralı portların açık olduğunu görebilirsiniz. Bu portlar, genellikle web servisleri için kullanılır.
+2. Adım: Tüm portları taramak için -p- veya -p 1-65536 şeklinde kullanılabilir.
+root@pentest09:~# nmap 85.95.238.173 -p- --open
+Bu komut, 85.95.238.173 IP adresinin tüm portlarını TCP SYN taraması yaparak kontrol eder. --open parametresi, sadece açık portları gösterir.
+Tarama sonucunda, bu IP adresinde 22, 80, 443, 8080 ve 8443 numaralı portların açık olduğunu görebilirsiniz. Bu portlar, SSH, web servisleri ve uygulama sunucuları için kullanılır.
