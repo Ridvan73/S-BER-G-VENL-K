@@ -1,0 +1,191 @@
+İşletim Sistemine Kablosuz Ağ Adaptörünün Tanıtılması
+USB kablosuz ağ adaptörünü Windows işletim sisteminde tanıtmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: USB kablosuz ağ adaptörünü boş bir USB portuna takın. Windows, adaptörü otomatik olarak tanımaya çalışacaktır. Eğer tanımazsa, adaptörünüzün marka ve modelini belirleyin ve uygun sürücüyü indirin. 
+2. Adım: Kablosuz ağ bağdaştırıcınızın tanındığını kontrol etmek için Ayarlar > Ağ ve İnternet > Wi-Fi yolunu izleyin. Wi-Fi açık olmalı ve kullanılabilir ağlar listelenmelidir. Eğer ağ bağdaştırıcınız görünmüyorsa, Aygıt Yöneticisi'ni açın ve Ağ Bağdaştırıcıları bölümünü genişletin. Kablosuz ağ bağdaştırıcınızın adında kablosuz geçen bir bağdaştırıcı arayın. Eğer bağdaştırıcı görünüyorsa, sağ tıklayın ve Etkinleştir seçeneğini seçin. Eğer bağdaştırıcı görünmüyorsa, sürücü kurulumunda bir sorun olabilir. Sürücüyü yeniden kurmayı veya güncellemeyi deneyin.
+3. Adım: Bağlanmak istediğiniz kablosuz ağı seçin ve parolasını girin. Parolanızı unuttuysanız, yönlendiricinizin üzerinde veya altında bulunan etikette yazılı olabilir. Eğer parolanızı değiştirmek isterseniz, yönlendiricinizin web arayüzüne giriş yapmanız gerekir. Bu işlem için yönlendiricinizin marka ve modeline göre farklı adımlar izlemeniz gerekebilir.
+4. Adım: Kablosuz ağ bağdaştırıcınızın özelliklerini ve durumunu görmek için Aygıt Yöneticisi'ni açın ve Ağ Bağdaştırıcıları bölümünü genişletin. Kablosuz ağ bağdaştırıcınızı sağ tıklayın ve Özellikler seçeneğini seçin. Burada bağdaştırıcınızın sürücüsü, hızı, gücü, IP adresi, MAC adresi gibi bilgileri görebilirsiniz. Ayrıca, bağdaştırıcınızın ayarlarını değiştirebilir, sorun giderme yapabilir veya sürücüyü güncelleyebilirsiniz.
+5. Adım: Kablosuz ağ bağdaştırıcınızın injection desteğini test etmek için, bir Linux dağıtımı (örneğin Kali Linux) kullanmanız gerekir. Windows'ta injection yapmak mümkün değildir. Linux dağıtımını bir sanal makineye veya USB belleğe kurabilirsiniz. Linux dağıtımını çalıştırdıktan sonra, aşağıdaki komutları kullanarak injection testi yapabilirsiniz:
+# Kablosuz ağ bağdaştırıcınızın adını öğrenmek için
+iwconfig
+# Kablosuz ağ bağdaştırıcınızı izleme moduna almak için
+airmon-ng start wlan0 # wlan0 yerine bağdaştırıcınızın adını yazın
+# Injection testi yapmak için
+aireplay-ng -9 wlan0mon # wlan0mon yerine izleme modundaki bağdaştırıcınızın adını yazın
+Injection testi sonucunda, enjekte edilen paketlerin yüzdesini görebilirsiniz. Eğer yüzde 0 ise, bağdaştırıcınız injection desteklemiyor demektir. Eğer yüzde 100 ise, bağdaştırıcınız injection destekliyor demektir. Eğer yüzde 0 ile 100 arasında bir değer ise, bağdaştırıcınızın injection desteği kısmi veya sınırlı olabilir.
+Wifi Ağ Adaptörünü Monitor Moda Geçirme
+ Monitor modu, wifi kartınızın yakındaki tüm kablosuz ağ trafiğini yakalamasına ve analiz etmenize olanak tanır. Bu mod, wifi ağlarının güvenliğini test etmek veya araştırmak için kullanılabilir. Ancak, monitor modunda wifi kartınız normal bir istemci gibi çalışmaz, yani herhangi bir ağa bağlanamaz veya internete erişemez.
+Uygulama üzerinden detaylıca açıklamak gerekirse;
+- Uygulamanızı açın ve wifi kartınızı seçin. Eğer birden fazla wifi kartınız varsa, monitor modunu destekleyen birini seçmeniz gerekir.
+- Wifi kartınızı seçtikten sonra, sağ tıklayın ve özelliklerini açın. Özellikler penceresinde, gelişmiş sekmesine tıklayın ve monitor modunu etkinleştirmek için uygun seçeneği bulun. Bu seçenek, wifi kartınızın modeline ve sürücüsüne göre değişebilir. Örneğin, bazı wifi kartlarında "Network Type" veya "Wireless Mode" gibi bir seçenek olabilir. Bu seçeneği "Monitor" veya "Promiscuous" olarak ayarlayın ve değişiklikleri kaydedin.
+- Wifi kartınızın monitor moduna geçtiğini kontrol etmek için, komut istemini açın ve iwconfig komutunu yazın. Bu komut, wifi kartınızın durumunu ve modunu gösterir. Eğer monitor modunda ise, "Mode: Monitor" yazısını göreceksiniz.
+- Monitor modunda wifi kartınızla paket yakalamak için, airmon-ng gibi bir araç kullanabilirsiniz. Bu araç, wifi kartınızı belirli bir kanala ayarlamanıza ve yakaladığınız paketleri kaydetmenize olanak tanır. airmon-ng aracını kullanmak için, komut istemini açın ve airmon-ng start <wifi kartı adı> komutunu yazın. Örneğin, wifi kartınızın adı wlan1 ise, airmon-ng start wlan1 yazın. Bu komut, wifi kartınızı monitor moduna alır ve mon0 gibi yeni bir arayüz oluşturur. Bu arayüz, paket yakalamak için kullanılır.
+- airmon-ng aracını çalıştırdığınızda, bazı uyarılar alabilirsiniz. Örneğin, dhclient veya dhclient3 gibi bazı süreçlerin monitor modunu etkileyebileceği konusunda uyarılabilirsiniz. Bu süreçleri sonlandırmak için, killall dhclient veya killall dhclient3 gibi komutları kullanabilirsiniz. Bu komutlar, belirtilen süreçleri durdurur. Daha sonra, airmon-ng aracını tekrar çalıştırabilirsiniz.
+- Monitor modundan çıkmak için, airmon-ng stop <arayüz adı> komutunu kullanabilirsiniz. Örneğin, airmon-ng stop mon0 yazarsanız, mon0 arayüzünü durdurur ve wifi kartınızı normal moda geri döndürür.
+Gizli Olarak Ayarlanmış Kablosuz Ağların Keşfi
+Gizli olarak ayarlanmış kablosuz ağları keşfetmek ve bunların güvenlik açıklarını bulmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Gizli ESSID değerine sahip kablosuz ağları bulmak için önce kablosuz kartınızı izleme moduna almanız gerekir. Bunu yapmak için airmon-ng aracını kullanabilirsiniz. Örneğin, kablosuz kartınız wlan1 ise, aşağıdaki komutu çalıştırın:
+root@bt:~# airmon-ng start wlan1
+Bu komut, wlan1mon adında yeni bir izleme arayüzü oluşturacaktır. Bu arayüzü kullanarak, airodump-ng aracıyla tüm kablosuz ağları tarayabilirsiniz. Örneğin, aşağıdaki komutu çalıştırın:
+root@bt:~# airodump-ng wlan1mon
+Bu komut, yakalanan tüm kablosuz ağları bir tablo halinde gösterecektir. Tabloda, ağların BSSID (MAC adresi), kanal, güç, şifreleme, ESSID (ağ adı) gibi bilgileri yer alacaktır. ESSID değeri gizli olan ağlar, ESSID sütununda <length: x> şeklinde görünecektir. Burada x, ESSID'nin karakter sayısıdır. Örneğin, <length: 8> yazan bir ağ, 8 karakterli bir ESSID'ye sahiptir.
+Alternatif olarak, NetSpot veya Kismet gibi grafik arayüzlü araçlar da kullanabilirsiniz. Bu araçlar, kablosuz ağları görsel olarak analiz etmenize ve gizli ESSID'leri bulmanıza yardımcı olabilirler.
+2. Adım: Gizli ESSID değerini öğrenmek için, ilgili ağa bağlı bir istemci bulmanız ve onunla bir bağlantı kurmanız gerekir. Bunu yapmak için, airodump-ng aracını, belirli bir BSSID ve kanal ile çalıştırmalısınız. Örneğin, BSSID'si 00:13:49:E8:E7:50 ve kanalı 11 olan bir ağ için, aşağıdaki komutu çalıştırın:
+root@bt:~# airodump-ng -c 11 --bssid 00:13:49:E8:E7:50 wlan1mon
+Bu komut, sadece ilgili ağı ve ona bağlı istemcileri gösterecektir. İstemcilerin MAC adresleri, STATION sütununda yer alacaktır. Örneğin, 44:D8:84:B9:43:53 MAC adresine sahip bir istemci bulduysanız, bunu not edin.
+3. Adım: Gizli ESSID değerini elde etmek için, istemciyi ağdan koparıp tekrar bağlanmasını sağlamalısınız. Bunu yapmak için, aireplay-ng aracını kullanarak, istemciye deauthentication saldırısı yapabilirsiniz. Örneğin, aşağıdaki komutu çalıştırın:
+root@bt:~# aireplay-ng -0 40 -a 00:13:49:E8:E7:50 -c 44:D8:84:B9:43:53 wlan1mon
+Bu komut, istemciye 40 tane deauthentication paketi gönderecektir. Bu paketler, istemciyi ağdan koparacaktır. İstemci tekrar ağa bağlanmaya çalışırken, ESSID değerini göndermek zorunda kalacaktır.
+4. Adım: İstemcinin tekrar ağa bağlanmasını beklerken, airodump-ng aracını çalıştırmaya devam edin. ESSID değeri, airodump-ng tarafından yakalanacak ve tabloda gösterilecektir. Örneğin, ESSID değeri "GizliAg" olan bir ağ bulduysanız, bunu not edin.
+Ağın şifreleme anahtarını kırmak için:
+Eğer ağ, WEP şifrelemesi kullanıyorsa, aircrack-ng aracını kullanarak, yakalanan paketlerden anahtarı çıkartabilirsiniz. Örneğin, aşağıdaki komutu çalıştırın:
+root@bt:~# aircrack-ng -b 00:13:49:E8:E7:50 output.cap
+Bu komut, output.cap adlı dosyada yer alan paketleri analiz edecek ve BSSID'si 00:13:49:E8:E7:50 olan ağın WEP anahtarını bulmaya çalışacaktır. Bu işlem, yakalanan paket sayısına ve anahtarın uzunluğuna bağlı olarak değişen bir süre alabilir.
+Eğer ağ, WPA veya WPA2 şifrelemesi kullanıyorsa, aircrack-ng aracını kullanarak, yakalanan paketlerden elde edilen handshake'i (ağa bağlanma anlaşması) bir sözlük dosyası ile karşılaştırabilirsiniz. Örneğin, aşağıdaki komutu çalıştırın:
+root@bt:~# aircrack-ng -w wordlist.txt -b 00:13:49:E8:E7:50 output.cap
+Bu komut, output.cap adlı dosyada yer alan paketleri analiz edecek ve BSSID'si 00:13:49:E8:E7:50 olan ağın handshake'ini, wordlist.txt adlı sözlük dosyasında yer alan şifrelerle deneyecektir. Bu işlem, sözlük dosyasının boyutuna ve içeriğine bağlı olarak değişen bir süre alabilir.
+WPA Şifreleme Kullanılan Ağlara Yönelik Şifre Kırma
+WPA şifresini kırmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Hedef hakkında aşağıdaki bilgilere sahip olmanız gerekir: ESSID, BSSID, Channel. Bu bilgileri airodump-ng aracıyla elde edebilirsiniz. Örneğin, aşağıdaki komutu kullanarak wlan1 isimli ağ adaptörünüzle etraftaki kablosuz ağları tarayabilirsiniz.
+root@bt:~# airodump-ng wlan1
+Bu komut size bir tablo gösterecektir. Tabloda, hedef ağın ESSID (ağ adı), BSSID (ağın MAC adresi) ve Channel (ağın kullandığı kanal) değerlerini bulabilirsiniz. Bu değerleri not alın.
+2. Adım: Hedef ağa yönelik bir handshake yakalamak için airodump-ng aracını tekrar kullanın. Handshake, ağa bağlanan bir istemcinin ağla yaptığı kimlik doğrulama işlemidir. Handshake'i yakalamak için aşağıdaki komutu kullanın. Burada, -c parametresi ile ağın kanalını, -w parametresi ile handshake'i kaydedeceğiniz dosyanın ismini, --bssid parametresi ile ağın MAC adresini ve son olarak da ağ adaptörünüzün ismini belirtin.
+root@bt:~# airodump-ng -c 6 -w wpa mon0 --bssid 00:23:F8:A3:CD:9F
+Bu komut, hedef ağa bağlı olan istemcileri de gösterecektir. Bu istemcilerin MAC adreslerini de not alın.
+3. Adım: Handshake'i yakalamak için ağa bağlı bir istemciyi deauth saldırısına uğratın. Bu saldırı, istemciyi ağdan kopararak yeniden bağlanmasını sağlar. Böylece, istemci yeniden bağlanırken yaptığı handshake'i yakalayabilirsiniz. Deauth saldırısı için aireplay-ng aracını kullanın. Aşağıdaki komutu kullanarak saldırıyı başlatın. Burada, -0 parametresi ile saldırının tipini, 10 parametresi ile saldırıda kaç paket göndereceğinizi, -a parametresi ile ağın MAC adresini, -c parametresi ile istemcinin MAC adresini ve son olarak da ağ adaptörünüzün ismini belirtin.
+root@bt:~# aireplay-ng -0 10 -a 00:23:F8:A3:CD:9F -c 00:1C:B3:C2:3D:F3 mon0
+Bu komut, istemciye 10 tane deauth paketi gönderecektir. Bu paketler, istemciyi ağdan kopartacak ve yeniden bağlanmasını sağlayacaktır. Bu sırada, airodump-ng aracı, handshake'i yakalayacak ve wpa.cap isimli bir dosyaya kaydedecektir.
+4. Adım: Handshake'i kırmak için aircrack-ng aracını kullanın. Bu araç, bir wordlist dosyası içindeki şifreleri tek tek deneyerek doğru olanı bulmaya çalışır. Wordlist dosyası, olası şifreleri içeren bir metin dosyasıdır. İnternetten hazır wordlist dosyaları indirebilir veya kendi wordlist dosyanızı oluşturabilirsiniz. Aircrack-ng aracını kullanmak için aşağıdaki komutu girin. Burada, -w parametresi ile wordlist dosyanızın ismini, -b parametresi ile ağın MAC adresini ve son olarak da handshake dosyanızın ismini belirtin.
+root@bt:~# aircrack-ng -w wordlist.txt -b 00:23:F8:A3:CD:9F wpa.cap
+Bu komut, wordlist dosyasındaki şifreleri sırayla deneyerek handshake ile eşleştirmeye çalışacaktır. Eğer doğru şifre wordlist dosyasında varsa, komut size şifreyi gösterecektir. Eğer yoksa, komut size "Passphrase not in dictionary" mesajını verecektir.
+Bu adımları takip ederek WPA şifreleme kullanılan bir ağın şifresini kırmaya çalışabilirsiniz. Ancak, bu yöntem çok zaman alabilir ve başarılı olma garantisi yoktur. Wordlist dosyanızın ne kadar geniş ve doğru olduğu önemlidir. Ayrıca, hedef ağa bağlı bir istemci bulmanız ve handshake yakalamanız da gereklidir. Bu nedenle, WPA şifreleme yöntemi, WEP'e göre daha güvenli ve zor kırılabilirdir.
+WPA2 Kullanılan Ağlarda Şifre 
+WPA2, kablosuz ağlarda güvenliği sağlamak için geliştirilmiş bir protokoldür. WPA2, WPA'nın geliştirilmiş bir sürümüdür ve daha güçlü bir şifreleme algoritması olan AES'i kullanır.  WPA2 kullanılan ağlarda şifre kırma, ağa bağlı bir cihazın WPA2 handshake adı verilen bir kimlik doğrulama işlemi yapmasını bekleyip, bu işlem sırasında elde edilen verileri bir sözlük saldırısı ile kırmayı içerir.
+WPA2 kullanılan ağlarda şifre kırma için aşağıdaki araçları kullanabilirsiniz:
+- Airodump-ng: Kablosuz ağları taramak ve paketleri yakalamak için kullanılan bir araçtır. 
+- Aireplay-ng: Kablosuz ağlara saldırmak için kullanılan bir araçtır. Deauthentication, fake authentication, injection gibi çeşitli saldırı yöntemleri sunar.
+- Aircrack-ng: Yakalanan paketleri analiz etmek ve şifreleri kırmak için kullanılan bir araçtır.
+WPA2 kullanılan ağlarda şifre kırma için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Hedef ağ hakkında aşağıdaki bilgilere sahip olmalısınız. Bu bilgileri airodump-ng aracı ile tarama yaparak elde edebilirsiniz. İlgili komut sudo airodump-ng wlan1 şeklindedir. Burada wlan1 kablosuz ağ adaptörünüzün ismidir. Bu ismi iwconfig komutu ile öğrenebilirsiniz.
+    - ESSID: Kablosuz ağın ismidir. Örneğin ttv1 .
+    - BSSID: Kablosuz ağın MAC adresidir. Örneğin 00:23:F8:A3:CD:9F .
+    - Client: Kablosuz ağa bağlı olan cihazların MAC adresleridir. Örneğin 00:1C:B3:C2:3D:F3 veya 4C:0F:6E:D6:8D:BF .
+    - Channel: Kablosuz ağın kullandığı kanaldır. Örneğin 6 .
+2. Adım: Hedef ağ hakkında WPA2 handshake yakalayabilmek için paket toplayıp bunları rıdvantest isimli dosyaya yazdırmalısınız. Bunun için aşağıdaki komutu kullanabilirsiniz. sudo airodump-ng --channel 6 --bssid 00:23:F8:A3:CD:9F -w rıdvantest wlan1 . Burada --channel 6 parametresi ile hedef ağın kullandığı kanalı belirtiyoruz. --bssid 00:23:F8:A3:CD:9F parametresi ile hedef ağın MAC adresini belirtiyoruz. -w rıdvantest parametresi ile yakalanan paketleri rıdvantest isimli dosyaya yazdırıyoruz. wlan1 ise kablosuz ağ adaptörümüzün ismidir.
+3. Adım: Eğer hala WPA2 handshake yakalayamadıysanız, deauthentication paketleri ile istemciyi kablosuz ağdan düşürüp tekrar WPA2 handshake yapmasını sağlayabilirsiniz. Bunun için aireplay-ng aracını kullanabilirsiniz. Aşağıdaki komutu kullanarak istemciye 100 adet deauthentication paketi gönderebilirsiniz. sudo aireplay-ng --deauth 100 -a 00:23:F8:A3:CD:9F -c 00:1C:B3:C2:3D:F3 wlan1. Burada --deauth 100 parametresi ile 100 adet deauthentication paketi gönderdiğimizi belirtiyoruz. -a 00:23:F8:A3:CD:9F parametresi ile hedef ağın MAC adresini belirtiyoruz. -c 00:1C:B3:C2:3D:F3 parametresi ile hedef istemcinin MAC adresini belirtiyoruz. wlan1 ise kablosuz ağ adaptörümüzün ismidir.
+4. Adım: Elde ettiğiniz WPA2 handshake'i bruteforce saldırısı ile kırmalısınız. Bunun için aircrack-ng aracını kullanabilirsiniz. Aşağıdaki komutu kullanarak elde ettiğiniz .cap dosyasını bir wordlist dosyası ile karşılaştırabilirsiniz. sudo aircrack-ng rıdvantest-01.cap -w /wordlistdosyasinin-yolu.txt. Burada rıdvantest-01.cap yakaladığınız paketleri içeren dosyanın ismidir. -w /wordlistdosyasinin-yolu.txt parametresi ile kullandığınız wordlist dosyasının yolunu belirtiyorsunuz. Wordlist dosyası, olası şifreleri içeren bir metin dosyasıdır. Bu dosyayı kendiniz oluşturabilir veya internetten indirebilirsiniz. Wordlist dosyası ne kadar geniş ve doğru olursa, şifreyi kırma olasılığınız o kadar artar.
+Bu adımları takip ederek WPA2 kullanılan ağlarda şifre kırma işlemini gerçekleştirebilirsiniz. Ancak bu işlemi yasal olmayan amaçlarla kullanmamanızı tavsiye ederim. Ayrıca WPA2 güvenliği kırılmış olsa bile, WPA3 gibi daha güvenli protokoller de geliştirilmektedir. Bu nedenle kablosuz ağ güvenliğinizi artırmak için şifrenizi düzenli olarak değiştirmeniz, karmaşık ve uzun şifreler kullanmanız, WPS özelliğini devre dışı bırakmanız ve WPA3 destekli cihazlara geçmeniz yararlı olabilir.
+WPA3 Kullanılan Ağlarda Şifre 
+WPA3, WPA2'nin geliştirilmiş bir versiyonudur ve şu anda en güvenli kablosuz ağ şifreleme yöntemidir. WPA3, daha güçlü bir şifreleme anahtarı olan Simetrik Şifreleme Anahtarı (SAE) kullanır. WPA3 ayrıca, halka açık ağlarda oturum açmanız gerektiğinde daha güvenli bir deneyim sağlamak için şifreli oturum açma özelliği sunar.
+WPA3 kullanılan bir ağa sızma girişiminde bulunmak için, aşağıdaki araçlara ihtiyacınız olacaktır:
+- Airodump-ng: Kablosuz ağ trafiğini yakalamak ve analiz etmek için kullanılır.
+- Aireplay-ng: Kablosuz ağlara saldırmak için kullanılır. Örneğin, deauthentication, fake authentication, injection gibi saldırılar gerçekleştirebilir.
+- Hashcat: Şifre kırma aracıdır. Farklı şifreleme yöntemlerini destekler ve GPU gücünden yararlanır.
+Adımlar şöyle olacaktır:
+1. Adım: Hedef ağ hakkında aşağıdaki bilgilere sahip olmanız gerekir:
+- ESSID: Ağın adıdır. Örneğin, ttv1
+- BSSID: Ağın MAC adresidir. Örneğin, 00:23:F8:A3:CD:9F
+- Channel: Ağın kullandığı kanaldır. Örneğin, 6
+Bu bilgileri airodump-ng aracı ile bulabilirsiniz. Aşağıdaki komutu kullanarak tüm kablosuz ağları tarayabilirsiniz:
+root@bt:~# airodump-ng wlan1
+Burada wlan1, kablosuz ağ kartınızın adıdır. Bu komutu çalıştırdığınızda, ekranda ağların listesini göreceksiniz. Hedef ağınızı bulduktan sonra, ESSID, BSSID ve Channel değerlerini not edin.
+2. Adım: Hedef ağ hakkında WPA3 handshake yakalamak için airodump-ng aracını kullanarak paket toplayın. Aşağıdaki komutu kullanarak sadece hedef ağın trafiğini yakalayabilirsiniz:
+root@bt:~# airodump-ng --channel 6 --bssid 00:23:F8:A3:CD:9F -w rıdvantest wlan1
+Burada, --channel 6, hedef ağın kanalını belirtir. --bssid 00:23:F8:A3:CD:9F, hedef ağın MAC adresini belirtir. -w rıdvantest, yakalanan paketleri rıdvantest isimli dosyaya kaydeder. wlan1, kablosuz ağ kartınızın adıdır.
+Bu komutu çalıştırdığınızda, ekranda hedef ağın ve bağlı olan istemcilerin listesini göreceksiniz. Hedef ağın yanında, WPA handshake: 00:23:F8:A3:CD:9F yazısını görmeyi umuyorsunuz. Bu, WPA3 handshake'in başarıyla yakalandığı anlamına gelir. Eğer bu yazıyı göremiyorsanız, 3. adıma geçin.
+3. Adım: Eğer hala WPA3 handshake yakalayamadıysanız, aireplay-ng aracını kullanarak deauthentication saldırısı yapabilirsiniz. Bu saldırı, bağlı olan bir istemciyi kablosuz ağdan koparır ve tekrar bağlanmasını sağlar. Bu sırada, WPA3 handshake yakalamak için airodump-ng aracını çalıştırmaya devam edin. Aşağıdaki komutu kullanarak deauthentication saldırısı yapabilirsiniz:
+root@bt:~# aireplay-ng --deauth 100 -a 00:23:F8:A3:CD:9F -c 00:1C:B3:C2:3D:F3 wlan1
+Burada, --deauth 100, 100 tane deauthentication paketi gönderir. -a 00:23:F8:A3:CD:9F, hedef ağın MAC adresini belirtir. -c 00:1C:B3:C2:3D:F3, hedef istemcinin MAC adresini belirtir. wlan1, kablosuz ağ kartınızın adıdır.
+Bu komutu çalıştırdığınızda, hedef istemci ağdan kopacak ve tekrar bağlanmaya çalışacaktır. Bu sırada, airodump-ng aracının ekranında WPA handshake: 00:23:F8:A3:CD:9F yazısını görmeyi umuyorsunuz. Eğer bu yazıyı gördüyseniz, 4. adıma geçin.
+4. Adım: Elde ettiğiniz WPA3 handshake'i hashcat aracı ile kırmak için aşağıdaki komutu kullanabilirsiniz:
+root@bt:~# hashcat -m 22000 rıdvantest-01.cap /wordlistdosyasinin-yolu.txt
+Burada, -m 22000, WPA3 şifreleme yöntemini belirtir. rıdvantest-01.cap, WPA3 handshake'in bulunduğu dosyadır. /wordlistdosyasinin-yolu.txt, şifreyi bulmak için kullanacağınız sözlük dosyasının yoludur.
+Bu komutu çalıştırdığınızda, hashcat aracı WPA3 şifresini kırmaya çalışacaktır. Bu işlem, kullanılan sözlüğün büyüklüğüne ve bilgisayarınızın performansına bağlı olarak uzun sürebilir. Eğer şifreyi bulursanız, ekranda göreceksiniz.
+WPS Destekli Ağların Keşfi ve Ağ Giriş Parolasının Bulunması
+WPS (Wi-Fi Protected Setup), kablosuz ağlara kolayca bağlanmayı sağlayan bir protokoldür. Ancak, WPS PIN kodu kırılarak ağın WPA/WPA2 şifresi elde edilebilir. Bu, ağ güvenliğini tehlikeye atar.
+WPS destekli ağlara sızmak için aşağıdaki araçları kullanabilirsiniz:
+- Airmon-ng: Kablosuz ağ kartını monitor moda almak için kullanılan bir betiktir. Monitor modu, ağ kartının tüm kablosuz trafiği yakalamasını sağlar.
+- Wash: WPS destekli kablosuz ağları bulmak için kullanılan bir araçtır. Wash, ağların BSSID, kanal, sinyal gücü, WPS sürümü ve kilit durumu gibi bilgilerini gösterir.
+- Reaver: WPS PIN kodunu kaba kuvvet yöntemiyle kırmak için kullanılan bir araçtır. Reaver, PIN kodunu bulduktan sonra ağın WPA/WPA2 şifresini de verir.
+Bu araçları kullanarak WPS destekli ağlara sızmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Kablosuz ağ kartını monitor moda almak
+root@bt:~# airmon-ng start wlan0
+Bu komut, wlan0 adlı ağ kartını monitor moda alır ve yeni bir arayüz oluşturur. Yeni arayüzün adını öğrenmek için airmon-ng komutunu tekrar çalıştırabilirsiniz. Örneğin, wlan0mon veya mon0 olabilir.
+2. Adım: WPS destekli kablosuz ağları bulmak
+root@bt:~# wash -i wlan0mon -C
+Bu komut, wlan0mon adlı monitor mod arayüzünü kullanarak WPS destekli ağları tarar. -C seçeneği, çerçeve kontrol toplamı hatalarını yoksayar. Hedefinizde “RIDVAN” kablosuz ağı varsa, bu ağın BSSID ve kanal numarasını not edin. Örneğin, BSSID = 33:22:55:22:11:2F ve CH = 9 olabilir.
+3. Adım: BSSID ve kanal numarasını bildiğimiz WPS kablosuz ağını kırmak
+root@bt:~# reaver -i wlan0mon -b 33:22:55:22:11:2F -c 9 -vv –no-nack -d 5 -f -x298
+Bu komut, wlan0mon adlı monitor mod arayüzü ile 33:22:55:22:11:2F BSSID'li ve 9. kanalda yayın yapan WPS kablosuz ağını kırmaya çalışır. -vv seçeneği, ayrıntılı çıktı verir. –no-nack seçeneği, sıra dışı paketler alındığında NACK mesajları göndermemeyi sağlar. -d seçeneği, PIN denemeleri arasındaki gecikmeyi saniye cinsinden belirler. -f seçeneği, kanal değiştirmeyi devre dışı bırakır. -x seçeneği, 10 beklenmedik başarısızlık sonrasında uyku süresini saniye cinsinden belirler.
+Bu komutu çalıştırdıktan sonra, Reaver PIN kodunu tahmin etmeye başlar. Bu işlem, ağın WPS kilit durumuna ve PIN kodunun karmaşıklığına bağlı olarak saatler sürebilir. PIN kodu bulunduğunda, Reaver ağın WPA/WPA2 şifresini de gösterir.
+Kablosuz Ağlara Yönelik DoS TESTİ
+Kablosuz ağlara yönelik DoS testleri, kablosuz ağlarda iletişimi engellemek veya ağdaki cihazların kimlik doğrulama bilgilerini ele geçirmek için yapılan saldırılardır. Bu saldırılar, airodump-ng ve aireplay-ng gibi araçlarla gerçekleştirilebilir. Airodump-ng, kablosuz ağlarda paket yakalama ve analiz etme aracıdır. Aireplay-ng ise paket enjeksiyonu ve tekrarlama yapabilen bir araçtır.
+Bu testleri yapmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Mevcut kablosuz yayın yapan cihazları bulmak için airodump-ng aracını kullanabilirsiniz. Bu araç, yakındaki tüm kablosuz ağları ve bağlı olan istemcileri gösterir. Ayrıca, ağların şifreleme türlerini, sinyal güçlerini, kanal numaralarını ve MAC adreslerini de gösterir. Airodump-ng aracını çalıştırmak için aşağıdaki komutu kullanabilirsiniz:
+root@bt:~# airodump-ng <interface>
+Burada <interface> kablosuz ağ kartınızın arayüz adıdır. Örneğin, wlan0, mon0, ath0 gibi. Bu arayüzü monitor moduna almak için airmon-ng aracını kullanabilirsiniz.
+2. Adım: Hedef seçtiğiniz kablosuz ağa yönelik DoS saldırısı yapmak için aireplay-ng aracını kullanabilirsiniz. Bu araç, deauthentication veya disassociation paketleri göndererek, ağa bağlı olan istemcilerin bağlantısını keser. Böylece, istemciler yeniden bağlanmaya çalışırken, kimlik doğrulama bilgilerini yakalayabilirsiniz. Aireplay-ng aracını çalıştırmak için aşağıdaki komutu kullanabilirsiniz:
+root@bt:~# aireplay-ng -0 <count> -a <bssid> [-c <client>] <interface>
+Burada -0 deauthentication saldırısı yapacağınızı belirtir. <count> göndereceğiniz paket sayısıdır. 0 yazarsanız sürekli paket gönderir. <bssid> hedef kablosuz ağın MAC adresidir. -c seçeneği ile belirli bir istemciye saldırabilirsiniz. Yoksa, tüm istemcilere saldırır. <interface> kablosuz ağ kartınızın arayüz adıdır.
+3. Adım: Saldırıyı yaparken, aynı zamanda internet bağlantınızı ping komutu ile kontrol edebilirsiniz. Ping komutu, bir IP adresine veya bir web sitesine ICMP paketleri göndererek, bağlantının durumunu ve gecikmesini ölçer. Ping komutunu çalıştırmak için aşağıdaki komutu kullanabilirsiniz:
+root@bt:~# ping <target>
+Burada <target> bir IP adresi veya bir web sitesi olabilir. Örneğin, 8.8.8.8 veya www.google.com gibi. Ping komutunu durdurmak için Ctrl+C tuşlarına basabilirsiniz.
+Bu adımları uyguladığınızda, hedef kablosuz ağa bağlı olan istemcilerin bağlantısı kesilecek ve internete erişemeyeceklerdir. Bu sırada, airodump-ng aracı ile kimlik doğrulama bilgilerini yakalayabilirsiniz. Bu bilgileri, aircrack-ng aracı ile şifreyi kırmak için kullanabilirsiniz.
+Sahte Kablosuz Ağ Erişim Noktası [Fake AP] Oluşturulması
+Sahte kablosuz ağ erişim noktası (Fake AP), gerçek bir kablosuz ağa benzeyen ancak aslında saldırganın kontrolünde olan bir kablosuz ağdır. Bu sayede saldırgan, bağlanan kullanıcıların internet trafiğini izleyebilir, yönlendirebilir veya değiştirebilir. Bu, ortadaki adam (man-in-the-middle) saldırısı olarak bilinen bir tekniktir.
+Sahte kablosuz ağ erişim noktası oluşturmak için Kali Linux gibi bir işletim sistemi kullanabilirsiniz. Kali Linux, dijital adli tıp ve sızma testi için tasarlanmış bir Debian türevi Linux dağıtımıdır. Kali Linux, aircrack-ng gibi birçok güvenlik aracı içerir. Aircrack-ng, kablosuz ağlara saldırmak için kullanılan bir araç setidir. Aircrack-ng içindeki airbase-ng aracı, sahte kablosuz ağ erişim noktası oluşturmak için kullanılabilir.
+Sahte kablosuz ağ erişim noktası oluşturmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Kablosuz kartınızı izleme (monitor) moduna alın. Bunu aşağıdaki komutla yapabilirsiniz:
+airmon-ng start wlan0
+Bu, izleme modunda yeni bir kablosuz arayüz, wlan0mon, başlatacaktır.
+2. Adım: Sahte kablosuz ağ erişim noktası için bir kanal seçin. Bunu aşağıdaki komutla yapabilirsiniz:
+iwconfig wlan0mon channel 6
+Bu, sahte kablosuz ağ erişim noktası için 6. kanalı kullanacaktır.
+3. Adım: Sahte kablosuz ağ erişim noktası başlatın. Bunu aşağıdaki komutla yapabilirsiniz:
+airbase-ng -c 6 -e "Free WiFi" wlan0mon
+Bu, 6. kanalı kullanarak, SSID (isim) olarak "Free WiFi" olan yeni bir kablosuz ağ erişim noktası oluşturacaktır.
+4. Adım: Müşterilerinizin sahte kablosuz ağ erişim noktası üzerinden internete bağlanabilmesi için bazı NAT kuralları ayarlayın. Bunu aşağıdaki komutlarla yapabilirsiniz:
+iptables --table nat --append POSTROUTING --out-interface eth0 -j MASQUERADE
+iptables --append FORWARD --in-interface wlan0mon -j ACCEPT
+echo 1 > /proc/sys/net/ipv4/ip_forward
+Bu komutlar, eth0 arayüzü üzerinden internete bağlı olduğunuzu varsaymaktadır. Eğer farklı bir arayüz kullanıyorsanız, eth0 yerine onu yazın.
+Ve işte bu kadar! Sahte kablosuz ağ erişim noktanız artık çalışıyor. Bağlanan kullanıcıların internet trafiğini izlemek veya değiştirmek için sslstrip veya Ettercap gibi araçlar kullanabilirsiniz. 
+Wifi Ağlarda MAC Adres Filtreleme Atlatma
+Wifi ağlarında MAC adres filtreleme atlatma, güvenlik önlemi olarak kullanılan MAC adresi ile kimlik doğrulama sistemini aşmak için yapılan bir işlemdir. Bu işlem, ağa bağlı olan bir cihazın MAC adresini taklit ederek, ağa erişim sağlamayı amaçlar. Bu işlemi yapmak için aşağıdaki araçlara ihtiyacınız olacaktır:
+- Airodump-ng: Bu araç, wifi ağlarını tarayarak, ağın BSSID, kanal, şifreleme, güç ve bağlı cihazların MAC adresleri gibi bilgilerini gösterir.
+- Macchanger: Bu araç, kendi cihazınızın MAC adresini değiştirmenizi sağlar. Böylece, ağa bağlı olan bir cihazın MAC adresini taklit edebilirsiniz.
+- Aireplay-ng: Bu araç, wifi ağlarına saldırı yapmanızı sağlar. Örneğin, ağa bağlı olan bir cihazın bağlantısını kesmek için kullanabilirsiniz.
+Bu araçları kullanarak, wifi ağlarında MAC adres filtreleme atlatma işlemini şu adımlarla yapabilirsiniz:
+1. Adım: Hedef wifi noktasının belirlenmesi ve o bağlantıdan IP alan bir clientin MAC adresinin bulunması. Bunun için airodump-ng aracını kullanabilirsiniz. Örneğin, wlan0 arayüzü ile wifi ağlarını taratmak için şu komutu kullanabilirsiniz:
+root@bt:~# airodump-ng wlan0
+Bu komut, size wifi ağlarının listesini ve bağlı cihazların listesini gösterecektir. Burada, hedef wifi noktasının BSSID, kanal ve şifreleme bilgilerini not edin. Ayrıca, o ağa bağlı olan bir cihazın MAC adresini de not edin. Bu MAC adresi, Station sütununda gösterilir.
+2. Adım: Station ile belirtilen MAC adresleri client’lara ait mac adresleridir. Bu adres alınır ve kendi sistemimize atanır. Bunun için macchanger aracını kullanabilirsiniz. Örneğin, wlan0 arayüzünün MAC adresini D8:30:62:95:9B:C1 olarak değiştirmek için şu komutu kullanabilirsiniz:
+root@bt:~# macchanger -m D8:30:62:95:9B:C1 wlan0
+Bu komut, size eski ve yeni MAC adresinizi gösterecektir. Böylece, ağa bağlı olan bir cihazın MAC adresini taklit etmiş olursunuz.
+3. Adım: Bu MAC adresini kendimize atadıktan sonra, bu clienti düşürmemiz gerekecek. Bunun için aireplay-ng aracını kullanabilirsiniz. Örneğin, hedef wifi noktasının BSSID'si 00:13:49:E8:E7:50 ve kanalı 6 ise, şu komutu kullanabilirsiniz:
+root@bt:~# aireplay-ng -0 1000 -a 00:13:49:E8:E7:50 -c D8:30:62:95:9B:C1 wlan0
+Bu komut, hedef wifi noktasına ve taklit ettiğiniz cihaza sahte deauthentication paketleri göndererek, bağlantılarını kesmeye çalışacaktır. Bu sayede, ağda bir boşluk yaratmış olursunuz.
+4. Adım: Hedef wifi noktasına artık clientlardan birine ait sahte MAC adresi ile bağlantı yapılabilir. Bunun için, wifi ağının şifresini biliyorsanız, normal bir şekilde bağlanabilirsiniz. Eğer bilmiyorsanız, wifi ağının şifresini kırmak için başka araçlar kullanmanız gerekecektir. Bu konu, bu yazının kapsamı dışındadır.
+Bu şekilde, wifi ağlarında MAC adres filtreleme atlatma işlemini yapabilirsiniz.
+Windows Sistemde Kayıtlı Wifi Parolalarının Bulunması
+Windows sistemde kayıtlı wifi parolalarını bulmak için aşağıdaki yöntemleri kullanabilirsiniz:
+- WirelessKeyView: Bu, NirSoft tarafından geliştirilen ücretsiz bir araçtır. Bu araç, Windows'un kayıtlı olduğu tüm wifi ağlarının adlarını, parolalarını, şifreleme türünü ve diğer bilgileri gösterir. Bu aracı indirip çalıştırın. Bu aracı çalıştırdığınızda, aşağıdaki gibi bir ekran göreceksiniz:
+Network Name (SSID) | Key Type | Key (Hex) | Key (Ascii)
+---------------------------------------------------------
+MyWifi              | WPA2     | 123456789 | *********
+HomeNetwork         | WPA      | abcdef012 | *********
+OfficeWifi          | WEP      | 987654321 | *********
+Burada, her wifi ağının adını, anahtar türünü (WPA, WPA2, WEP, vb.), anahtarın onaltılık (hex) ve ASCII formatlarını görebilirsiniz. Parolaları görmek için, Karakterleri Göster kutusunu işaretleyin. Parolaları kopyalamak için, ilgili satırları seçin ve Ctrl+C tuşlarına basın. Parolaları dışa aktarmak için, Dosya menüsünden HTML Raporu Oluştur veya Metin Dosyası Oluştur seçeneklerini kullanın.
+- Grafik Arayüz: Bu, Windows'un yerleşik bir özelliğidir. Bu yöntem, yalnızca şu anda bağlı olduğunuz wifi ağı için parolayı gösterir. Bu yöntemi kullanmak için, şu adımları izleyin:
+  1. Sistem tepsisindeki wifi simgesine sağ tıklayın ve Ağ ve İnternet Ayarları'nı seçin.
+  2. Wifi sekmesine gidin ve Bilinen Ağları Yönet'i tıklayın.
+  3. Bağlı olduğunuz wifi ağını bulun ve Özellikler'i tıklayın.
+  4. Güvenlik sekmesine geçin ve Parola Alanının altındaki Karakterleri Göster kutusunu işaretleyin. Bu, wifi parolanızı gösterecektir.
+- Komut İstemi: Bu, Windows'un komut satırı arayüzüdür. Bu yöntem, bilgisayarınıza kayıtlı olan tüm wifi ağlarının parolalarını gösterir. Bu yöntemi kullanmak için, şu adımları izleyin:
+  1. Başlat menüsünden Komut İstemi'ni açın veya Windows+R tuşlarına basarak Çalıştır kutusunu açın ve cmd yazın.
+  2. Aşağıdaki komutu yazın ve Enter tuşuna basın:
+  netsh wlan show profile
+  Bu, bilinen tüm wifi ağlarının listesini gösterecektir. Parolayı görmek istediğiniz ağın adını not edin.
+  3. Aşağıdaki komutu yazın ve Enter tuşuna basın. "PROFILE_NAME" kısmını önceki adımda not ettiğiniz ağ adıyla değiştirin (tırnak işaretleri olmadan).
+  netsh wlan show profile PROFILE_NAME key=clear
+  Bu komut, wifi ağı hakkında birçok bilgi gösterecektir. Güvenlik Ayarları bölümüne gidin ve Anahtar İçeriği adlı bir alanı arayın. Bu, wifi parolanızı gösterecektir.
+Bu yöntemlerden herhangi birini kullanarak, Windows sistemde kayıtlı wifi parolalarını bulabilirsiniz. 
