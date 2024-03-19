@@ -1,0 +1,22 @@
+SNMP Üzerinden Bilgi Toplama
+SNMP (Simple Network Management Protocol), ağ cihazları hakkında bilgi toplamak ve yönetmek için kullanılan bir uygulama katmanı protokolüdür. SNMP, ağ yöneticilerinin ağ performansını izlemesi, ağ problemlerini tespit etmesi ve çözmesi, ağlarda genişleme için planlama yapması gibi işlemleri kolaylaştırır.
+SNMP, üç temel bileşenden oluşur:
+- Yönetilen cihazlar: SNMP arabirimi uygulayan ağ cihazlarıdır. Örneğin, yönlendiriciler, anahtarlayıcılar, erişim sunucuları, köprüler, IP telefonlar, IP kameralar, bilgisayarlar, yazıcılar vb.
+- Ajanlar: Yönetilen cihazlarda çalışan yazılım bileşenleridir. Ajanlar, yönetim bilgilerinin yerel bilgisine sahip olur ve bu bilgileri SNMP'ye özgü bir forma dönüştürür.
+- Ağ yönetim istasyonları (NMS): Yönetilen cihazları izleyen ve kontrol eden uygulamaları çalıştıran bilgisayarlardır. NMS'ler, ağ yönetimi için gereken işlem ve bellek kaynaklarının çoğunu sağlar.
+SNMP, yönetim bilgilerini MIB (Management Information Base) adı verilen hiyerarşik bir yapıda saklar. MIB, SNMP ile yönetilen cihazlarda bulunan değişkenleri tanımlar. Bu değişkenlere, OID (Object Identifier) adı verilen benzersiz bir numara ile erişilir. Örneğin, sysName.0 adlı değişken, yönetilen cihazın adını tutar ve 1.3.6.1.2.1.1.5.0 OID ile tanımlanır.
+SNMP, yönetim bilgilerini almak veya değiştirmek için iki temel yöntem kullanır:
+- Sorgu: NMS, yönetilen cihazın ajanına bir sorgu mesajı gönderir. Ajan, sorguyu işler ve cevap mesajı gönderir. Sorgu mesajları, SNMP GET, GETNEXT, GETBULK gibi komutlar içerir. Cevap mesajları, sorgunun sonucunu veya hata durumunu belirtir.
+- Tuzak: Ajan, yönetilen cihazda önemli bir olay meydana geldiğinde, NMS'ye bir tuzak mesajı gönderir. Tuzak mesajları, olayın nedenini ve ilgili bilgileri içerir.
+SNMP, güvenlik için topluluk adı (community name) adı verilen bir kimlik doğrulama mekanizması kullanır. Topluluk adı, SNMP mesajlarının başlığında yer alır ve ajan ile NMS arasındaki ilişkiyi belirler. Topluluk adı, SNMP mesajlarının okuma veya yazma yetkisine sahip olup olmadığını belirler. Varsayılan olarak, SNMP mesajları public veya private topluluk adları ile gönderilir. Ancak, bu topluluk adları güvenli değildir ve değiştirilmelidir. SNMPv3 sürümü, daha güvenli bir kimlik doğrulama ve şifreleme mekanizması sunar.
+SNMP üzerinden bilgi toplama için kullanılan araçlardan bazıları şunlardır:
+- Nmap: Ağ tarama aracıdır. SNMP servisinin açık olup olmadığını, hangi sürümü kullandığını, hangi topluluk adlarını kabul ettiğini tespit etmek için kullanılabilir. Örneğin, aşağıdaki komut, 192.168.5.9 IP adresindeki cihazın SNMP servisini tarar.
+nmap 192.168.5.9 -p 161 -sU -sV --script=snmp-info,snmp-brute
+- Metasploit: Sızma testi aracıdır. SNMP servisine yönelik saldırılar gerçekleştirmek için kullanılabilir. Örneğin, aşağıdaki komutlar, 192.168.5.9 IP adresindeki cihazın SNMP topluluk adını kaba kuvvet yöntemiyle bulmaya çalışır.
+msfconsole
+use auxiliary/scanner/snmp/snmp_login
+set RHOSTS 192.168.5.9
+run
+- Solarwinds: Ağ yönetim aracıdır. SNMP servisini grafik arayüzü ile izlemek ve yönetmek için kullanılabilir. Örneğin, Solarwinds Network IP Browser aracı, SNMP ile yönetilen cihazların IP adreslerini, adlarını, çalışma sürelerini, işletim sistemlerini vb. gösterir.
+- Snmpenum: SNMP bilgi toplama aracıdır. SNMP servisinden MIB bilgilerini almak için kullanılabilir. Örneğin, aşağıdaki komut, 111.1.19.23 IP adresindeki cihazın linux.txt dosyasındaki MIB bilgilerini getirir.
+snmpenum.pl 111.1.19.23 public linux.txt
