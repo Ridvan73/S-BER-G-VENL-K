@@ -1,0 +1,50 @@
+Sahte IP/Tuzak Sistemler Kullanarak Port Tarama
+Port tarama, bir ağdaki açık portları veya hizmetleri bulmak için kullanılan bir tekniktir. Bu, bir sızma testinin veya bir saldırının ilk adımlarından biridir. Ancak, port tarama işlemi, güvenlik duvarları, IDS/IPS gibi sistemler tarafından kolayca tespit edilebilir ve engellenebilir. Bu nedenle, port tarama yapan kişinin kimliğini gizlemek veya hedef sistemleri şaşırtmak için çeşitli yöntemler geliştirilmiştir.
+Sahte IP/Tuzak Sistemler Kullanarak Port Tarama, bu yöntemlerden biridir. Bu yöntemde, port tarama yapan kişi, kendi IP adresini de içeren bir sahte IP havuzu oluşturur. Bu havuz, istenilen IP adreslerinden veya rastgele seçilen IP adreslerinden oluşabilir. Bu havuzdaki IP adreslerinden, hedef sisteme aynı anda port tarama paketleri gönderilir. Bu şekilde, hedef sistem, port tarama yapan kişinin gerçek IP adresini belirlemekte zorlanır veya yanlış belirler.
+Bu yöntemi uygulamak için Nmap gibi bir port tarama aracı kullanılabilir. Nmap, -D seçeneği ile sahte IP havuzu oluşturmayı ve tarama yapmayı sağlar. Örneğin, aşağıdaki komut, asaguvenlik.com sitesine karşı, 212.23.23.145, 11.12.45.6, 5.5.5.5 IP adreslerini ve kendi IP adresimizi kullanarak port 80'i taramak için kullanılabilir.
+sudo nmap asaguvenlik.com -D 212.23.23.145,11.12.45.6,5.5.5.5 -p 80 -sV -n
+Bu komutun açıklaması şöyledir:
+- sudo: Nmap'i root olarak çalıştırmak için kullanılır. Bu, sahte IP adresleri ile tarama yapmak için gereklidir.
+- nmap: Port tarama aracının adıdır.
+- asaguvenlik.com: Tarama yapılacak hedefin adı veya IP adresidir.
+- -D: Sahte IP havuzu oluşturmak için kullanılan seçenektir. IP adresleri virgül ile ayrılır. Kendi IP adresimiz de otomatik olarak eklenir.
+- -p 80: Tarama yapılacak port numarasını belirtir. Birden fazla port numarası veya aralığı da kullanılabilir.
+- -sV: Servis versiyon tespiti yapmak için kullanılan seçenektir. Bu, portun hangi servis ve versiyon tarafından kullanıldığını belirlemeye yardımcı olur.
+- -n: DNS çözümlemesi yapmamak için kullanılan seçenektir. Bu, tarama hızını artırmaya ve DNS sunucularına fazladan trafik göndermemeye yarar.
+Bu komutun sonucunda, port 80'in açık olduğu ve Apache 2.4.41 web sunucusu tarafından kullanıldığı görülebilir.
+Starting Nmap 7.91 ( https://nmap.org ) at 2024-01-22 10:44 +03
+Nmap scan report for asaguvenlik.com (178.18.197.18)
+Host is up (0.011s latency).
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Apache httpd 2.4.41 ((Ubuntu))
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+Aynı zamanda, tcpdump gibi bir araç ile ağ trafiğini izleyecek olursak, girdiğimiz sahte IP adreslerinden ve kendi IP adresimizden hedefe doğru SYN paketleri set edilmiş TCP paketlerinin gittiğini görebiliriz.
+tcpdump -i eth0 -n host 178.18.197.18
+10:44:16.123456 IP 212.23.23.145.40212 > 178.18.197.18.80: Flags [S], seq 2328236182, win 2048, options [mss 1460], length 0
+10:44:16.123456 IP 11.12.45.6.40212 > 178.18.197.18.80: Flags [S], seq 2328236182, win 1024, options [mss 1460], length 0
+10:44:16.123456 IP 5.5.5.5.40212 > 178.18.197.18.80: Flags [S], seq 2328236182, win 3072, options [mss 1460], length 0
+10:44:16.123456 IP 192.168.1.10.40212 > 178.18.197.18.80: Flags [S], seq 2328236182, win 4096, options [mss 1460], length 0
+10:44:16.123456 IP 178.18.197.18.80 > 192.168.1.10.40212: Flags [S.], seq 2585139682, ack 2328236183, win 5840, options [mss 1460], length 0
+Burada, 192.168.1.10 IP adresi, kendi IP adresimizdir. Hedef sistem, sadece bu IP adresine SYN-ACK paketi göndermiştir. Diğer IP adreslerine herhangi bir yanıt göndermemiştir. Bu, hedef sistemin port tarama yapan kişinin gerçek IP adresini belirleyemediğini veya yanlış belirlediğini gösterir.
+Rastgele IP adresleri ile bir 10 IP adresine sahip havuz oluşturup bu havuz IP adresleri ile hedefe yönelik port taraması yapmak için, aşağıdaki komut kullanılabilir.
+sudo nmap asaguvenlik.com -D RND:10 -p 80 -sV -n
+Bu komutun açıklaması şöyledir:
+- -D RND:10: Rastgele 10 IP adresi seçmek için kullanılan seçenektir. Kendi IP adresimiz de otomatik olarak eklenir.
+Bu komutun sonucunda, port 80'in açık olduğu ve Apache 2.4.41 web sunucusu tarafından kullanıldığı görülebilir.
+Starting Nmap 7.91 ( https://nmap.org ) at 2024-01-22 10:45 +03
+Nmap scan report for asaguvenlik.com (178.18.197.18)
+Host is up (0.011s latency).
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Apache httpd 2.4.41 ((Ubuntu))
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+Aynı zamanda, tcpdump ile ağ trafiğini izleyecek olursak, rastgele seçilen IP adreslerinden ve kendi IP adresimizden hedefe doğru SYN paketleri set edilmiş TCP paketlerinin gittiğini görebiliriz.
+tcpdump -i eth0 -n host 178.18.197.18
+Ağ trafiğini izlemeye devam edersek, şunları görebiliriz:
+10:45:16.123456 IP 213.116.227.58.40212 > 178.18.197.18.80: Flags [S], seq 2328236182, win 2048, options [mss 1460], length 0
+10:45:16.123456 IP 61.2.175.211.40212 > 178.18.197.18.80: Flags [S], seq 2328236182, win 1024, options [mss 1460], length 0
+10:45:16.123456 IP 91.93.118.125.40212 > 178.18.197.18.80: Flags [S], seq 2328236182, win 3072, options [mss 1460], length 0
+10:45:16.123456 IP 2.42.202.142.40212 > 178.18.197.18.80: Flags [S], seq 2328236182, win 4096, options [mss 1460], length 0
+10:45:16.123456 IP 192.168.1.10.40212 > 178.18.197.18.80: Flags [S], seq 2328236182, win 4096, options [mss 1460], length 0
+10:45:16.123456 IP 178.18.197.18.80 > 192.168.1.10.40212: Flags [S.], seq 2585139682, ack 2328236183, win 5840, options [mss 1460], length 0
+Burada, 192.168.1.10 IP adresi, kendi IP adresimizdir. Hedef sistem, sadece bu IP adresine SYN-ACK paketi göndermiştir. Diğer IP adreslerine herhangi bir yanıt göndermemiştir. Bu, hedef sistemin port tarama yapan kişinin gerçek IP adresini belirleyemediğini veya yanlış belirlediğini gösterir.
+Bu yöntem, port tarama yapan kişinin kimliğini gizlemek için etkili bir yöntemdir. Ancak, bu yöntemin de bazı dezavantajları vardır. Örneğin, bu yöntem, tarama hızını düşürebilir, çünkü birden fazla IP adresi ile tarama yapmak daha fazla zaman alabilir. Ayrıca, bu yöntem, sahte IP adreslerinin gerçek olup olmadığını kontrol eden gelişmiş güvenlik sistemleri tarafından tespit edilebilir. Bu nedenle, bu yöntemi kullanırken dikkatli olmak gerekir.
