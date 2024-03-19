@@ -1,0 +1,43 @@
+Nmap GUI/Zenmap Kullanarak Port Tarama
+Nmap, ağ güvenliği testlerinde yaygın olarak kullanılan güçlü bir araçtır. Zenmap ise Nmap'in grafik arayüzüdür. Zenmap ile port tarama işlemini şu şekilde yapabilirsiniz:
+1. Adım: Zenmap'i açın ve sol üst köşedeki Profile menüsünden istediğiniz tarama türünü seçin. Tarama türleri, zorluk derecesine göre sıralanmıştır. Örneğin, Intense scan en kapsamlı ve yavaş tarama türüdür, Quick scan ise en hızlı ve yüzeysel tarama türüdür.
+2. Adım: Taramak istediğiniz hedefin IP adresini veya domain adını Target kutusuna yazın. Örneğin, facebook.com domain adresinin portlarını tarayacaksanız, Target kutusuna facebook.com yazın. Ardından Scan butonuna tıklayın. Tarama işlemi başlayacaktır.
+3. Adım: Tarama işlemi bittikten sonra, sonuçları görmek için sol alt köşedeki Nmap Output sekmesine tıklayın. Burada, tarama işlemi için kullanılan komutu, tarama süresini, hedefin durumunu, açık portları, işletim sistemini ve diğer bilgileri görebilirsiniz. Örneğin, facebook.com domain adresinin port taraması sonucunda şu bilgileri görebilirsiniz:
+# Nmap 7.91 scan initiated Mon Jan 22 07:44:16 2024 as: nmap -T4 -F facebook.com
+Nmap scan report for facebook.com (31.13.71.36)
+Host is up (0.011s latency).
+Other addresses for facebook.com (not scanned): 2a03:2880:f12f:83:face:b00c:0:25de
+Not shown: 98 filtered ports
+PORT    STATE SERVICE
+80/tcp  open  http
+443/tcp open  https
+Nmap done at Mon Jan 22 07:44:18 2024 -- 1 IP address (1 host up) scanned in 2.02 seconds
+4. Adım: Eğer belirli bir port aralığını veya en popüler portları taramak istiyorsanız, Profile menüsünden New Scan seçeneğini seçin. Bu seçenek, size tarama işlemi için kendi komutunuzu yazmanızı sağlar. Örneğin, 6.6.6.0/24 subnetindeki cihazların en popüler 5 portunu zenmap ile tarayacaksanız, şu komutu yazabilirsiniz:
+nmap -sS -T4 --top-ports 5 6.6.6.0/24
+Bu komut, TCP SYN taraması yaparak, hedef subnetteki cihazların en çok kullanılan 5 portunu (21, 22, 23, 25, 80) tarar. Ardından Scan butonuna tıklayın. Tarama işlemi başlayacaktır.
+5. Adım: Tarama işlemi bittikten sonra, sonuçları görmek için sol alt köşedeki Nmap Output sekmesine tıklayın. Burada, tarama işlemi için kullanılan komutu, tarama süresini, hedef subnetteki aktif cihazları, açık portları, işletim sistemini ve diğer bilgileri görebilirsiniz. Örneğin, 6.6.6.0/24 subnetindeki cihazların en popüler 5 port taraması sonucunda şu bilgileri görebilirsiniz:
+# Nmap 7.91 scan initiated Mon Jan 22 07:44:18 2024 as: nmap -sS -T4 --top-ports 5 6.6.6.0/24
+Nmap scan report for 6.6.6.1
+Host is up (0.012s latency).
+Not shown: 4 closed ports
+PORT   STATE SERVICE
+80/tcp open  http
+Nmap scan report for 6.6.6.2
+Host is up (0.013s latency).
+Not shown: 4 closed ports
+PORT   STATE SERVICE
+22/tcp open  ssh
+Nmap scan report for 6.6.6.3
+Host is up (0.014s latency).
+Not shown: 4 closed ports
+PORT   STATE SERVICE
+23/tcp open  telnet
+Nmap scan report for 6.6.6.4
+Host is up (0.015s latency).
+Not shown: 4 closed ports
+PORT   STATE SERVICE
+25/tcp open  smtp
+Nmap scan report for 6.6.6.5
+Host is up (0.016s latency).
+All 5 scanned ports on 6.6.6.5 are closed
+Nmap done at Mon Jan 22 07:44:20 2024 -- 256 IP addresses (5 hosts up) scanned in 2.03 seconds
