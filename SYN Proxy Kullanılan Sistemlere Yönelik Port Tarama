@@ -1,0 +1,33 @@
+SYN Proxy Kullanılan Sistemlere Yönelik Port Tarama
+ SYN proxy, SYN saldırılarına karşı koruma sağlayan bir tekniktir. SYN saldırıları, hedef sisteme çok sayıda SYN paketi göndererek bağlantı kurma isteklerini tamamlamayan ve böylece sunucunun kaynaklarını tüketen DoS saldırılarıdır. SYN proxy, gelen SYN paketlerini hedef sunucuya iletmeden önce, kaynak IP adresinin gerçekliğini kontrol eder ve sahte olanları filtreler. Böylece, hedef sunucu yalnızca gerçek isteklere cevap verir ve kaynak tüketimi azalır.
+SYN proxy kullanan sistemlere yönelik port tarama yapmak için Nmap adlı bir araç kullanabilirsiniz. Nmap, ağ tarama ve zafiyet tespiti için kullanılan açık kaynaklı bir araçtır. Nmap ile SYN proxy kullanan sistemlere yönelik port tarama yapmak için şu adımları izleyebilirsiniz:
+1. Adım: SYN Proxy kullanan hedefe yönelik port taramasında SYN Proxy’lik yapan cihaz her gönderilen SYN bayrağı set edilmiş TCP paketine SYN+ACK döneceğinden tüm portlar açık görünür. Bu durumda, Nmap'in -sS parametresi ile yarı açık tarama yapabilirsiniz. Bu parametre, hedef sisteme SYN paketleri gönderir ve gelen SYN+ACK paketlerine karşılık ACK paketi göndermez. Böylece, bağlantı tamamlanmaz ve hedef sunucu kaynak tüketmez. Bu tarama yöntemi, hızlı ve güvenilir bir şekilde açık portları tespit etmenizi sağlar. Örneğin, 10.10.10.5 IP adresli hedef sistemin 78-82 arasındaki portlarını taramak için şu komutu kullanabilirsiniz:
+root@bt:/usr/local/share/nmap/scripts# nmap 10.10.10.5 -p 78-82 -sS
+Bu komutun çıktısı şöyle olabilir:
+Starting Nmap 7.91 ( https://nmap.org ) at 2024-01-22 10:44 EET
+Nmap scan report for 10.10.10.5
+Host is up (0.0012s latency).
+PORT   STATE    SERVICE
+78/tcp open     vettcp
+79/tcp open     finger
+80/tcp open     http
+81/tcp open     hosts2-ns
+82/tcp open     xfer
+Nmap done: 1 IP address (1 host up) scanned in 0.04 seconds
+Bu çıktıda, hedef sistemin 78-82 arasındaki portlarının hepsinin açık olduğu görülmektedir.
+2. Adım: SYN proxy kullanan sistemlerde hangi portların gerçekte açık olduğunu tespit etmek için nmap’in -sV parametresi ile portlarda çalışan servis tespitinin yapılması gerekmektedir. Bu parametre, hedef sistemin portlarına bağlanarak çalışan servislerin isimlerini, versiyonlarını ve diğer bilgilerini elde etmenizi sağlar. Bu tarama yöntemi, hedef sistemin zafiyetlerini belirlemenize yardımcı olur. Örneğin, 10.10.10.5 IP adresli hedef sistemin 78-82 arasındaki portlarında çalışan servisleri tespit etmek için şu komutu kullanabilirsiniz:
+root@bt:/usr/local/share/nmap/scripts# nmap 10.10.10.5 -p 78-82 -sV
+Bu komutun çıktısı şöyle olabilir:
+Starting Nmap 7.91 ( https://nmap.org ) at 2024-01-22 10:45 EET
+Nmap scan report for 10.10.10.5
+Host is up (0.0012s latency).
+PORT   STATE    SERVICE     VERSION
+78/tcp open     vettcp      VET/1.0
+79/tcp open     finger      Linux fingerd
+80/tcp open     http        Apache httpd 2.4.46 ((Unix))
+81/tcp open     hosts2-ns   Hosts2 name server
+82/tcp open     xfer        XFER utility
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 0.07 seconds
+Bu çıktıda, hedef sistemin 78-82 arasındaki portlarında çalışan servislerin isimleri ve versiyonları görülmektedir. Bu bilgiler, hedef sistemin işletim sistemi, uygulamaları ve zafiyetleri hakkında ipuçları vermektedir.
+Bu şekilde, SYN proxy kullanılan sistemlere yönelik port tarama yaparak hedef sistemin açık portlarını ve çalışan servislerini tespit edebilirsiniz. Bu bilgiler, hedef sistemin güvenlik durumunu analiz etmenize ve sızma testi yapmanıza yardımcı olur.
