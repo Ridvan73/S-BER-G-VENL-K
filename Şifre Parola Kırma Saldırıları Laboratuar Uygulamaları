@@ -1,0 +1,300 @@
+MD5, SHA1, SHA512 Hasli Parolaları Kırmak Hashli parolaların kırılması
+Hashli parolaları kırmak, bir hash fonksiyonu ile şifrelenmiş olan parolaların orijinal halini bulmak anlamına gelir. Bu işlem için farklı yöntemler ve araçlar kullanılabilir. Hash fonksiyonları, girdi olarak verilen metni sabit uzunlukta bir çıktıya dönüştüren matematiksel işlemlerdir. Örneğin, MD5, SHA1 ve SHA512 gibi hash fonksiyonları vardır. Bu fonksiyonlar tek yönlüdür, yani hash değerinden geriye metni bulmak kolay değildir. Ancak, bazı hash fonksiyonları zayıf kabul edilir ve kırılmaları daha kolaydır. Bu nedenle, parola güvenliği için daha güçlü hash fonksiyonları ve salting (tuzlama) gibi teknikler kullanılmalıdır.
+Hashli parolaları kırmak için kullanılan yöntemlerden biri, kaba kuvvet (brute force) saldırısıdır. Bu yöntemde, hash değeri ile eşleşen bir metin bulana kadar tüm olası metin kombinasyonları denenir. Bu işlem çok uzun sürebilir ve çok fazla işlem gücü gerektirebilir. Bu nedenle, kaba kuvvet saldırılarını hızlandırmak için wordlist (kelime listesi) adı verilen önceden hazırlanmış metin dosyaları kullanılır. Wordlist'ler, sık kullanılan veya tahmin edilebilir parolaları içerir. Bu sayede, hash değeri ile eşleşen bir metin daha çabuk bulunabilir.
+Hashli parolaları kırmak için kullanılan araçlardan biri, John The Ripper (JTR) adlı bir komut satırı programıdır. JTR, farklı hash fonksiyonlarını destekler ve wordlist'ler ile kaba kuvvet saldırıları yapabilir. JTR ile hashli parolaları kırmak için aşağıdaki adımları izleyebilirsiniz.
+
+Adım: Hashli parolaları içeren bir metin dosyası oluşturun. Örneğin, md5hash.txt, sha1hash.txt ve sha512hash.txt gibi. Bu dosyaların her satırında bir hash değeri olmalıdır.
+Adım: JTR programını indirin ve kurun. JTR, Linux, Windows ve Mac OS gibi farklı işletim sistemlerinde çalışabilir.
+Adım: JTR programını çalıştırın ve hash tipini, hash dosyasını ve wordlist dosyasını belirtin. Örneğin, MD5 hashli parolaları kırmak için aşağıdaki komutu kullanabilirsiniz:
+./john --format=raw-MD5 md5hash.txt --wordlist=password.lst
+Bu komut, md5hash.txt dosyasındaki hash değerlerini password.lst dosyasındaki metinlerle karşılaştırır ve eşleşenleri ekrana yazdırır. Eğer wordlist dosyası belirtmezseniz, JTR kendi içindeki wordlist'i kullanır.
+Adım: JTR ile SHA1 ve SHA512 hashli parolaları kırmak için de benzer komutlar kullanabilirsiniz. Örneğin, SHA1 (sha256crypt) hashli parolaları kırmak için aşağıdaki komutu kullanabilirsiniz:
+./john --format=sha256crypt sha1hash.txt --wordlist=password.lst
+SHA1 (sha512crypt) hashli parolaları kırmak için de aşağıdaki komutu kullanabilirsiniz:
+./john --format=sha512crypt sha512hash.txt --wordlist=password.lst
+Bu komutlar, hash dosyalarındaki hash değerlerini password.lst dosyasındaki metinlerle karşılaştırır ve eşleşenleri ekrana yazdırır.
+Adım: JTR programının çıktısını inceleyin ve kırılan parolaları görün. JTR programı, kırılan parolaları ve hash değerlerini ekrana yazdırır. Ayrıca, kırılan parolaları ~/.john/john.pot dosyasında da saklar. Bu dosyayı görüntülemek için aşağıdaki komutu kullanabilirsiniz:
+cat ~/.john/john.pot
+Bu komut, kırılan parolaları ve hash değerlerini ekrana yazdırır.
+John The Ripper Kullanarak Linux Parolalarını Kırma
+Öncelikle, John The Ripper aracını Linux sisteminize kurmanız gerekiyor. Eğer Kali Linux kullanıyorsanız, aracı doğrudan kullanabilirsiniz. Eğer başka bir Linux dağıtımı kullanıyorsanız, aşağıdaki komutlardan uygun olanı seçerek kurulumu yapabilirsiniz:
+Debian: aptitude install john
+Fedora: yum install john
+Arch Linux: pacman -S john
+OpenSuse Linux: zypper install john
+Gentoo: emerge johntheripper
+John The Ripper aracını kullanarak Linux parolalarını kırmak için üç farklı yöntem vardır:
+Wordlist yöntemi: Bu yöntemde, önceden hazırlanmış bir kelime listesi kullanarak parolaları tahmin etmeye çalışırız. Bu yöntem, parolaların yaygın veya zayıf kelimelerden oluştuğu durumlarda işe yarar. Örneğin, aşağıdaki komutla password.txt dosyasındaki parolaları wordlist.txt dosyasındaki kelimelerle kırmaya çalışabiliriz:
+john --wordlist=wordlist.txt password.txt
+Single yöntemi: Bu yöntemde, kullanıcı adlarından yola çıkarak parolaları tahmin etmeye çalışırız. Bu yöntem, parolaların kullanıcı adlarıyla ilgili veya benzer olduğu durumlarda işe yarar. Örneğin, aşağıdaki komutla password.txt dosyasındaki parolaları single yöntemiyle kırmaya çalışabiliriz:
+john --single password.txt
+Incremental yöntemi: Bu yöntemde, tüm olası karakter kombinasyonlarını deneyerek parolaları kırmaya çalışırız. Bu yöntem, parolaların rastgele veya karmaşık olduğu durumlarda işe yarar. Ancak bu yöntem çok uzun sürebilir ve çok fazla kaynak tüketebilir. Örneğin, aşağıdaki komutla password.txt dosyasındaki parolaları incremental yöntemiyle kırmaya çalışabiliriz:
+john --incremental password.txt
+Bu yöntemlerden hangisini kullanacağınıza karar vermek için, önce parolaların hangi hash algoritmasıyla şifrelendiğini bilmek gerekir. Linux sistemlerinde, /etc/shadow dosyasında parolaların başındaki $ işaretleri arasındaki sayı, hash algoritmasının tipini belirtir. Örneğin, $1$ MD5, $5$ SHA256, $6$ SHA512 anlamına gelir. Eğer hash algoritmasını biliyorsanız, --format parametresiyle John The Ripper aracını bu algoritma için çalışmaya zorlayabilirsiniz. Örneğin, aşağıdaki komutla password.txt dosyasındaki SHA256 ile şifrelenmiş parolaları wordlist yöntemiyle kırmaya çalışabiliriz:
+john --format=raw-sha256 --wordlist=wordlist.txt password.txt
+Parolaları kırmaya başladığınızda, John The Ripper aracı kırılan parolaları ~/.john/john.pot dosyasında saklar. Bu dosyayı doğrudan okuyamazsınız, terminalinizde görmek istiyorsanız --show parametresini kullanmalısınız. Örneğin, aşağıdaki komutla password.txt dosyasındaki kırılan parolaları görebilirsiniz:
+john --show password.txt
+Parolaları kırmak için birden fazla yöntem denemek isterseniz, --session parametresiyle her yöntem için farklı bir oturum adı belirleyebilirsiniz. Böylece, parolaları kırmayı durdurup devam ettirebilir veya farklı oturumların durumunu kontrol edebilirsiniz. Örneğin, aşağıdaki komutlarla password.txt dosyasındaki parolaları wordlist ve single yöntemleriyle kırmaya başlayabilir, durumlarını görebilir veya durdurabilirsiniz:
+john --session=wordlist --wordlist=wordlist.txt password.txt
+john --session=single --single password.txt
+john --status=wordlist
+john --status=single
+kill -HUP wordlist_pid
+kill -HUP single_pid
+Hashcat Kullanarak Cisco/Juniper Parolalarını Kırma
+Hashcat, GPU gücünü kullanarak çok hızlı ve etkili bir şekilde parola kırma işlemi yapabilen bir araçtır. Hashcat, birçok farklı hash algoritmasını destekler ve farklı modlarda çalışabilir. Hashcat kullanarak Cisco ve Juniper cihazlarına ait parolaları kırmak için öncelikle, Hashcat'i indirmek ve kurmak için aşağıdaki adımları takip edebilirsiniz:
+Windows: Hashcat'in web sitesinden binary dosyasını indirin ve bir klasöre çıkartın.
+Linux: Terminal üzerinden aşağıdaki komutları çalıştırın:
+sudo pacman -Syy && pacman -S p7zip # Arch Linux için
+sudo apt-get install p7zip-full # Debian/Ubuntu için
+wget 3 # Hashcat'in son sürümünü indir
+7z x hashcat-6.2.4.7z # Hashcat'i çıkart
+cd hashcat-6.2.4 # Hashcat dizinine gir
+Hashcat'i çalıştırmak için, hash modunu, hash dosyasını ve wordlist dosyasını belirtmeniz gerekir. Örneğin, aşağıdaki komut, MD5 hash modunu (-m 0), hash.txt dosyasını (-a hash.txt) ve password.lst dosyasını (-w password.lst) kullanarak parola kırma işlemini başlatır:
+./hashcat -m 0 -a hash.txt -w password.lst
+Cisco ve Juniper cihazlarına ait parolaları kırmak için, hash modlarını ve hash formatlarını bilmek gerekir. Aşağıda, bu cihazlara ait bazı hash modları ve formatları verilmiştir:
+Cisco-IOS: Hash modu 500, formatı $1$$
+Cisco-PIX: Hash modu 2400, formatı :
+Cisco-ASA: Hash modu 2410, formatı :
+Juniper-NetScreen: Hash modu 22, formatı :$
+Bu bilgileri kullanarak, Hashcat ile Cisco ve Juniper cihazlarına ait parolaları kırmak için aşağıdaki adımları izleyebilirsiniz:
+Adım: Hashcat ile Cisco/Juniper cihazlarının kullandığı hash algoritmasını kullanarak bir kullanıcı adı ve parola hash'i oluşturun. Bunun için, Hashcat'in examples dizininde bulunan örnek python scriptlerini kullanabilirsiniz. Örneğin, aşağıdaki komut, Cisco-IOS cihazı için admin kullanıcısının 123456 parolasının hash'ini oluşturur:
+cd examples
+python example500.py admin 123456
+admin:$1$pdQG$o8nrSzsGXeaduXrjlvKc91
+Not: Bir Cisco/Juniper cihazından alınacak hash, bizim oluşturduğumuz ile aynı olacaktır.
+Adım: Elde ettiğiniz Cisco/Juniper hash'ini bir metin dosyasına kopyalayın. Örneğin, aşağıdaki komut, Cisco-IOS hash'ini cisco.txt dosyasına yazar:
+echo 'admin:$1$pdQG$o8nrSzsGXeaduXrjlvKc91' > cisco.txt
+Adım: Cisco/Juniper ile aynı hash algoritması kullanılarak oluşturulan hash değerini Hashcat ile kırın. Bunun için, hash modunu ve wordlist dosyasını belirtin. Örneğin, aşağıdaki komut, Cisco-IOS hash modunu (-m 500), cisco.txt dosyasını (-a cisco.txt) ve password.lst dosyasını (-w password.lst) kullanarak parola kırma işlemini başlatır:
+./hashcat -m 500 -a cisco.txt -w password.lst
+Adım: Hashcat, parolayı kırdığında, sonucu ekranda görebilirsiniz. Örneğin, aşağıdaki çıktı, admin kullanıcısının parolasının 123456 olduğunu gösterir:
+admin:$1$pdQG$o8nrSzsGXeaduXrjlvKc91:123456
+Adım: Aynı şekilde, Juniper hash'ini de kırmak için, hash modunu, hash dosyasını ve wordlist dosyasını belirtin. Örneğin, aşağıdaki komut, Juniper-NetScreen hash modunu (-m 22), juniper.txt dosyasını (-a juniper.txt) ve password.lst dosyasını (-w password.lst) kullanarak parola kırma işlemini başlatır:
+./hashcat -m 22 -a juniper.txt -w password.lst
+Adım: Hashcat, parolayı kırdığında, sonucu ekranda görebilirsiniz. Örneğin, aşağıdaki çıktı, admin kullanıcısının parolasının 123456 olduğunu gösterir:
+admin:admin$nOHUFKrhP1gFczKIYsyM8FFtwjG5yn:123456
+Bu şekilde, Hashcat kullanarak Cisco ve Juniper cihazlarına ait parolaları kırabilirsiniz.
+Ophcrack Kullanarak Parola Kırma Saldırıları
+Ophcrack, Windows 10 dahil olmak üzere tüm Windows sürümlerinde çalışabilen ve LM ve NTLM parolalarını kırmak için gökkuşağı tabloları kullanan ücretsiz ve açık kaynaklı bir araçtır. Ophcrack'i kullanmak için aşağıdaki adımları izleyebilirsiniz:
+Adım: Ophcrack'in resmi sitesinden Ophcrack LiveCD indirin. Bu, Ophcrack'i bir USB bellek veya CD/DVD üzerinden çalıştırmanızı sağlayan bir ISO dosyasıdır.
+Adım: Ophcrack LiveCD'yi bir USB belleğe veya CD/DVD'ye yazdırmak için Rufus gibi bir araç kullanın. Rufus'u çalıştırın, Ophcrack LiveCD ISO dosyasını seçin ve yazdırma işlemini başlatın.
+Adım: Parolasını kırmak istediğiniz bilgisayarı Ophcrack LiveCD ile başlatın. Bilgisayarınızın BIOS veya UEFI ayarlarını değiştirerek önyükleme sırasını ayarlamayı unutmayın. Ophcrack LiveCD otomatik olarak çalışacaktır.
+Adım: Ophcrack arayüzünde, parolalarını kırmak istediğiniz kullanıcı hesaplarını seçin ve "Crack" butonuna tıklayın. Ophcrack, gökkuşağı tablolarını kullanarak parolaları kırmaya başlayacaktır. Parolalar bulunduğunda, ekranda gösterilecektir.
+Adım: Parolaları bir yere not edin veya Ophcrack'ten dışa aktarın. Ardından, Ophcrack LiveCD'yi çıkarın ve bilgisayarınızı normal şekilde yeniden başlatın. Artık parolalarını bildiğiniz kullanıcı hesaplarına giriş yapabilirsiniz.
+Crunch Kullanarak İsteğe Göre Sözlük Listesi Oluşturma
+Crunch, istediğiniz formatta wordlist oluşturmak için kullanabileceğiniz bir araçtır. Wordlist, parola kırma, güvenlik testi veya veri analizi gibi çeşitli amaçlar için kullanabileceğiniz olası parola kombinasyonlarını içeren bir dosyadır. Crunch, wordlist oluştururken kullanılacak karakter setlerini, uzunlukları ve desenleri özelleştirmenize olanak sağlar.
+Crunch, Kali Linux gibi çeşitli Linux dağıtımlarında önceden yüklü olarak gelir. Kali Linux, penetrasyon testi, güvenlik araştırması, bilgisayar adli analizi ve tersine mühendislik gibi çeşitli bilgi güvenliği görevleri için optimize edilmiş, açık kaynaklı, Debian tabanlı bir Linux dağıtımıdır.
+Crunch'ı kullanmak için, bir terminal açın ve aşağıdaki komutu yazın:
+crunch
+Bu komut, crunch'ın nasıl kullanılacağına dair bir yardım mesajı gösterecektir. Crunch'ın kullanabileceğiniz çeşitli seçenekleri vardır. Bunlardan bazıları şunlardır:
+-b: wordlist'in maksimum boyutunu belirtir.
+-c: wordlist'e yazılacak satır sayısını belirtir.
+-d: yinelenen karakter sayısını sınırlar.
+-e: belirli bir dizide wordlist oluşturmayı durdurur.
+-f: charset.lst dosyasından bir karakter seti listesi belirtir.
+-i: wordlist'teki karakterlerin sırasını tersine çevirir.
+-l: -t kullanırken %, @, ^ gibi karakterlerin harfiyen yorumlanmasını sağlar.
+-o: çıktı wordlist dosyasını belirtir.
+-p: yinelenen karakter olmadan permütasyonlar yazar.
+-q: -p gibi çalışır, ancak dizeleri belirtilen bir dosyadan okur.
+-r: önceki bir oturumu devam ettirir ( -s ile kullanılamaz).
+-s: wordlist'in belirli bir dize ile başlamasını belirtir.
+-t: belirli bir desen belirler. @, %, ^, , işaretleri küçük harf, büyük harf, rakam ve özel karakter anlamına gelir.
+Crunch'ı aşağıdaki şekilde kullanabilirsiniz:
+Adım: Crunch'a erişmek için ilgili yolu takip edin:
+root@kali:/Desktop# cd /usr/share/crunch/
+root@kali:/usr/share/crunch# ls
+Burada charset.lst isimli dosya, crunch ile birlikte kullanabileceğiniz karakter gruplarının tanımlandığı dosyadır. Örneğin yalnızca rakamlar kullanılacaksa, bu dosyada bu gruba verilen numerics charsetini kullanmalısınız. Charset.lst dosyasının içeriğinin bir kısmı aşağıdaki gibidir:
+root@kali:/usr/share/crunch# cat charset.lst
+mixalpha-numeric-all-space = 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ !"#$%&'()*+,-./:;<=>?@[]^_{|}~ mixalpha-numeric-symbol14-space = 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-_+= mixalpha-numeric-symbol32-space = 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&'()*+,-./:;<=>?@[\]^_{|}
+numeric = 0123456789
+numeric-space = 0123456789
+Adım: Yalnızca rakamlardan oluşan minimum 1, maksimum 8 karakterli rakamlar.txt isimli wordlist oluşturmak için:
+root@kali:/usr/share/crunch# ./crunch 1 8 -f charset.lst numeric -o rakamlar.txt
+Burada -f parametresi charset değerini vermek için, -o parametresi ise çıktı dosyasını belirtmek için kullanılmıştır.
+Aynı işlemi şu komutla da yapabilirsiniz:
+root@kali:/usr/share/crunch# ./crunch 1 8 0123456789 -o rakamlar.txt
+Adım: Aşağıda verilen senaryoya göre wordlist oluşturmak için:
+Şifrenin ilk 4 karakteri 1453
+Şifre 10 karakterli
+Şifrenin son iki karakteri ab
+Geri kalan kısımları ise büyük harflerden oluşmaktadır. (o halde "," (virgül) işareti kullanılacaktır)
+Çıktı ozel.txt dosyasına yazdırılacaktır.
+root@kali:/usr/share/crunch# ./crunch 10 10 -t 1453,,,,ab -o ozel.txt
+Özel bir wordlist oluşturmak için kullanılan -t parametresi ile kullanılabilecek karakterler ve anlamları şunlardır:
+@ işareti küçük harfli karakterleri yazdırmak için
+, işareti büyük harfli karakterleri yazdırmak için
+% rakam kullanmak için
+^ özel karakterler yazdırmak için kullanılır.
+İnternetten Sözlük Listeleri İndirme
+Wordlist, kelime listesi veya sözcük listesi anlamına gelir. Bu, belirli bir amaca yönelik olarak oluşturulmuş veya toplanmış bir liste içerisinde bulunan kelimelerin veya terimlerin bir derlemesidir. Wordlistler, siber güvenlik uzmanları, etik hackerlar, bilgisayar korsanları ve diğer teknik profesyoneller tarafından kullanılır.
+İnternetten wordlist elde etmek için aşağıdaki adımları izleyebilirsiniz:
+Wordlist bulabileceğiniz web sitelerini araştırın. Bu siteler, wordlistleri farklı kategorilere, dillere veya amaçlara göre sınıflandırabilir. Örneğin, Türkçe wordlist arıyorsanız, GitHub - utkusen/turkce-wordlist: Türk kullanıcıların parola seçimlerinin analizi için yapılmış bir çalışmadır gibi bir siteye bakabilirsiniz.
+Wordlist dosyalarını indirin. Bu dosyalar genellikle .txt, .csv, .zip veya .rar formatında olabilir. İndirdiğiniz dosyaları açmak için uygun programları kullanın. Örneğin, .zip veya .rar dosyalarını açmak için WinRAR gibi bir program kullanabilirsiniz.
+Wordlist dosyalarını inceleyin. Wordlistlerin içeriği, kullanılan kaynaklara, oluşturma yöntemlerine ve hedeflenen amaçlara göre değişebilir. Wordlistlerin içinde parolalar, kelime kombinasyonları, sayılar, rakamlar, özel karakterler veya diğer terimler bulunabilir. Wordlistlerin boyutu da çok büyük olabilir, bu yüzden dosyaları açarken veya düzenlerken dikkatli olun.
+Wordlist dosyalarını kullanın. Wordlistleri, çeşitli amaçlar için kullanabilirsiniz. Örneğin, parola kırma saldırıları, brute-force saldırıları, güvenlik testleri, metin madenciliği veya dil işleme gibi alanlarda wordlistleri kullanabilirsiniz. Wordlistleri kullanırken, yasal ve etik kurallara uyduğunuzdan emin olun. Wordlistleri, yasa dışı veya etik olmayan şekillerde kullanmak ciddi sonuçlara yol açabilir.
+Internetten Hash Arama
+Hash arama, bir hash değerinin kaynak metnini bulmak için kullanılan bir tekniktir. Hash değerleri, bir metni sabit uzunlukta başka bir metne dönüştüren matematiksel fonksiyonlarla oluşturulur. Hash değerleri, şifreler gibi hassas verileri korumak için yaygın olarak kullanılır. Ancak, hash değerleri tersine çevrilemez, yani hash değerinden kaynak metni elde etmek mümkün değildir. Bu nedenle, hash arama, farklı metinleri hashleyerek ve sonuçları verilen hash değeriyle karşılaştırarak yapılır.
+Hash arama yapmak için kullanılan araçlar ve yöntemler şunlardır:
+Google önbelleği: Google, web sayfalarının eski sürümlerini önbelleğe alır ve bunlara arama sonuçlarından erişilebilir. Bu, bazı web sitelerinin hash değerlerini açıkça gösterdiği durumlarda hash aramak için kullanılabilir. Örneğin, bir web sitesinin şifre sıfırlama bağlantısında bir hash değeri varsa, bu bağlantıyı Google'da aratarak önbelleğe alınmış bir sayfada hash değerinin kaynak metnini bulabilirsiniz. Ancak, bu yöntem sadece Google'ın önbelleğe aldığı sayfalarda ve hash değerinin açıkça görülebildiği durumlarda işe yarar.
+Online hash veritabanları: İnternette, farklı metinlerin hash değerlerini içeren büyük veritabanları bulunur. Bu veritabanları, hash arama yapmak için kullanılabilir. Örneğin, Hash-Buster adlı bir araç, bir hash değerini otomatik olarak tanımlayabilir ve çeşitli online veritabanlarında arayabilir. Bu yöntem, yaygın kullanılan metinlerin hash değerlerini kırmak için etkilidir. Ancak, bu yöntem, veritabanlarında bulunmayan veya karmaşık olan metinlerin hash değerlerini kırmak için işe yaramaz.
+Hashcat: Hashcat, hash değerlerini kırmak için kullanılan güçlü bir araçtır. Hashcat, çoğu hash algoritmasını destekler ve çeşitli saldırı modlarıyla çalışabilir. Hashcat, bir hash değerini kırmak için farklı metin kombinasyonlarını deneyerek kaba kuvvet saldırısı yapar. Bu yöntem, veritabanlarında bulunmayan veya önbelleğe alınmamış hash değerlerini kırmak için kullanılabilir. Ancak, bu yöntem, uzun veya karmaşık metinlerin hash değerlerini kırmak için çok zaman ve kaynak gerektirir. Ayrıca, hash değerlerinin tuzlanmış veya anahtar uzatılmış olması, bu yöntemi zorlaştırır.
+Hash arama yaparken, şu ipuçlarını takip edebilirsiniz:
+Hash değerinin hangi algoritmayla oluşturulduğunu bilmek, hash arama sürecini kolaylaştırır. Eğer bilmiyorsanız, hash değerinin uzunluğu, karakterleri ve biçimi gibi ipuçlarından yola çıkabilirsiniz. Ayrıca, hash değerini tanımlamak için online araçlar da kullanabilirsiniz.
+Hash arama yapmadan önce, hash değerinin kaynak metninin ne olabileceğine dair tahminlerde bulunmak, arama alanını daraltır. Örneğin, eğer hash değeri bir şifreyse, yaygın kullanılan şifreler, isimler, tarihler, rakamlar gibi metinleri denemek daha mantıklıdır.
+Hash arama yaparken, yasalara ve etik kurallara uygun davranmak önemlidir.
+Hash, Şifreleme, Encoding Tipini Belirleme
+Hash, şifreleme ve kodlama, verileri farklı biçimlere dönüştürmek için kullanılan üç farklı yöntemdir. Bu yöntemlerin her birinin farklı amaçları, özellikleri ve güvenlik seviyeleri vardır.
+Hash, bir veriyi tek yönlü bir fonksiyonla sabit uzunlukta bir değere dönüştürmektir. Hash değerleri, verilerin bütünlüğünü ve kimliğini doğrulamak için kullanılır. Hash değerleri, orijinal veriyi geri almak için tersine çevrilemez. Hash değerlerinin türünü belirlemek için, verinin hangi algoritma ile hashlendiğini bilmek gerekir. Farklı hash algoritmaları, farklı uzunluklarda, karakter kümelerinde ve formatlarda hash değerleri üretir. Örneğin, MD5, SHA1, SHA256, BCRYPT, MD5-Crypt gibi popüler hash algoritmaları vardır.
+Şifreleme, bir veriyi iki yönlü bir fonksiyonla farklı bir forma dönüştürmektir. Şifreleme, verileri gizlilik ve güvenlik için kullanılır. Şifrelenmiş veriler, bir anahtar ile geri çözülebilir. Şifrelenmiş verilerin türünü belirlemek için, verinin hangi şifreleme algoritması ve anahtarı ile şifrelendiğini bilmek gerekir. Farklı şifreleme algoritmaları, farklı uzunluklarda, karakter kümelerinde ve formatlarda şifrelenmiş veriler üretir. Örneğin, AES, DES, RSA, Blowfish gibi popüler şifreleme algoritmaları vardır.
+Kodlama, bir veriyi farklı bir karakter kümesine dönüştürmektir. Kodlama, verileri depolama ve iletim için kullanılır. Kodlanmış veriler, orijinal karakter kümesine geri dönüştürülebilir. Kodlanmış verilerin türünü belirlemek için, verinin hangi kodlama standardı ile kodlandığını bilmek gerekir. Farklı kodlama standartları, farklı uzunluklarda, karakter kümelerinde ve formatlarda kodlanmış veriler üretir. Örneğin, Base64, Hex, URL, ASCII gibi popüler kodlama standartları vardır.
+Hash, şifreleme ve kodlama türlerini belirlemek için, verilerin uzunluğuna, karakter kümesine, formatına ve örüntüsüne bakmak gerekir. Bu işlemi kolaylaştırmak için, bazı araçlar kullanılabilir. Bu araçlar, verilere uyan olası hash, şifreleme ve kodlama türlerini tahmin eder. Ancak, bu araçlar her zaman kesin ve doğru sonuçlar vermez. Bu yüzden, araçların verdiği sonuçları doğrulamak için başka yöntemler de kullanmak gerekir.
+Güncel ve kapsamlı araçlardan biri, hashID isimli bir Python scriptidir. Bu araç, 2020 yılında yazılmış ve son güncellemesi 2021 yılında yapılmıştır. Bu araç, 175'ten fazla hash türünü tanımlayabilir. Bu araç, hash değerlerini düzenli ifadelerle eşleştirir ve olası hash türlerini listeler. Bu araç, ayrıca, hashcat isimli bir hash kırma aracı için uygun parametreleri de verir. Bu araç, şifreleme ve kodlama türlerini tanımlayamaz. Bu aracı kullanmak için, aşağıdaki adımları izleyebilirsiniz.
+Adım: hashID isimli Python scriptini wget ile indirin.
+root@bt:/Desktop# wget https://github.com/psypanda/hashID/archive/master.zip root@bt:/Desktop#
+Adım: İndirdiğiniz zip dosyasını unzip ile açın.
+root@bt:/Desktop# unzip master.zip root@bt:/Desktop#
+Adım: Açılan klasöre girin ve hashID scriptini çalıştırın.
+root@bt:/Desktop# cd hashID-master root@bt:/Desktop/hashID-master# python3 hashid.py
+Adım: Script sizden hash değerine bir tipini bulmak istediğiniz hash bilgisini girmenizi ister. Böylece olası hash türlerini ve hashcat parametrelerini size bildirir.
+Not: Hash tipinin kesin olarak bilinmesi her zaman mümkün değildir.
+Başka bir güncel ve kapsamlı araç, Hash Analyzer isimli bir web aracıdır. Bu araç, 2018 yılında yazılmış ve son güncellemesi 2020 yılında yapılmıştır. Bu araç, 20'den fazla hash, şifreleme ve kodlama türünü tanımlayabilir. Bu araç, hash, şifreleme ve kodlama türlerinin uzunluğuna, karakter kümesine, formatına ve örüntüsüne bakarak tahmin eder. Bu araç, ayrıca, hash, şifreleme ve kodlama türlerinin örneklerini ve formatlarını da verir. Bu aracı kullanmak için, aşağıdaki adımları izleyebilirsiniz.
+Adım: Hash Analyzer isimli web aracına erişin.
+Adım: Aracın sağ üst köşesindeki dil seçeneğinden Türkçe'yi seçin.
+Adım: Aracın sol tarafındaki kutucuğa tipini bulmak istediğiniz hash, şifreleme veya kodlama bilgisini girin ve Analiz Et butonuna tıklayın.
+Adım: Aracın sağ tarafında olası hash, şifreleme ve kodlama türlerini, bit uzunluklarını, tabanlarını ve örneklerini göreceksiniz.
+Not: Hash, şifreleme ve kodlama türlerinin kesin olarak bilinmesi her zaman mümkün değildir.
+Hydra Kullanarak Online Brute Force Atakları
+Hydra, bir kaba kuvvet parola saldırı aracıdır. Hydra, FTP, SSH, HTTP, HTTPS, MySQL, Oracle, Cisco, IMAP, VNC gibi birçok protokolü desteklemektedir. Hydra, komut satırından veya grafik arayüz ile kullanılabilir.
+Hydra aracı ile online olarak parola kırma saldırısı yapmak için aşağıdaki adımları takip edin:
+Adım: Hedef sistemlere kaba kuvvet saldırısı yaparken kullanacağınız kullanıcı adlarını ve parolalarını içeren metin dosyalarını oluşturun. Bu dosyaları users.txt ve pass.txt olarak adlandırabilirsiniz. Kullanıcı adlarını ve parolalarını her satıra bir tane gelecek şekilde yazın. Örneğin:
+users.txt içeriği:
+admin
+user
+root
+guest
+test
+pass.txt içeriği:
+123456
+password
+qwerty
+admin123
+iloveyou
+Bu dosyaları vi, gedit, touch, nano gibi metin editör uygulamalarından biri ile oluşturabilirsiniz. Örneğin, nano kullanarak users.txt dosyasını oluşturmak için şu komutu kullanabilirsiniz:
+root@bt:~/Desktop# nano users.txt
+Açılan editörde kullanıcı adlarını yazın ve Ctrl+X tuşlarına basarak kaydedip çıkın. Aynı şekilde pass.txt dosyasını da oluşturun.
+Adım: Hydra ile ssh brute force saldırısı yapın. Hedef sistemin IP adresini ve ssh servisinin çalıştığı port numarasını bilmeniz gerekmektedir. Örneğin, hedef IP adresi 85.95.238.173 ve ssh portu 443 ise, şu komutu kullanabilirsiniz:
+root@bt:~/Desktop# hydra -L users.txt -P pass.txt 85.95.238.173 ssh -s 443
+Bu komut, users.txt dosyasındaki tüm kullanıcı adlarını, pass.txt dosyasındaki tüm parolalarla eşleştirerek deneyecektir. -s parametresi, default ssh portu dışında bir port üzerinden ssh denemesi yapmak istediğinizde kullanılır. Örnekte 443 portu üzerinden ssh kaba kuvvet saldırısı denenmiştir.
+Adım: Hydra ile ftp brute force saldırısı yapın. Hedef sistemin IP adresini ve ftp servisinin çalıştığı port numarasını bilmeniz gerekmektedir. Örneğin, hedef IP adresi 85.95.238.173 ve ftp portu 21 ise, şu komutu kullanabilirsiniz:
+root@bt:~/Desktop# hydra -L users.txt -P pass.txt 85.95.238.173 ftp -e n
+Bu komut, users.txt dosyasındaki tüm kullanıcı adlarını, pass.txt dosyasındaki tüm parolalarla eşleştirerek deneyecektir. -e parametresine verilecek değer ile kullanıcı adları parolasız denensin (n) veya parola olarak kullanıcı adı kullanılmasını (s) sağlamaktadır. Örnekte -e n şeklinde kullanılarak boş parolaları da denemesi sağlanmıştır. Anonymous kullanıcısı parolasız olarak login olunabilmektedir.
+Adım: Hydra ile mysql servisine yönelik kaba kuvvet saldırısı yapın. Hedef sistemin IP adresini ve mysql servisinin çalıştığı port numarasını bilmeniz gerekmektedir. Örneğin, hedef IP adresi 85.95.238.173 ve mysql portu 3306 ise, şu komutu kullanabilirsiniz:
+root@bt:~/Desktop# hydra -L users.txt -P pass.txt 85.95.238.173 mysql -e ns
+Bu komut, users.txt dosyasındaki tüm kullanıcı adlarını, pass.txt dosyasındaki tüm parolalarla eşleştirerek deneyecektir. -e parametresine verilecek değer ile kullanıcı adları parolasız denensin (n) veya parola olarak kullanıcı adı kullanılmasını (s) sağlamaktadır. Örnekte -e ns şeklinde kullanılarak hem boş parolaları hem de kullanıcı adı ile aynı parolaları denemesi sağlanmıştır.
+Bu adımları takip ederek, Hydra aracı ile online olarak parola kırma saldırısı yapabilirsiniz.
+Medusa Kullanarak SSH, FTP Servislerine Yönelik Brute Force
+Medusa, uzaktan kimlik doğrulamasına izin veren olabildiğince çok servisi desteklemeyi amaçlayan hızlı, paralel ve modüler bir giriş kaba kuvvet aracıdır. SSH ve FTP gibi farklı protokolleri destekler. Medusa kullanarak SSH ve FTP servislerine yönelik kaba kuvvet saldırısı gerçekleştirmek için aşağıdaki adımları izleyebilirsiniz:
+Adım: Medusa kullanarak SSH kaba kuvvet saldırıları gerçekleştirme. Bu adımda, SSH modülünü kullanmak için -M ssh parametresini belirtmeniz gerekir. Ayrıca, hedef sunucunun IP adresini -h parametresiyle, kullanıcı adlarını içeren bir dosyanın yolunu -U parametresiyle, parolaları içeren bir dosyanın yolunu -P parametresiyle ve -F parametresiyle ilk geçerli kullanıcı adı/parola bulunduğunda taramayı durdurmanız gerekir. Örneğin, aşağıdaki komutu kullanabilirsiniz:
+root@bt:~/Desktop# medusa -h 192.168.1.10 -U users.txt -P pass.txt -M ssh -F
+Bu komut, users.txt dosyasındaki her kullanıcı adı için pass.txt dosyasındaki her parolayı deneyerek 192.168.1.10 IP adresindeki SSH servisine kaba kuvvet saldırısı yapacaktır. Eğer başarılı bir giriş yapılırsa, komut çıktısında göreceksiniz.
+Adım: Medusa kullanarak FTP hesaplarına yönelik kaba kuvvet saldırıları. Bu adımda, FTP modülünü kullanmak için -M ftp parametresini belirtmeniz gerekir. Diğer parametreler aynı şekilde kullanılır. Örneğin, aşağıdaki komutu kullanabilirsiniz:
+root@bt:/Desktop# medusa -h 192.168.1.20 -U users.txt -P pass.txt -M ftp -F
+Bu komut, users.txt dosyasındaki her kullanıcı adı için pass.txt dosyasındaki her parolayı deneyerek 192.168.1.20 IP adresindeki FTP servisine kaba kuvvet saldırısı yapacaktır. Eğer başarılı bir giriş yapılırsa, komut çıktısında göreceksiniz.
+Bu adımları takip ederek Medusa kullanarak SSH ve FTP servislerine yönelik kaba kuvvet saldırısı gerçekleştirebilirsiniz.
+Metasploit Aux Kullanarak Windows Parola Brute Force Atakları
+Metasploit, güvenlik testleri için kullanılan bir araçtır. Metasploit'te auxiliary modüller, hedef sistemler üzerinde çeşitli tarama, keşif, saldırı ve test işlemleri yapmaya yarar. Bu modüllerden biri de smb_login modülüdür. Bu modül, SMB protokolünü kullanan Windows sistemlere yönelik kaba kuvvet (brute force) saldırıları yapmaya olanak sağlar. SMB protokolü, dosya ve yazıcı paylaşımı gibi işlevler için kullanılır.
+Smb_login modülünü kullanmak için öncelikle hedef sistemlerin IP adreslerini bilmek gerekir. Bu IP adreslerini Nmap gibi bir araçla taramak mümkündür. Ayrıca hedef sistemlerin SMB protokolünü desteklediğinden ve SMBv1 sürümünü kullandığından emin olmak gerekir. SMBv1, güvenlik açıkları nedeniyle artık kullanılmayan eski bir sürümdür. SMBv2 ve SMBv3 sürümleri daha güvenlidir ve smb_login modülü ile saldırılamaz.
+Smb_login modülünü kullanmak için Metasploit konsolunu açmak ve aşağıdaki komutları girmek gerekir:
+root@bt:/Desktop# msfconsole
+msf > use auxiliary/scanner/smb/smb_login
+msf auxiliary(smb_login) > show options
+Bu komutlar, smb_login modülünü yükler ve kullanılabilir seçenekleri gösterir. Bu seçeneklerden en önemlileri şunlardır:
+RHOSTS: Hedef sistemlerin IP adreslerini veya aralığını belirtir. Örneğin, 192.168.1.0/24 gibi.
+SMBUser: Hedef sistemlerde denenecek kullanıcı adını belirtir. Örneğin, Administrator gibi.
+SMBPass: Hedef sistemlerde denenecek parolayı belirtir. Örneğin, passw0rd gibi.
+USER_FILE: Hedef sistemlerde denenecek birden fazla kullanıcı adını içeren bir dosyanın yolunu belirtir. Örneğin, /root/users.txt gibi.
+PASS_FILE: Hedef sistemlerde denenecek birden fazla parolayı içeren bir dosyanın yolunu belirtir. Örneğin, /root/pass.txt gibi.
+USERPASS_FILE: Hedef sistemlerde denenecek kullanıcı adı ve parola çiftlerini içeren bir dosyanın yolunu belirtir. Örneğin, /root/userpass.txt gibi. Bu dosyada her satırda bir kullanıcı adı ve bir parola olmalıdır. Örneğin, admin:123456 gibi.
+THREADS: Eş zamanlı olarak kaç hedef sisteme saldırılacağını belirtir. Örneğin, 10 gibi.
+STOP_ON_SUCCESS: Doğru bir kullanıcı adı ve parola bulunduğunda saldırının durdurulup durdurulmayacağını belirtir. true veya false olabilir.
+Bu seçenekleri set komutu ile ayarlamak gerekir. Örneğin, aşağıdaki komutlar, 192.168.1.0/24 ağındaki tüm sistemlere yönelik, test kullanıcısı ve passw0rd parolası ile saldırı yapmaya hazırlanır.
+msf auxiliary(smb_login) > set RHOSTS 192.168.1.0/24
+msf auxiliary(smb_login) > set SMBUser test
+msf auxiliary(smb_login) > set SMBPass passw0rd
+msf auxiliary(smb_login) > set THREADS 10
+msf auxiliary(smb_login) > set STOP_ON_SUCCESS true
+Bu seçenekleri ayarladıktan sonra, exploit komutu ile saldırıyı başlatmak gerekir.
+msf auxiliary(smb_login) > exploit
+Bu komut, hedef sistemlere sırayla kullanıcı adı ve parola denemeye başlar. Eğer doğru bir kullanıcı adı ve parola bulunursa, ekranda SUCCESS yazısı görülür. Ayrıca hedef sistemin IP adresi, kullanıcı adı, parola, işletim sistemi ve SMB sürümü gibi bilgiler de gösterilir. Bu bilgiler, daha sonraki saldırılar için kullanılabilir.
+Smb_login modülü, tek bir kullanıcı adı ve parola ile saldırı yapmanın yanı sıra, birden fazla kullanıcı adı ve parola içeren dosyaları da kullanabilir. Bu durumda, USER_FILE, PASS_FILE veya USERPASS_FILE seçeneklerini kullanmak gerekir. Örneğin, aşağıdaki komutlar, /root/userpass.txt dosyasındaki kullanıcı adı ve parola çiftlerini kullanarak saldırı yapmaya hazırlanır.
+msf auxiliary(smb_login) > set USERPASS_FILE /root/userpass.txt
+msf auxiliary(smb_login) > exploit
+Bu komutlar, dosyadaki her bir kullanıcı adı ve parola çiftini hedef sistemlere denemeye başlar. Eğer doğru bir çift bulunursa, ekranda SUCCESS yazısı görülür. Ayrıca hedef sistemin IP adresi, kullanıcı adı, parola, işletim sistemi ve SMB sürümü gibi bilgiler de gösterilir.
+Smb_login modülü, Windows sistemlere yönelik kaba kuvvet saldırıları yapmak için kullanışlı bir araçtır. Ancak bu saldırıların başarılı olması için, hedef sistemlerin SMBv1 sürümünü kullanması, güvenlik duvarı veya IDS gibi engellerin olmaması, kullanıcı adı ve parola listelerinin doğru ve güncel olması gerekir. Ayrıca bu saldırılar, çok fazla ağ trafiği oluşturduğu için kolayca fark edilebilir. Bu nedenle, bu saldırıları yapmadan önce, hedef sistemlerin iznini almak ve saldırı sonuçlarını raporlamak önemlidir.
+Ncrack Kullanarak RDP Brute Force Atakları
+Ncrack kullanarak RDP brute force saldırısı gerçekleştirmek uzak masaüstü protokolü (RDP) kullanan sistemlere şifre kırma yöntemiyle erişmeye çalışmak anlamına gelir.
+Ncrack kullanarak RDP brute force saldırısı gerçekleştirmek için aşağıdaki adımları takip edin.
+Adımlar şöyle:
+Adım: Bulunduğunuz ağdaki RDP (3389) servisi açık olan sistemleri bulmak için nmap aracını kullanabilirsiniz. Bu araç, ağdaki cihazları ve açık portları taramanıza olanak sağlar. Örneğin, 192.168.1.0/24 gibi bir alt ağda RDP servisi açık olan sistemleri bulmak için şu komutu kullanabilirsiniz:
+root@bt:/pentest/enumeration/dns/fierce# nmap 192.168.1.0/24 -p 3389 --open -n -Pn | grep for | cut -d ' ' -f5
+Bu komut, 192.168.1.0/24 alt ağındaki 3389 portunu taramanızı, açık olanları bulmanızı, IP adreslerini ekrana yazdırmanızı sağlar. -n seçeneği, IP adreslerini isimlere çevirmemenizi, -Pn seçeneği ise ping atlamadan tarama yapmanızı sağlar.
+Adım: Bu IP adreslerini bir dosyaya kaydetmek için >> operatörünü kullanabilirsiniz. Bu operatör, çıktıyı belirttiğiniz dosyaya eklemenizi sağlar. Örneğin, IP adreslerini /root/Desktop/rdpopen.txt dosyasına kaydetmek için şu komutu kullanabilirsiniz:
+root@bt:/pentest/enumeration/dns/fierce# nmap 192.168.1.0/24 -p 3389 --open -n -Pn | grep for | cut -d ' ' -f5 >> /root/Desktop/rdpopen.txt
+Bu komut, birinci adımdaki komutun yaptığı işi yapar, ancak çıktıyı ekrana değil, /root/Desktop/rdpopen.txt dosyasına yazar.
+Adım: Saldırıda kullanılacak kullanıcı adlarını bir dosyaya yazdırmak için vi, nano, gedit gibi metin editörlerinden faydalanabilirsiniz. Bu editörler, metin dosyalarını oluşturmanıza ve düzenlemenize olanak sağlar. Örneğin, users.txt adında bir dosya oluşturmak ve içine kullanıcı adlarını yazmak için şu komutu kullanabilirsiniz:
+root@bt:~/Desktop# nano users.txt
+Bu komut, nano metin editörünü açar ve users.txt dosyasını oluşturur. Burada istediğiniz kullanıcı adlarını yazabilirsiniz. Örneğin, admin, root, user, test gibi. Dosyayı kaydetmek için Ctrl+O tuşlarına, çıkmak için Ctrl+X tuşlarına basabilirsiniz.
+Adım: Ncrack ile RDP servisine kaba kuvvet saldırısını başlatmak için şu komutu kullanabilirsiniz:
+root@bt:~/Desktop# ncrack -iL rdpopen.txt -U users.txt -P pass.txt -p rdp -v
+Bu komut, Ncrack aracını çalıştırır ve şu parametreleri alır:
+-iL rdpopen.txt: Bu parametre, hedef IP adreslerinin bulunduğu dosyanın adını belirtir. Bu örnekte, ikinci adımda oluşturduğumuz rdpopen.txt dosyasını kullanıyoruz.
+-U users.txt: Bu parametre, denenecek kullanıcı adlarının bulunduğu dosyanın adını belirtir. Bu örnekte, üçüncü adımda oluşturduğumuz users.txt dosyasını kullanıyoruz.
+-P pass.txt: Bu parametre, denenecek şifrelerin bulunduğu dosyanın adını belirtir. Bu dosyayı da metin editörleriyle oluşturabilirsiniz. Örneğin, pass.txt adında bir dosya oluşturup içine şifreleri yazabilirsiniz. Şifreleri seçerken, yaygın ve zayıf şifreleri kullanmanız daha iyi sonuç verebilir. Örneğin, 123456, password, admin, qwerty gibi.
+-p rdp: Bu parametre, saldırı yapılacak servisin adını belirtir. Bu örnekte, RDP servisini seçiyoruz.
+-v: Bu parametre, ayrıntılı çıktı vermesini sağlar. Bu sayede, saldırının durumunu ve sonucunu görebilirsiniz.
+Bu komutu çalıştırdığınızda, Ncrack hedef IP adreslerine sırayla kullanıcı adı ve şifre kombinasyonlarını deneyecektir. Eğer başarılı bir giriş yaparsa, size bunu bildirecektir. Örneğin, şöyle bir çıktı alabilirsiniz:
+Discovered credentials on rdp://192.168.1.10:3389 'admin' 'password'
+Bu, 192.168.1.10 IP adresindeki RDP servisine admin kullanıcı adı ve password şifresi ile giriş yapabildiğinizi gösterir.
+Adım: RDP ile uzak sisteme bağlanmak için rdesktop aracını kullanabilirsiniz. Bu araç, RDP protokolünü kullanan sistemlere uzaktan erişmenizi sağlar. Örneğin, 192.168.1.10 IP adresindeki sisteme bağlanmak için şu komutu kullanabilirsiniz:
+root@bt:~/Desktop# rdesktop 192.168.1.10 -u admin -p password -k tr
+Bu komut, rdesktop aracını çalıştırır ve şu parametreleri alır:
+192.168.1.10: Bu parametre, bağlanmak istediğiniz sistemin IP adresini belirtir. Bu örnekte, dördüncü adımda giriş bilgilerini bulduğumuz 192.168.1.10 IP adresini kullanıyoruz.
+-u admin: Bu parametre, kullanıcı adını belirtir. Bu örnekte, admin kullanıcı adını kullanıyoruz.
+-p password: Bu parametre, şifreyi belirtir. Bu örnekte, password şifresini kullanıyoruz.
+-k tr: Bu parametre, klavye düzenini belirtir. Bu örnekte, Türkçe klavye düzenini seçiyoruz.
+Bu komutu çalıştırdığınızda, uzak sistemin masaüstüne erişebilirsiniz.
+HTTP Basic Auth Korumalı Sitelere Yönelik Brute Force
+HTTP Basic Auth korumalı sitelere yönelik brute force saldırıları, web uygulamalarının kullanıcı adı ve parola bilgilerini tahmin etmeye çalışan otomatik programlardır. Bu programlar, çok sayıda deneme yaparak doğru kombinasyonu bulmaya çalışırlar. Bu saldırılar, web uygulamalarının güvenliğini tehlikeye atabilir ve yetkisiz erişime neden olabilir.
+Bu saldırıları gerçekleştirmek için kullanabileceğiniz bazı araçlar şunlardır:
+Medusa: Çoklu protokolleri destekleyen, hızlı ve esnek bir brute force aracıdır. HTTP Basic Auth korumalı sitelere saldırmak için, aşağıdaki komutu kullanabilirsiniz:
+medusa -h <hedef_ip> -U <kullanıcı_adı_listesi> -P <parola_listesi> -M http -m DIR:<korunan_dizin> -m AUTH:BASIC -f
+Bu komutun parametreleri şöyle açıklanabilir:
+-h: Hedef IP adresi veya alan adı
+-U: Denenecek kullanıcı adlarının bulunduğu dosya
+-P: Denenecek parolaların bulunduğu dosya
+-M: Saldırı yapılacak protokol (http, ftp, ssh, vb.)
+-m DIR: Korunan dizinin adı (örn. /admin, /gizli, vb.)
+-m AUTH: Kullanılacak kimlik doğrulama yöntemi (BASIC, DIGEST, NTLM, vb.)
+-f: İlk başarılı girişte saldırıyı durdur
+Örnek olarak, 192.168.1.10 IP adresindeki admin dizinine yönelik saldırı yapmak için, users.txt ve pass.txt dosyalarını kullanan bir komut şöyle olabilir:
+medusa -h 192.168.1.10 -U users.txt -P pass.txt -M http -m DIR:/admin -m AUTH:BASIC -F
+Hydra: Popüler bir brute force aracıdır. Medusa'ya benzer şekilde, çoklu protokolleri destekler ve HTTP Basic Auth korumalı sitelere saldırmak için kullanılabilir. Aşağıdaki komutu kullanabilirsiniz:
+hydra -L <kullanıcı_adı_listesi> -P <parola_listesi> http://<hedef_ip>/<korunan_dizin>
+Bu komutun parametreleri şöyle açıklanabilir:
+-L: Denenecek kullanıcı adlarının bulunduğu dosya
+-P: Denenecek parolaların bulunduğu dosya
+http://<hedef_ip>/<korunan_dizin>: Saldırı yapılacak web adresi
+Örnek olarak, http://131.104.163.19/admin adresine saldırmak için, şu komutu kullanabilirsiniz:
+hydra -L users.txt -P pass.txt http://131.104.163.19/admin
+Bu komut, users.txt dosyasındaki kullanıcı adlarını ve pass.txt dosyasındaki parolaları deneyerek, admin dizinine erişmeye çalışacaktır. Eğer başarılı bir giriş yapılırsa, saldırı duracak ve ekrana kullanıcı adı ve parola bilgisi yazılacaktır.
+Patator aracı, http_fuzz modülü ile HTTP Basic Auth korumalı sayfalara yönelik brute force saldırısı yapabilirsiniz. Bu modül, -x parametresi ile istek başlıklarını, -b parametresi ile başarılı yanıt kodlarını, -u parametresi ile hedef sayfanın URL’sini, -C parametresi ile kullanıcı adı ve parola listesini belirtmenizi sağlar. Örneğin, şöyle bir komut kullanabilirsiniz:
+patator http_fuzz url=http://131.104.163.19/gizli-alan -x ignore:fgrep=401 -b 200 -C admin:FILE0 0=pass.txt
+Bu komut, kullanıcı adı admin olan ve parolaları pass.txt dosyasından alınan istekleri gönderir, 401 yanıt kodunu yoksayar, 200 yanıt kodunu başarılı olarak kabul eder.
+Bu araçları kullanırken, saldırı hızını, zaman aşımı süresini, paralel bağlantı sayısını ve diğer seçenekleri ayarlayabilirsiniz. Ayrıca, saldırı yapmadan önce hedef sistemin iznini almanız ve yasalara uygun davranmanız gerektiğini unutmayın.
+Bu saldırıları önlemek için, web uygulamalarının güvenliğini artırmak gerekir. Bunun için, şu önlemleri alabilirsiniz:
+Güçlü ve karmaşık parolalar kullanmak
+Parola sayısını sınırlamak veya yanlış girişlerden sonra hesabı kilitlemek
+IP adreslerini izlemek ve şüpheli aktiviteleri engellemek
+SSL/TLS gibi şifreleme protokolleri kullanmak
+Ekstra bir kimlik doğrulama katmanı eklemek (örn. CAPTCHA, OTP, vb.)
