@@ -1,0 +1,21 @@
+
+BRUTE FORCE SALDIRISI ARACI 
+import itertools
+import string
+def crack_password(target_password, max_length=8):
+    characters = string.ascii_letters + string.digits + string.punctuation
+    for length in range(1, max_length + 1):
+        for guess in itertools.product(characters, repeat=length):
+            guess_password = ''.join(guess)
+            if guess_password == target_password:
+                return guess_password
+    return None
+target_password = input("Hedef parolayı girin: ")
+cracked_password = crack_password(target_password)
+if cracked_password:
+    print("Parola kırıldı! Kırılan parola:", cracked_password)
+else:
+    print("Parola kırılamadı. Daha fazla deneme yapılması gerekebilir.")
+
+Bu kod, verilen bir hedef parolayı kırmak için bir Python fonksiyonu içerir. İşlev, verilen hedef parolayı bulana kadar olası parola kombinasyonlarını deneyerek çalışır.İlk olarak, import itertools ve import string ifadeleri kullanılarak gerekli modüller içe aktarılır.crack_password adlı bir fonksiyon tanımlanır. Bu fonksiyon, iki parametre alır: target_password (hedef parola) ve max_length (maksimum parola uzunluğu, varsayılan olarak 8).Fonksiyon içinde, characters adında bir değişken oluşturulur. Bu değişken, büyük harfler, küçük harfler, rakamlar ve özel karakterlerden oluşan bir dize içerir. Yani, parolalar oluşturmak için kullanılacak karakterlerin bir listesini sağlar.Fonksiyon, ardından belirtilen maksimum uzunlukta (varsayılan olarak 1 ila 8 karakter arası) olası parola kombinasyonlarını denemek için iç içe geçmiş bir döngü kullanır. Bu döngü, itertools modülünden product fonksiyonunu kullanarak tüm karakterlerin uzunluk aralığına kadar olan kombinasyonlarını oluşturur.Her bir olası tahmin (guess), bir dizeye dönüştürülerek (''.join(guess)) hedef parola ile karşılaştırılır. Eğer tahmin, hedef parolaya eşitse, bu parola bulunmuş demektir ve fonksiyon bu parolayı döndürür.Eğer hedef parola bulunamazsa, None değeri döndürülür.Ana program, kullanıcıdan hedef parolayı girmesini ister. Ardından crack_password fonksiyonunu kullanarak parolayı kırmaya çalışır. Eğer parola kırılırsa, kırılan parola kullanıcıya gösterilir; aksi halde, daha fazla deneme yapılması gerektiğine dair bir mesaj verilir.
+Bu kodu çalıştırmak için bir Python ortamına ihtiyacınız olacak. Örneğin, bir Python yürütme ortamı olan IDLE'ı kullanabilirsiniz. Aşağıdaki adımları izleyerek kodu çalıştırabilirsiniz:Bir metin düzenleyicisi veya Python geliştirme ortamı (IDE) açın. Örneğin, IDLE, PyCharm, VSCode veya Jupyter Notebook gibi.Kodu kopyalayın ve yeni bir dosyaya yapıştırın.Dosyayı bir isimle kaydedin, örneğin "password_cracker.py" gibi.Python ortamınızda dosyayı çalıştırın. Bunun için, dosyayı açın ve çalıştırma düğmesine basın veya terminalde şu komutu çalıştırın:python password_cracker.pyProgram sizden bir hedef parola girmenizi isteyecek. Bir parola girin ve ENTER tuşuna basın.Program, parolayı kırmak için denemelerde bulunacak ve sonuçları ekrana yazdıracak. Eğer parola kırılırsa, kırılan parola gösterilecek; aksi halde, daha fazla deneme yapılması gerektiğine dair bir mesaj alacaksınız.Bu şekilde, verilen hedef parolayı kırmak için bu Python programını kullanabilirsiniz.
