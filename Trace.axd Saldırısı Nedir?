@@ -1,0 +1,14 @@
+Trace.axd Saldırısı Nedir?
+Trace.axd, ASP.NET web uygulamalarında hata ayıklama ve izleme için kullanılan bir sayfadır. Bu sayfa, geliştiricilerin uygulama hatalarını ve istekleri izlemelerine yardımcı olur. Saldırganlar, trace.axd'yi kullanarak hassas bilgilere erişebilir, kullanıcı kimlik bilgilerini çalabilir ve hatta sistem üzerinde tam kontrol sağlayabilir.
+Saldırının Aşamaları:
+1. Trace.axd Sayfasının Bulunması:
+Saldırganlar, Google araması aracılığıyla ".axd" uzantılı ve "Trace.axd?id=0" içeren sayfaları arar. Bu arama, potansiyel olarak güvenlik açığı barındıran web sitelerini belirlemelerini sağlar.
+2. Session ID'nin Elde Edilmesi:
+Saldırgan, trace.axd sayfasını açtığında tarayıcısında "ASP.NET_SessionId" adında bir çerez oluşturulur. Bu çerez, kullanıcının oturum bilgilerini içerir ve saldırgan tarafından ele geçirilebilir.
+3. Session ID'nin Kullanılması:
+Saldırgan, ele geçirdiği session ID'yi bir çerez yöneticisi aracılığıyla kendi tarayıcısına aktarabilir. Bu işlem, kullanıcının oturumunu ele geçirmesine ve sistem üzerinde yetkisiz erişim elde etmesine olanak tanır.
+Saldırıya Karşı Önlemler:
+Trace.axd sayfasını devre dışı bırakın veya erişimi kısıtlayın. Bunu web.config dosyasını düzenleyerek veya IIS ayarlarını kullanarak yapabilirsiniz.
+ASP.NET_SessionId çerezini "HttpOnly" olarak ayarlayın. Bu, çerezin JavaScript tarafından erişilemez hale gelmesini sağlar.
+Güçlü parolalar ve iki faktörlü kimlik doğrulama kullanın. Bu, saldırganların hesaplara erişmesini zorlaştırır.
+Web uygulamanızı güncel tutun ve güvenlik yamalarını uygulayın. Yazılım güncellemeleri genellikle güvenlik açıklarını giderir.
