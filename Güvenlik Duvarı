@@ -1,0 +1,62 @@
+Güvenlik Duvarı Keşif Çalışması
+
+Güvenlik duvarı keşif çalışması üç aşamada incelenebilir:
+1. SYN Taraması (SYN Scan): Bu aşamada, bir istemci hedef sistemdeki bir servise bağlanmak için bir SYN paketi gönderir. Eğer hedef sistemdeki servis aktifse, istemciye bir SYN+ACK paketi ile yanıt verir. Bu, portun açık olduğunu ve servisin dinlediğini gösterir. Örneğin, HTTP servisi için 80 numaralı portu taramak istiyorsanız, komut şu şekilde olur:
+   nmap -sS -p80 hedefsite.com
+   Bu komut, hedefsite.com adresindeki 80 numaralı portun durumunu kontrol eder.
+2. RST Taraması (RST Scan): Eğer hedef sistemdeki servis kapalıysa, istemci tarafından gönderilen SYN paketine RST paketi ile yanıt verir. Bu, portun kapalı olduğunu ve servisin hizmet vermediğini gösterir. Örneğin, HTTPS servisi için 443 numaralı portu taramak istiyorsanız, komut şu şekilde olur:
+   nmap -sS -p443 hedefsite.com
+   Bu komut, hedefsite.com adresindeki 443 numaralı portun durumunu kontrol eder.
+3. Filtrelenmiş Port Taraması (Filtered Port Scan): Eğer istemci, hedef sistemden SYN paketine karşılık olarak ne SYN+ACK ne de RST paketi alamıyorsa, bu genellikle hedef sistemin önünde bir güvenlik duvarının olduğunu gösterir. Bu durumda, port "filtrelenmiş" olarak görünür ve erişilemez durumdadır. Örneğin, SSH servisi için 22 numaralı portu taramak istiyorsanız, komut şu şekilde olur:
+   nmap -sS -p22 hedefsite.com
+   Bu komut, hedefsite.com adresindeki 22 numaralı portun durumunu kontrol eder ve eğer filtrelendiyse, bu bilgiyi size sunar.
+Bu komutlar, güvenlik duvarı keşif çalışmalarında kullanılan temel nmap tarama teknikleridir. Güvenlik duvarlarının ve ağ güvenliğinin sürekli geliştiğini unutmamak önemlidir, bu yüzden bu tekniklerin yanı sıra güncel güvenlik araçları ve yöntemleri de öğrenilmelidir. 
+Güvenlik Duvarı Engelleme Yöntemleri
+Linux sistemlerde paket filtreleme ve güvenlik duvarı yönetimi için artık nftables kullanılmaktadır. iptables'in yerini alan bu yeni sistem, daha esnek ve performanslı bir yapı sunmaktadır. nftables kullanımında temel kavramlar ve örnek bir senaryo;
+- input: Gelen paketler için kuralların tanımlandığı zincir.
+- output: Giden paketler için kuralların tanımlandığı zincir.
+- forward: Yönlendirilen paketler için kuralların tanımlandığı zincir.
+- accept: Paketin kabul edilmesi.
+- drop: Paketin sessizce engellenmesi.
+- reject: Paketin engellenip, gönderen tarafa bilgi verilmesi.
+Örneğin, bir sistemin 80 numaralı portuna gelen TCP paketlerini engellemek için aşağıdaki nftables kuralını kullanabiliriz:
+root@kali:~# nft add rule ip filter input tcp dport 80 counter drop
+Bu kural, 80 numaralı porta gelen TCP paketlerini drop edecektir, yani paketler engellenecek ve gönderen tarafa herhangi bir bilgi gitmeyecektir.
+Eğer paketleri reject metodu ile engellemek isterseniz, gönderen tarafa paketin reddedildiğine dair bir cevap dönecektir. Bu durum için kullanılacak kural şu şekildedir:
+root@kali:~# nft add rule ip filter input tcp dport 80 counter reject
+Bu kural sayesinde, 80 numaralı porta gelen paketler reddedilecek ve istek yapan tarafa bir hata mesajı gönderilecektir.
+Paket filtreleme testi için kullanılan hping3 komutu ile SYN paketleri göndererek bu kuralların işleyişini gözlemleyebilirsiniz. Örneğin, IP adresi 192.0.2.1 olan bir sisteme 80 numaralı porta SYN paketi göndermek için:
+root@kali:~# hping3 -p 80 -S 192.0.2.1
+Bu komut, belirtilen IP adresine ve porta SYN paketleri gönderir ve nftables kurallarının uygulanıp uygulanmadığını test etmenizi sağlar. Eğer drop kuralı aktifse, herhangi bir yanıt alamayacaksınız. Reject kuralı aktifse, hata mesajı alacaksınız. Bu şekilde, güvenlik duvarınızın doğru çalışıp çalışmadığını kontrol edebilirsiniz.
+
+Güvenlik Duvarı Kurallarının Keşfedilmesi
+
+Güvenlik duvarları, bir kuruluşun iç ağını dış tehditlerden korumak için hayati öneme sahiptir. Her kuruluşun ihtiyaçları farklı olduğundan, güvenlik duvarları da bu gereksinimlere göre özel olarak yapılandırılır. Güvenlik duvarlarının nasıl yapılandırıldığını doğrudan anlamak zor olabilir, ancak ağ trafiğini inceleyerek ve belirli testler yaparak güvenlik duvarı kuralları hakkında bilgi edinmek mümkündür.
+Örneğin, hedef sistemdeki belirli portların (genellikle web trafiği için kullanılan 80 ve 443 portları gibi) açık olup olmadığını kontrol etmek için SYN paketleri gönderilebilir. Bu, hping3 gibi araçlar kullanılarak yapılabilir:
+root@kali:~# hping3 -p 80 -S asaguvenlik.com
+Ayrıca, nmap gibi ağ tarama araçları kullanarak, sistemdeki ilk 100 portun durumunu (açık, kapalı veya filtrelenmiş) kontrol edebilirsiniz:
+root@kali:~# nmap -sS -p1-100 asaguvenlik.com
+Bazı durumlarda, güvenlik duvarı tüm portları açık olarak gösterecek şekilde yapılandırılmış olabilir. Bu, syn cookie olarak bilinen bir teknikle yapılır ve potansiyel saldırganların sistem hakkında doğru bilgi edinmesini engeller. Gerçek port durumlarını ve güvenlik duvarı kurallarını öğrenmek için, nmap ile versiyon taraması yapılabilir:
+root@kali:~# nmap -sV asaguvenlik.com
+2024 yılı itibarıyla, güvenlik duvarı yapılandırması için en iyi uygulamalar arasında düzenli güncellemeler, en az ayrıcalık ilkesinin uygulanması ve gelişmiş güvenlik özelliklerinin kullanımı bulunmaktadır. Ağ güvenliği tarama teknikleri ise gelişmiş port tarama teknikleri, programlanabilir donanım kullanımı ve uygulama seviyesi protokol ayrıştırmasını içermektedir. Nmap'in son sürümü, çeşitli hata düzeltmeleri ve istikrar iyileştirmeleri içeren 7.93 sürümüdür. 
+Farklı Portta Çalıştırma Yöntemiyle Klasik Güvenlik Duvarı Atlatma Yöntemleri
+Güvenlik duvarlarını atlatma yöntemleri, özellikle kurumsal ağlarda sıkça karşılaşılan bir durumdur. Genellikle, kurumlar sadece 80 ve 443 portlarını açık tutar ve diğer tüm portları güvenlik nedeniyle kapatır. Ancak, bu kısıtlamalar bazen meşru kullanım için bile engel teşkil edebilir. Bu gibi durumlarda, SSH tüneli kullanarak kısıtlı portlara erişim sağlamak mümkündür.
+SSH tüneli, güvenli bir bağlantı üzerinden yerel ağınızdan uzak bir sunucuya trafik yönlendirmenizi sağlar. Bu yöntemle, yasaklanmış veya kısıtlanmış portlara erişebilirsiniz. Örneğin, dışarıda SSH servisi açık olan bir sunucuya bağlanarak, o sunucunun internet bağlantısını kullanabilir ve böylece yerel ağınızdaki kısıtlamaları aşabilirsiniz.
+SSHuttle ise, SSH tünellemesini kolaylaştıran bir araçtır. SSHuttle kullanarak, yerel makinenizden uzak bir sunucuya tüm trafik yönlendirilebilir ve bu sunucu üzerinden internete çıkış yapılabilir. Bu, güvenlik duvarı kurallarını geçersiz kılmanın bir yoludur ve genellikle sistem yöneticileri tarafından uzaktan çalışma durumlarında kullanılır.
+Örneğin, aşağıdaki komut ile SSHuttle aracılığıyla bir SSH tüneli kurulabilir:
+root@kali:~/SSHuttle-master# sshuttle -r kullanici_adi@sunucu_ip:443 0.0.0.0/0
+Bu komut, kullanici_adi ve sunucu_ip ile belirtilen uzak sunucuya tüm trafik yönlendirir. Burada 443 portu kullanılmıştır çünkü bu port genellikle HTTPS trafiği için açık olur ve bu yüzden güvenlik duvarları tarafından engellenmez. 0.0.0.0/0 ifadesi ise tüm trafik anlamına gelir ve bu sayede internete çıkış tamamen uzak sunucu üzerinden gerçekleşir.
+PORT BAĞIMSIZ PROTOKOL TANIMA
+Bir ağda, uygulamalar, servisler veya protokoller genellikle belirli portlar üzerinden iletişim kurar. Örneğin, web sunucuları genellikle HTTP için 80 numaralı portu, HTTPS için ise 443 numaralı portu kullanır. Ancak, bu portlar değiştirilebilir ve bazen güvenlik nedeniyle değiştirilmek istenebilir.
+Eğer bir SSH servisi varsayılan portu olan 22 yerine, 443 numaralı port üzerinde çalıştırılırsa, bu durum dışarıdan bir gözlemci için yanıltıcı olabilir. Çünkü 443 portu genellikle güvenli web trafiği (SSL/TLS) için ayrılmıştır. Bu nedenle, ağ trafiğini izleyen bir araç (örneğin Wireshark), bu bağlantıyı SSL olarak sınıflandırabilir ve gerçekte SSH olduğunu fark edemeyebilir.
+Bu tür bir durumda, eğer ağ trafiğinin SSH olduğu biliniyorsa ve bu trafiği SSH olarak analiz etmek istiyorsak, Wireshark gibi bir ağ analiz aracında, SSL paketlerinden birine sağ tıklayarak "Decode As" seçeneğini kullanabiliriz. Bu seçenekle, paketleri SSH olarak dekodlamak ve analiz etmek mümkün olur. Böylece, 443 portu üzerinden geçen trafiğin SSL yerine SSH olduğunu anlayabilir ve uygun şekilde inceleyebiliriz.
+Bu işlem, ağ güvenliği profesyonellerinin yanı sıra siber saldırıları tespit etmeye çalışan kişiler tarafından da kullanılabilir. Portların protokollere göre değiştirilmesi, güvenlik duvarları ve izleme sistemlerini atlatmak için kullanılan bir tekniktir. Ancak, bu teknik aynı zamanda sistem yöneticilerine, trafiği daha iyi anlamaları ve yönetmeleri için esneklik sağlar.
+
+Güvenlik Duvarı Kurallarının Denetimden Geçirilmesi
+
+Güvenlik duvarı kurallarının denetlenmesi, ağ güvenliğinin önemli bir parçasıdır ve bu süreçte kullanılan araçlardan biri Nipper'dır. Nipper, güvenlik duvarı yapılandırmalarınızı inceleyerek güvenlik açıklarını ve uyumsuzlukları tespit eder. Bu sürecin adımları şöyledir:
+1. Nipper Programının Açılması: Güvenlik duvarı kurallarınızı içeren yapılandırma dosyasını dışa aktarın ve Nipper programında açın.
+2. Raporlama Seçeneklerinin Belirlenmesi: Program içinde 'Next' butonuna basarak ilerleyin ve raporlama için istediğiniz seçenekleri belirleyin. Bu, hangi tür güvenlik testlerinin yapılacağını ve raporda hangi bilgilerin yer alacağını içerir.
+3. Rapor Formatının Seçilmesi: Seçenekler belirlendikten sonra, raporun formatını seçin. Bu, raporun PDF, HTML veya başka bir formatta olup olmayacağını belirler.
+4. Analiz ve Raporun Alınması: 'Finish' butonuna basarak, yüklediğiniz yapılandırma dosyasının analiz edilmesini başlatın. Nipper, kuralları değerlendirir ve güvenlik duruşunuzu iyileştirmek için önerilerde bulunur.
+Sonuç olarak, Nipper ile yapılan denetim, güvenlik duvarı kurallarınızın etkinliğini ve güvenliğinizi artırmak için gerekli düzenlemeleri yapmanıza yardımcı olur. Bu süreç, ağınızın güvenliğini sağlamak ve olası siber tehditlere karşı korunmak için kritik öneme sahiptir.
